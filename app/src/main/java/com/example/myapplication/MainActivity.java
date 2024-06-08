@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +21,18 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        Button buttonToLogIn = findViewById(R.id.buttonToLogIn);
+        buttonToLogIn.setOnClickListener(v -> {
+            Intent i = new Intent(this, LogInActivity.class);
+            startActivity(i);
+        });
+
+        Button buttonToAddVideoPage = findViewById(R.id.buttonToAddVideoPage);
+        buttonToAddVideoPage.setOnClickListener(v -> {
+            Intent i = new Intent(this, AddVideoActivity.class);
+            startActivity(i);
         });
     }
 }

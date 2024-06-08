@@ -6,12 +6,24 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/icon_of_the_program_round"
+        android:label="@string/youtube"
+        android:roundIcon="@mipmap/icon_of_the_program_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LogInActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WatchVideoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AddVideoActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

@@ -3,4 +3,13 @@
     <string name="password">Password</string>
     <string name="username">Username</string>
     <string name="log_in">Log In</string>
+    <string name="nickname">Nickname</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="notification" />
+    <string name="search" />
+    <string name="button4">Button4</string>
+    <string name="move_to_log_in">Move To Log In</string>
+    <string name="youtbe">YouTbe</string>
+    <string name="youtube">YouTube</string>
+    <string name="addvideopage">AddVideoPage</string>
 </resources>
