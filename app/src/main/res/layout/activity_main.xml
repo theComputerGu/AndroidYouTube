@@ -6,57 +6,98 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <LinearLayout
-        android:layout_width="357dp"
-        android:layout_height="636dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonsLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refreshLayout"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/lstPosts"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/lstPosts"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/darker_gray" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <LinearLayout
+        android:id="@+id/buttonsLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:contentDescription="@string/add_button_description"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:contentDescription="@string/delete_button_description"
-            android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_close" />
+        <ImageButton
+            android:id="@+id/buttonToLogIn"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_log_in" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_subscribe" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/buttonToAddVideoPage"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_add_video" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_shorts" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
+        <ImageButton
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_home" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/black" />
+
     </LinearLayout>
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
