@@ -12,4 +12,6 @@
     <string name="youtbe">YouTbe</string>
     <string name="youtube">YouTube</string>
     <string name="addvideopage">AddVideoPage</string>
+    <string name="add_button_description">Add</string>
+    <string name="delete_button_description">Delete</string>
 </resources>
