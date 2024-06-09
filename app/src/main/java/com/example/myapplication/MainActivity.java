@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +23,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+
+        ImageButton buttonToLogIn = findViewById(R.id.buttonToLogIn);
+        buttonToLogIn.setOnClickListener(v -> {
+            Intent i = new Intent(this, LogInActivity.class);
+            startActivity(i);
+        });
+
+        ImageButton buttonToAddVideoPage = findViewById(R.id.buttonToAddVideoPage);
+        buttonToAddVideoPage.setOnClickListener(v -> {
+            Intent i = new Intent(this, AddVideoActivity.class);
+            startActivity(i);
+        });
 
 
         RecyclerView lstVideos = findViewById(R.id.lstPosts);
@@ -43,21 +56,9 @@ public class MainActivity extends AppCompatActivity {
         posts.add(new Post("Alice", "Hello world", R.drawable.women_reading));
         adapter.setPosts(posts);
 
-/*
-        Button buttonToLogIn = findViewById(R.id.buttonToLogIn);
-        buttonToLogIn.setOnClickListener(v -> {
-            Intent i = new Intent(this, LogInActivity.class);
-            startActivity(i);
-        });
-
-        Button buttonToAddVideoPage = findViewById(R.id.buttonToAddVideoPage);
-        buttonToAddVideoPage.setOnClickListener(v -> {
-            Intent i = new Intent(this, AddVideoActivity.class);
-            startActivity(i);
-        });
 
 
- */
+
 
     }
 }
