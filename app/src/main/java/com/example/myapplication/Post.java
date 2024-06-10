@@ -1,63 +1,54 @@
 package com.example.myapplication;
 
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import java.io.Serializable;
 
-@Entity
-public class Post {
-
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-    private String author;
-
+public class Post implements Serializable {
     private String content;
-
-    private String Date;
-    private int likes;
-
-
+    private String author;
     private int pic;
+    private int likes;
+    private int dislikes;
+    private String date;
+    private int type; // New field to store the type of the post (image or video)
 
+    // Constants to represent the types of posts
+    public static final int TYPE_IMAGE = 1;
+    public static final int TYPE_VIDEO = 2;
 
-    public Post() {
-        this.pic = R.drawable.boat;
-    }
-
-    public Post(String author, String content, int pic,String Date){
-        this.pic = pic;
-        this.author = author;
+    public Post(String content, String author, int pic, String date) {
         this.content = content;
-        this.Date = Date;
+        this.author = author;
+        this.pic = pic;
+        this.date = date;
+        this.type = TYPE_IMAGE; // By default, assume it's an image post
     }
-    public int getId() {
-        return id;
+
+
+    // Getter and setter methods for likes, dislikes, and other fields (omitted for brevity)
+
+    // Add getter and setter methods for type and fileName
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getContent() {
         return content;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
     public int getPic() {
         return pic;
     }
 
-    public void setPic(int pic) {
-        this.pic = pic;
+    public String getDate() {
+        return date;
     }
 
     public int getLikes() {
@@ -68,11 +59,13 @@ public class Post {
         this.likes = likes;
     }
 
-    public String getDate() {
-        return Date;
+
+    public int getDislikes() {
+        return dislikes;
     }
 
-    public void setTimeAgo(String Date) {
-        this.Date = Date;
+    public void setDislikes(int dislikes) {
+        this.dislikes = dislikes;
     }
+
 }

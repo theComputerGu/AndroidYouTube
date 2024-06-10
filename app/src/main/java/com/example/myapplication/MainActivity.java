@@ -2,22 +2,23 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PostsListAdapter.OnItemClickListener {
+
+    // Declare serializablePosts and previousSelectedPost as class members
+    private ArrayList<Serializable> serializablePosts = new ArrayList<>();
+    private Post previousSelectedPost = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
         });
 
-
         RecyclerView lstVideos = findViewById(R.id.lstPosts);
         final PostsListAdapter adapter = new PostsListAdapter(this);
+        adapter.setOnItemClickListener(this);
         lstVideos.setAdapter(adapter);
         lstVideos.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
         posts.add(new Post("road", "Author10", R.drawable.road,"1/01/2011"));
         posts.add(new Post("women_reading", "Author11", R.drawable.women_reading,"3/01/2021"));
         adapter.setPosts(posts);
-
-
 
         ImageButton searchButton = findViewById(R.id.buttonSearch);
         searchButton.setOnClickListener(v -> {
@@ -84,9 +83,35 @@ public class MainActivity extends AppCompatActivity {
             adapter.setPosts(filteredPosts);
         });
 
+        // Iterate through the list of posts and add each one to the serializablePosts list
+        for (Post post : posts) {
+            serializablePosts.add(post);
+        }
+    }
 
+    @Override
+    public void onItemClick(Post post) {
+        List<Post> posts = new ArrayList<>();
+        for (Serializable serializable : serializablePosts) {
+            if (serializable instanceof Post) {
+                posts.add((Post) serializable);
+            }
+        }
 
+        // Add the previously selected post back to the list if it exists
+        if (previousSelectedPost != null && !posts.contains(previousSelectedPost)) {
+            posts.add(previousSelectedPost);
+        }
+
+        // Remove the newly selected post from the list
+        posts.remove(post);
+        serializablePosts.clear();
+        serializablePosts.addAll(posts);
+
+        Intent intent = new Intent(this, WatchVideoActivity.class);
+        intent.putExtra("selectedPost", post);
+        intent.putExtra("allPosts", serializablePosts);
+        previousSelectedPost = post; // Update the previously selected post
+        startActivity(intent);
     }
 }
-
-

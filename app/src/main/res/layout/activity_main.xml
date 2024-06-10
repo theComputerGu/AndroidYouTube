@@ -73,7 +73,8 @@
             android:layout_marginStart="20dp"
             android:layout_marginBottom="-5dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_serach" />
+            app:srcCompat="@drawable/ic_serach"
+            />
 
         <Space
             android:layout_width="0dp"
@@ -251,7 +252,8 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_home" />
+            app:srcCompat="@drawable/ic_home"
+            android:contentDescription="Home"/>
 
         <View
             android:layout_width="1dp"
