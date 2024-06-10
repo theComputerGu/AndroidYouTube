@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import android.widget.EditText;
+
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;

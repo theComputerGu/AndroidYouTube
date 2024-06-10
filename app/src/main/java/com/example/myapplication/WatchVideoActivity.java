@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class WatchVideoActivity extends AppCompatActivity implements PostsListAd
     private RecyclerView recyclerView;
     private PostsListAdapter adapter;
     private Post previousSelectedPost = null; // To keep track of the previously selected post
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
