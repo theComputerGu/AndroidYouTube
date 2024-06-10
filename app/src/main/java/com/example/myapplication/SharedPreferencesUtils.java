@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPreferencesUtils {
-
+    // SharedPreferences constants
     private static final String SHARED_PREFS_NAME = "my_app_prefs";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
