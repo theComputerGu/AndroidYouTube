@@ -12,7 +12,7 @@ public class Post {
 
     private String content;
 
-
+    private String Date;
     private int likes;
 
 
@@ -23,10 +23,11 @@ public class Post {
         this.pic = R.drawable.boat;
     }
 
-    public Post(String author, String content, int pic){
+    public Post(String author, String content, int pic,String Date){
         this.pic = pic;
         this.author = author;
         this.content = content;
+        this.Date = Date;
     }
     public int getId() {
         return id;
@@ -65,5 +66,13 @@ public class Post {
 
     public void setLikes(int likes) {
         this.likes = likes;
+    }
+
+    public String getDate() {
+        return Date;
+    }
+
+    public void setTimeAgo(String Date) {
+        this.Date = Date;
     }
 }

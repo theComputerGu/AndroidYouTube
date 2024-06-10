@@ -16,15 +16,18 @@ import java.util.List;
 
 public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.PostViewHolder> {
 
+
     class PostViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvAuthor;
         private final TextView tvContent;
         private final ImageView ivPic;
+        private final TextView tvDate;
 
         private PostViewHolder(View itemView) {
             super(itemView);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
             tvContent = itemView.findViewById(R.id.tvContent);
+            tvDate = itemView.findViewById(R.id.tvDate);
             ivPic = itemView.findViewById(R.id.ivPic);
         }
     }
@@ -49,6 +52,7 @@ public class PostsListAdapter extends RecyclerView.Adapter<PostsListAdapter.Post
             holder.tvAuthor.setText(current.getAuthor());
             holder.tvContent.setText(current.getContent());
             holder.ivPic.setImageResource(current.getPic());
+            holder.tvDate.setText(current.getDate());
         }
     }
 

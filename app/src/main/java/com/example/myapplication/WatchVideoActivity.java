@@ -1,24 +1,40 @@
 package com.example.myapplication;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.VideoView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class WatchVideoActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_watch_video);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        VideoView videoView = findViewById(R.id.videoView);
+        TextView tvAuthor = findViewById(R.id.tvAuthor);
+        TextView tvContent = findViewById(R.id.tvContent);
+        ImageView ivPic = findViewById(R.id.ivPic);
+
+        String videoUri = getIntent().getStringExtra("videoUri");
+        String postAuthor = getIntent().getStringExtra("postAuthor");
+        String postContent = getIntent().getStringExtra("postContent");
+        String postDate = getIntent().getStringExtra("postDate");
+        int postPic = getIntent().getIntExtra("postPic", -1);
+
+        if (videoUri != null) {
+            videoView.setVideoURI(Uri.parse(videoUri));
+            videoView.start();
+        }
+
+        tvAuthor.setText(postAuthor);
+        tvContent.setText(postContent);
+        if (postPic != -1) {
+            ivPic.setImageResource(postPic);
+        }
     }
 }
