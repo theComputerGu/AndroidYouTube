@@ -9,12 +9,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.MainActivity;
-import com.example.myapplication.R;
-import com.example.myapplication.SignUpActivity;
-import com.example.myapplication.User;
-import com.example.myapplication.SharedPreferencesManager;
-
 import java.util.List;
 
 public class LogInActivity extends AppCompatActivity {
@@ -33,19 +27,15 @@ public class LogInActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextTextPassword);
         buttonLogIn = findViewById(R.id.buttonLogIn);
 
-        userList = SharedPreferencesManager.loadUsers(this);
+        userList = UserManager.getUsers();
 
         buttonLogIn.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
-            String validationMessage = validateLogin(username, password);
-            if (validationMessage == null) {
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, validationMessage, Toast.LENGTH_SHORT).show();
+            if (isValidLogin(username, password)) {
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
             }
         });
 
@@ -56,16 +46,21 @@ public class LogInActivity extends AppCompatActivity {
         });
     }
 
-    private String validateLogin(String username, String password) {
+    private boolean isValidLogin(String username, String password) {
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
                 if (user.getPassword().equals(password)) {
-                    return null; // Login successful
+                    UserManager.saveSignedInUser(user);
+                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                    return true; // Login successful
                 } else {
-                    return "Wrong password"; // Wrong password
+                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                    return false; // Wrong password
                 }
             }
         }
-        return "Invalid username"; // Invalid username
+        Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT).show();
+        return false; // Invalid username
     }
+
 }

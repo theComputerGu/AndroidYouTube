@@ -9,6 +9,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="sign_up">Sign Up</string>
     <string name="log_in">Log In</string>
+    <string name="user_profile_image">profile image</string>
     <string name="notification" />
     <string name="search" />
     <string name="button4">Button4</string>
