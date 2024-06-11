@@ -1,48 +1,46 @@
 package com.example.myapplication;
 
+import android.graphics.Bitmap;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
     private String nickname;
     private String username;
     private String password;
-    private String photoUri;
+    private Bitmap photo;  // Changed to Bitmap
+    private List<Post> posts;
 
-    public User(String nickname, String username, String password, String photoUri) {
+    public User(String nickname, String username, String password, Bitmap photo) {
         this.nickname = nickname;
         this.username = username;
         this.password = password;
-        this.photoUri = photoUri;
+        this.photo = photo;
+        this.posts = new ArrayList<>();
     }
 
-    // Getters and Setters
     public String getNickname() {
         return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public Bitmap getPhoto() {  // Getter for Bitmap photo
+        return photo;
     }
 
-    public String getPhotoUri() {
-        return photoUri;
+    public List<Post> getPosts() {
+        return posts;
     }
 
-    public void setPhotoUri(String photoUri) {
-        this.photoUri = photoUri;
+    public void addPost(Post post) {
+        this.posts.add(post);
     }
 }
