@@ -1,10 +1,28 @@
 package com.example.myapplication;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+
 import java.io.Serializable;
 
 public class Post implements Serializable {
     private String content;
     private String author;
+    private Bitmap bit;
+
+    public Uri getVideoUri() {
+        return videoUri;
+    }
+
+    public void setVideoUri(Uri videoUri) {
+        this.videoUri = videoUri;
+    }
+
+    private Uri videoUri; // Add this field
+    public void setPic(int pic) {
+        this.pic = pic;
+    }
+
     private int pic;
     private int likes;
     private int dislikes;
@@ -15,11 +33,28 @@ public class Post implements Serializable {
     public static final int TYPE_IMAGE = 1;
     public static final int TYPE_VIDEO = 2;
 
+
+    public Post(String content, String author, Bitmap bit, String date) {
+        this.content = content;
+        this.author = author;
+        this.bit = bit;
+        this.date = date;
+        this.type = TYPE_IMAGE; // By default, assume it's an image post
+    }
     public Post(String content, String author, int pic, String date) {
         this.content = content;
         this.author = author;
         this.pic = pic;
         this.date = date;
+        this.type = TYPE_IMAGE; // By default, assume it's an image post
+    }
+
+    public Post(String content, String author, int pic, String date, Uri videoUri) {
+        this.content = content;
+        this.author = author;
+        this.pic = pic;
+        this.date = date;
+        this.videoUri = videoUri;
         this.type = TYPE_IMAGE; // By default, assume it's an image post
     }
 
@@ -68,4 +103,11 @@ public class Post implements Serializable {
         this.dislikes = dislikes;
     }
 
+    public Bitmap getBit() {
+        return bit;
+    }
+
+    public void setBit(Bitmap bit) {
+        this.bit = bit;
+    }
 }
