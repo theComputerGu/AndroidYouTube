@@ -17,7 +17,7 @@
             android:id="@+id/editTextNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp"
+            android:layout_margin="20dp"
             android:padding="20dp"
             android:hint="@string/nickname"
             android:inputType="text" />
@@ -26,7 +26,7 @@
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp"
+            android:layout_margin="20dp"
             android:padding="20dp"
             android:hint="@string/username"
             android:inputType="text" />
@@ -35,7 +35,7 @@
             android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp"
+            android:layout_margin="20dp"
             android:padding="20dp"
             android:hint="@string/password"
             android:inputType="textPassword" />
@@ -44,7 +44,7 @@
             android:id="@+id/editTextConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="30dp"
+            android:layout_margin="20dp"
             android:padding="20dp"
             android:hint="@string/confirm_password"
             android:inputType="textPassword" />
@@ -53,26 +53,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="30dp"
-            android:padding="20dp">
+            android:layout_margin="20dp">
 
+            <!-- Upload Photo Button -->
             <Button
                 android:id="@+id/buttonUploadPhoto"
-                android:layout_width="0dp"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/upload_photo"
-                android:enabled="true"
-                android:clickable="true" />
+                android:layout_marginEnd="30dp"
+                android:backgroundTint="@color/red"
+                android:layout_marginTop="15dp"
+                android:padding="20dp"
+                android:text="Upload Photo" />
 
+            <!-- Image View for Photo -->
             <ImageView
                 android:id="@+id/imageViewPhoto"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:contentDescription="@string/photo"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/circular_image_bg"
+                android:contentDescription="User Photo"
                 android:scaleType="centerCrop"
-                android:background="#e0e0e0" />
+                android:src="@drawable/ic_default_avatar" />
 
         </LinearLayout>
 
@@ -81,10 +83,11 @@
             android:layout_width="137dp"
             android:layout_height="82dp"
             android:layout_gravity="center"
-            android:layout_margin="30dp"
+            android:layout_margin="10dp"
             android:padding="20dp"
             android:text="@string/sign_up"
             android:enabled="true"
+            android:backgroundTint="@color/red"
             android:clickable="true" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

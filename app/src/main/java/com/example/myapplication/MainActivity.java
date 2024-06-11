@@ -1,10 +1,10 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-
+import android.view.View;
 import android.widget.EditText;
-
 import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
@@ -28,15 +28,26 @@ public class MainActivity extends AppCompatActivity implements PostsListAdapter.
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // Initialize views
+        ImageButton imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
+
+        // Retrieve signed-in user from UserManager
+        User signedInUser = UserManager.getSignedInUser();
+        // Display profile photo and nickname if user is signed in
+        if (signedInUser != null) {
+            Bitmap photo = signedInUser.getPhoto();
+            if (photo != null) {
+                imageViewProfilePhoto.setImageBitmap(photo);
+            } else {
+                // Use default photo if photo is null
+                imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+            }
+
+        }
+
         ImageButton buttonToHomePage = findViewById(R.id.buttonToHomePage);
         buttonToHomePage.setOnClickListener(v -> {
             Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
-        });
-
-        ImageButton buttonToLogIn = findViewById(R.id.buttonToLogIn);
-        buttonToLogIn.setOnClickListener(v -> {
-            Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
         });
 
@@ -115,5 +126,10 @@ public class MainActivity extends AppCompatActivity implements PostsListAdapter.
         intent.putExtra("allPosts", serializablePosts);
         previousSelectedPost = post; // Update the previously selected post
         startActivity(intent);
+    }
+
+    public void onProfilePhotoClicked(View view) {
+        Intent i = new Intent(this, LogInActivity.class);
+        startActivity(i);
     }
 }
