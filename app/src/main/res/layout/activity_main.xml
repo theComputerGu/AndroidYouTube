@@ -196,18 +196,27 @@
             android:layout_height="match_parent"
             android:background="@android:color/black" />
 
+
         <ImageButton
-            android:id="@+id/buttonToLogIn"
+            android:id="@+id/imageViewProfilePhoto"
             android:layout_width="0dp"
             android:layout_height="60dp"
+            android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_log_in" />
+            android:background="@drawable/circular_image_bg"
+            android:contentDescription="@string/photo_description"
+            android:onClick="onProfilePhotoClicked"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="10dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_avatar" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="@android:color/black" />
+
+
 
         <ImageButton
             android:layout_width="0dp"
