@@ -6,136 +6,120 @@
     android:layout_height="match_parent"
     tools:context=".AddVideoActivity">
 
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:text="Add Video"
-        android:gravity="center"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_margin="16dp"
-        android:layout_marginTop="100dp"
-        android:textColor="@color/red"
-        app:layout_constraintBottom_toTopOf="@+id/etContent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
     <EditText
         android:id="@+id/etContent"
-        android:layout_width="300dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="title"
+        android:hint="Content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp"/>
+
+    <EditText
+        android:id="@+id/etAuthor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Author/User"
+        app:layout_constraintTop_toBottomOf="@id/etContent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp" />
+
+    <EditText
+        android:id="@+id/tvDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        app:layout_constraintTop_toBottomOf="@id/etAuthor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp" />
+
+    <!-- Upload Photo Button and ImageView -->
+
+    <Button
+        android:id="@+id/btnUploadPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="16dp"
+        android:text="Upload Photo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDate" />
+
+    <ImageView
+        android:id="@+id/imageViewPhoto"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/btnUploadPhoto" />
 
+    <!-- Upload Video Button -->
 
-    <!-- Upload Photo Button and ImageView -->
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="16dp"
+    <!-- Add Button -->
+
+    <!-- Video Post Layout -->
+
+    <Button
+        android:id="@+id/btnUploadVideo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="16dp"
+        android:text="Upload Video"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etContent">
+        app:layout_constraintTop_toBottomOf="@id/imageViewPhoto" />
 
-        <Button
-            android:id="@+id/btnUploadPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:padding="16dp"
-            android:layout_weight="1"
-            android:layout_marginRight="40dp"
-            android:text="Upload Photo"
-            android:backgroundTint="@color/red"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageViewPhoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnUploadPhoto" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="16dp"
+    <ImageView
+        android:id="@+id/btnFgha"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
-
-        <Button
-            android:id="@+id/btnUploadVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="12dp"
-            android:padding="16dp"
-            android:backgroundTint="@color/red"
-            android:layout_marginRight="40dp"
-            android:text="Upload Video"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <ImageView
-            android:id="@+id/selectedVideoUri"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnUploadVideo" />
-    </LinearLayout>
-
+        app:layout_constraintTop_toBottomOf="@id/btnUploadVideo" />
 
     <Button
         android:id="@+id/btnAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:layout_marginTop="32dp"
         android:padding="16dp"
-        android:layout_margin="16dp"
+        android:enabled="false"
         android:text="Add"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toBottomOf="@id/btnFgha" />
 
     <LinearLayout
         android:id="@+id/layoutVideoPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:orientation="vertical"
-        android:padding="16dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnAdd"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnAdd">
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:padding="16dp">
 
+        <!-- You can customize this layout to display video content -->
         <TextView
             android:id="@+id/tvVideoContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="8dp"
             android:text="Video Content"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <!-- Add any other views you want to display for the video post here -->
 
     </LinearLayout>
 
@@ -145,12 +129,13 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAdd"
+        app:layout_constraintTop_toBottomOf="@id/layoutVideoPost"
         app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
