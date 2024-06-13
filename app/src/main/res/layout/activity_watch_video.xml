@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WatchVideoActivity">
+    tools:context=".WatchVideoActivity2">
 
     <!-- Your existing layout code goes here -->
 

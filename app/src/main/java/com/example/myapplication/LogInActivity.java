@@ -17,6 +17,7 @@ public class LogInActivity extends AppCompatActivity {
     private EditText editTextUsername;
     private EditText editTextPassword;
     private Button buttonLogIn;
+    private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +28,15 @@ public class LogInActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextTextPassword);
         buttonLogIn = findViewById(R.id.buttonLogIn);
 
-        userList = UserManager.getUsers();
+        userManager = UserManager.getInstance();
+        userList = userManager.getUsers();
 
         buttonLogIn.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
             if (isValidLogin(username, password)) {
-                Intent i = new Intent(this, MainActivity.class);
+                Intent i = new Intent(this, MainActivity2.class);
                 startActivity(i);
             }
         });
@@ -50,7 +52,7 @@ public class LogInActivity extends AppCompatActivity {
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
                 if (user.getPassword().equals(password)) {
-                    UserManager.saveSignedInUser(user);
+                    userManager.saveSignedInUser(user);
                     Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
                     return true; // Login successful
                 } else {

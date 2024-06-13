@@ -19,13 +19,13 @@
             android:name=".LogInActivity"
             android:exported="false" />
         <activity
-            android:name=".WatchVideoActivity"
+            android:name=".WatchVideoActivity2"
             android:exported="false" />
         <activity
-            android:name=".AddVideoActivity"
+            android:name=".AddVideoActivity2"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivity2"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

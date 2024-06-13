@@ -34,7 +34,8 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
-    private Bitmap selectedPhotoBitmap;  // Bitmap to store selected photo
+    private Bitmap selectedPhotoBitmap;
+    private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,8 @@ public class SignUpActivity extends AppCompatActivity {
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
 
-        userList = UserManager.getUsers();
+        userManager = UserManager.getInstance();
+        userList = userManager.getUsers();
 
         buttonUploadPhoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -68,13 +70,13 @@ public class SignUpActivity extends AppCompatActivity {
             } else {
                 // Create User with selected photo Bitmap
                 User newUser = new User(nickname, username, password, selectedPhotoBitmap);
-                UserManager.addUser(newUser);
-                UserManager.saveSignedInUser(newUser);
+                userManager.addUser(newUser);
+                userManager.saveSignedInUser(newUser);
 
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
 
                 // Proceed to MainActivity after successful sign-up
-                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                Intent intent = new Intent(SignUpActivity.this, MainActivity2.class);
                 startActivity(intent);
             }
         });
