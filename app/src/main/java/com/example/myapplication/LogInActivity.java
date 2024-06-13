@@ -34,7 +34,7 @@ public class LogInActivity extends AppCompatActivity {
             String password = editTextPassword.getText().toString();
 
             if (isValidLogin(username, password)) {
-                Intent i = new Intent(this, MainActivity.class);
+                Intent i = new Intent(this, MainActivity2.class);
                 startActivity(i);
             }
         });

@@ -74,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
 
                 // Proceed to MainActivity after successful sign-up
-                Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                Intent intent = new Intent(SignUpActivity.this, MainActivity2.class);
                 startActivity(intent);
             }
         });
