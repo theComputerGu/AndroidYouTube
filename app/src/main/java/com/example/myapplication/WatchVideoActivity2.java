@@ -7,9 +7,12 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,11 +24,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class WatchVideoActivity2 extends AppCompatActivity implements VideoAdapter.OnVideoClickListener {
+public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
     private Video currentVideo;
     private List<Video> otherVideos;
     private UserManager userManager;
-
+    private int counterForShrares = 0;
+    private int counterForLikes = 0;
+    private int counterForDislikes =0;
+    private TextView tvLikes;
+    private TextView tvDislikes;
+    private TextView tvShares;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,17 @@ public class WatchVideoActivity2 extends AppCompatActivity implements VideoAdapt
         VideoListManager videoManager = VideoListManager.getInstance(this);
         currentVideo = videoManager.getVideosByTag(selectedUsername, selectedVideoTitle);
         otherVideos = videoManager.getVideosExcluding(currentVideo);
+
+
+        // Initialize the TextViews
+        tvLikes = findViewById(R.id.tvLikes);
+        tvDislikes = findViewById(R.id.tvDislikes);
+        tvShares = findViewById(R.id.tvShares);
+
+        // Initialize the like, dislike, and share counts
+        tvLikes.setText(String.valueOf(currentVideo.getLikes()));
+        tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
+        tvShares.setText(String.valueOf(currentVideo.getShares()));
 
 
         // Display the selected post content, author, etc.
@@ -65,13 +84,102 @@ public class WatchVideoActivity2 extends AppCompatActivity implements VideoAdapt
         // Start the video
         videoView.start();
 
-
+        // Setup the comments RecycleView
+        //RecyclerView commentsListView = findViewById(R.id.commentsListView);
+        //commentsListView.setLayoutManager(new LinearLayoutManager(this));
+        //CommentAdapter adapter1 = new VideoAdapter(currentVideo.getUsersComments());
+        //commentsListView.setAdapter(adapter1);
 
         // Setup the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         VideoAdapter adapter = new VideoAdapter(otherVideos, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(adapter);
+
+        // add shares to current video
+
+        ImageButton btnShare = findViewById(R.id.btnShare);
+        btnShare.setOnClickListener(v -> {
+            if(UserManager.getInstance().getSignedInUser()!=null)
+            {
+                for (User user : currentVideo.getUsersShares()) {
+                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    {
+                        Toast.makeText(this, "The User shared the video once already", Toast.LENGTH_SHORT).show();
+                        counterForShrares=1;
+                    }
+                }
+                if(counterForShrares==0)
+                {
+                    currentVideo.setShares();
+                    tvShares.setText(String.valueOf(currentVideo.getShares()));
+                    currentVideo.getUsersShares().add(UserManager.getInstance().getSignedInUser());
+                }
+                else {
+                    counterForShrares= 0;
+                }
+            }
+            else {
+                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+            }
+
+
+        });
+
+        // add dislike to current video
+        ImageButton btnDislike = findViewById(R.id.btnDislike);
+        btnDislike.setOnClickListener(v -> {
+            if (UserManager.getInstance().getSignedInUser()!=null)
+            {
+                for (User user : currentVideo.getUsersShares()) {
+                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    {
+                        Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
+                        counterForDislikes=1;
+                    }
+                }
+                if(counterForDislikes==0)
+                {
+                    currentVideo.setDislikes();
+                    tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
+                    currentVideo.getUsersDislike().add(UserManager.getInstance().getSignedInUser());
+                }
+                else {
+                    counterForDislikes= 0;
+                }
+            }
+            else {
+                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        // add likes to current video
+        ImageButton btnLike = findViewById(R.id.btnLike);
+        btnLike.setOnClickListener(v -> {
+            if(UserManager.getInstance().getSignedInUser()!=null)
+            {
+                for (User user : currentVideo.getUsersShares()) {
+                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    {
+                        Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
+                        counterForLikes=1;
+                    }
+                }
+                if(counterForLikes==0)
+                {
+                    currentVideo.setLikes();
+                    tvLikes.setText(String.valueOf(currentVideo.getLikes()));
+                    currentVideo.getUsersLike().add(UserManager.getInstance().getSignedInUser());
+                }
+                else {
+                    counterForLikes= 0;
+                }
+            }else {
+                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+            }
+
+        });
 
 //        // Setup the RecyclerView for comments
 //        RecyclerView recyclerView = findViewById(R.id.commentsRecyclerView);
@@ -101,21 +209,24 @@ public class WatchVideoActivity2 extends AppCompatActivity implements VideoAdapt
         startActivity(intent);
         finish();
     }
-//    // Method to handle the like button click
-//    public void onLikeButtonClick(View view) {
-//        likes++;
-//        updateLikeDislikeShareCounts();
-//    }
-//
-//    // Method to handle the dislike button click
-//    public void onDislikeButtonClick(View view) {
-//        dislikes++;
-//        updateLikeDislikeShareCounts();
-//    }
-//
-//    // Method to handle the share button click
-//    public void onShareButtonClick(View view) {
-//        shares++;
-//        updateLikeDislikeShareCounts();
-//    }
+
+    //Method to handle the like button click
+   public void onLikeButtonClick(View view) {
+       currentVideo.setLikes();
+       //int likes = currentVideo.getLikes();
+       //tvLikes.setText(String.valueOf(likes));
+   }
+
+    public void onDisLikeButtonClick(View view) {
+        currentVideo.setDislikes();
+        //int Dislike = currentVideo.getDislikes();
+       // tvDislikes.setText(String.valueOf(Dislike));
+    }
+
+    public void onShareButtonClick(View view) {
+        currentVideo.setShares();
+        //int Shares = currentVideo.getShares();
+        //tvShares.setText(String.valueOf(Shares));
+    }
+
 }

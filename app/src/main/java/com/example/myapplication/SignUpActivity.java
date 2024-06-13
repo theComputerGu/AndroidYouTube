@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends BaseActivity {
 
     private static final int PICK_IMAGE = 1;
     private List<User> userList;

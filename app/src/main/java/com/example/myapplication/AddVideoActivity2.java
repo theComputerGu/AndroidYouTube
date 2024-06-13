@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class AddVideoActivity2 extends AppCompatActivity implements VideoAdapter.OnVideoClickListener {
+public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
     private static final int REQUEST_CODE_PHOTO = 1;
     private static final int REQUEST_CODE_VIDEO = 2;
     private RecyclerView recyclerView;

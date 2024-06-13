@@ -18,8 +18,7 @@
 //    private Context context;
 //    private List<Comment> comments;
 //
-//    public CommentAdapter(Context context, List<Comment> comments) {
-//        this.context = context;
+//    public CommentAdapter(List<Comment> comments) {
 //        this.comments = comments;
 //    }
 //
