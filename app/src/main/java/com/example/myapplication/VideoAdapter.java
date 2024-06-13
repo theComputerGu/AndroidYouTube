@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
@@ -12,12 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    // Define view types as constants
     public static final int VIEW_TYPE_MAIN = 1;
     public static final int VIEW_TYPE_WATCH = 2;
     public static final int VIEW_TYPE_ADD = 3;
     private List<Video> videos;
-    private int viewType;
+    private final int viewType;
     public interface OnVideoClickListener {
         void onVideoClick(Video video);
     }
@@ -33,20 +33,15 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Return appropriate ViewHolder based on view type
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout, parent, false);
-        return new MainViewHolder(view);
-//        View view;
-//        if (viewType == VIEW_TYPE_MAIN) {
-//            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout, parent, false);
-//            return new MainViewHolder(view);
-//        }
-//        else if (viewType == VIEW_TYPE_WATCH) {
-//            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_item_watch, parent, false);
-//            return new WatchViewHolder(view);
-//        } else { // VIEW_TYPE_ADD
-//            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_item_add, parent, false);
-//            return new AddViewHolder(view);
-//        }
+        View view;
+        if (viewType == VIEW_TYPE_MAIN || viewType == VIEW_TYPE_WATCH) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout, parent, false);
+            return new MainViewHolder(view);
+        }
+        else { // VIEW_TYPE_ADD
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
+            return new AddViewHolder(view);
+        }
     }
 
     // Bind data to the ViewHolder based on view type
@@ -60,6 +55,9 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     onVideoClickListener.onVideoClick(video);
                 }
             });
+        }
+        else if (holder instanceof AddViewHolder) {
+            ((AddViewHolder) holder).bind(videos.get(position), onVideoClickListener);
         }
     }
 
@@ -110,25 +108,41 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-//    // ViewHolder for WatchVideoActivity
+    // ViewHolder for AddVideoActivity
+    public static class AddViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvAuthor;
+        private final TextView tvContent;
+        private final ImageView ivPic;
+        private final TextView tvDate;
+        private Button btnDelete;
+
+        private AddViewHolder(View itemView) {
+            super(itemView);
+            tvAuthor = itemView.findViewById(R.id.tvAuthor);
+            tvContent = itemView.findViewById(R.id.tvContent);
+            ivPic = itemView.findViewById(R.id.ivPic);
+            tvDate = itemView.findViewById(R.id.tvDate);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+        }
+
+        public void bind(Video video, OnVideoClickListener onVideoClickListener) {
+            tvAuthor.setText(video.getUsername());
+            tvContent.setText(video.getTitle());
+            ivPic.setImageBitmap(video.getPic());
+            tvDate.setText(video.getDate());
+
+            btnDelete.setOnClickListener(v -> {
+                if (onVideoClickListener != null) {
+                    onVideoClickListener.onVideoClick(video);
+                }
+            });
+        }
+    }
+    //    // ViewHolder for WatchVideoActivity
 //    public static class WatchViewHolder extends RecyclerView.ViewHolder {
 //        public TextView titleTextView;
 //
 //        public WatchViewHolder(View itemView) {
-//            super(itemView);
-//            titleTextView = itemView.findViewById(R.id.titleTextView);
-//        }
-//
-//        public void bind(Video video) {
-//            titleTextView.setText(video.getTitle());
-//        }
-//    }
-
-//    // ViewHolder for AddVideoActivity
-//    public static class AddViewHolder extends RecyclerView.ViewHolder {
-//        public TextView titleTextView;
-//
-//        public AddViewHolder(View itemView) {
 //            super(itemView);
 //            titleTextView = itemView.findViewById(R.id.titleTextView);
 //        }
