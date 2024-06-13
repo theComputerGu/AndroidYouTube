@@ -13,25 +13,39 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
-public class AddVideoActivity2 extends AppCompatActivity {
+public class AddVideoActivity2 extends AppCompatActivity implements VideoAdapter.OnVideoClickListener {
     private static final int REQUEST_CODE_PHOTO = 1;
     private static final int REQUEST_CODE_VIDEO = 2;
+    private RecyclerView recyclerView;
     private EditText etTitle;
     private Uri videoUri;
     private Bitmap thumbnailBitmap;
     private ImageView imageViewPhoto;
     private ImageView videoViewPhoto;
+    private List<Video> userVideos;
+    private UserManager userManager;
+    VideoListManager videoManager;
+    private VideoAdapter videoAdapter;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
+
+        userManager = UserManager.getInstance();
+
+        videoManager = VideoListManager.getInstance(this);
+        userVideos = videoManager.getVideosByUser(userManager.getSignedInUser());
 
         // Initialize views
         etTitle = findViewById(R.id.etTitle);
@@ -41,9 +55,16 @@ public class AddVideoActivity2 extends AppCompatActivity {
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         videoViewPhoto = findViewById(R.id.selectedVideoUri);
 
+        // Set click listeners
         btnUploadPhoto.setOnClickListener(v -> uploadPhoto());
         btnUploadVideo.setOnClickListener(v -> uploadVideo());
         btnAdd.setOnClickListener(v -> addVideo());
+
+        // Initialize RecyclerView and set adapter
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        videoAdapter = new VideoAdapter(userVideos, VideoAdapter.VIEW_TYPE_MAIN, this);
+        recyclerView.setAdapter(videoAdapter);
 
 
     }
@@ -70,7 +91,9 @@ public class AddVideoActivity2 extends AppCompatActivity {
         }
 
         // Create new Video object
-        Video newVideo = new Video(title, UserManager.getSignedInUser().getUsername(), getCurrentDate(), thumbnailBitmap, videoUri);
+        Video newVideo = new Video(title, userManager.getSignedInUser().getUsername(), getCurrentDate(), thumbnailBitmap, videoUri);
+
+        userVideos.add(newVideo);
 
         // Add the video to the VideoListManager
         VideoListManager videoManager = VideoListManager.getInstance(this);
@@ -79,10 +102,15 @@ public class AddVideoActivity2 extends AppCompatActivity {
         // Show success message
         Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
 
-        // Navigate back to MainActivity or any other desired activity
-        Intent intent = new Intent(this, MainActivity2.class);
-        startActivity(intent);
-        finish();
+        // Show success message
+        Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
+
+        // Clear input fields or perform any other necessary actions
+        etTitle.setText("");
+        imageViewPhoto.setImageResource(0); // Clear image
+        videoViewPhoto.setImageResource(0); // Clear video thumbnail
+        videoUri = null;
+        thumbnailBitmap = null;
     }
 
     // Handle result of video selection (if implemented)
@@ -118,5 +146,15 @@ public class AddVideoActivity2 extends AppCompatActivity {
         Bitmap thumbnail = retriever.getFrameAtTime();
         retriever.release();
         return thumbnail;
+    }
+    @Override
+    public void onVideoClick(Video video) {
+        // Remove the clicked video from the list
+        userVideos.remove(video);
+        videoAdapter.notifyDataSetChanged();
+
+        videoManager.removeVideo(video);
+
+        Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
     }
 }

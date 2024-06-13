@@ -88,4 +88,15 @@ public class VideoListManager {
                 .filter(v -> !v.equals(video))
                 .collect(Collectors.toList());
     }
+    public Video getVideosByTag(String username, String title) {
+        for (Video video : videos) {
+            boolean matchesUsername = username == null || username.isEmpty() || video.getUsername().equalsIgnoreCase(username);
+            boolean matchesTitle = title == null || title.isEmpty() || video.getTitle().equalsIgnoreCase(title);
+
+            if (matchesUsername && matchesTitle) {
+                return video;
+            }
+        }
+        return null;
+    }
 }

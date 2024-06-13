@@ -6,7 +6,7 @@ public class Comment {
     private String content;
     private User user;
     private Date date;
-    public Comment(String content, User user, Date date) {
+    public Comment(User content, String user, String date) {
         this.content = content;
         this.user = user;
         this.date = date;
