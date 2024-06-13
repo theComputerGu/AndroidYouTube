@@ -98,9 +98,7 @@ public class AddVideoActivity2 extends AppCompatActivity implements VideoAdapter
         // Add the video to the VideoListManager
         VideoListManager videoManager = VideoListManager.getInstance(this);
         videoManager.addVideo(newVideo);
-
-        // Show success message
-        Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
+        videoAdapter.updateVideos(userVideos);
 
         // Show success message
         Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
