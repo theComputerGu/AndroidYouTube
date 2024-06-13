@@ -1,12 +1,10 @@
 package com.example.myapplication;
 
-import java.util.Date;
-
 public class Comment {
     private String content;
-    private User user;
-    private Date date;
-    public Comment(User content, String user, String date) {
+    private String user;
+    private String date;
+    public Comment(String content, String user, String date) {
         this.content = content;
         this.user = user;
         this.date = date;
@@ -14,10 +12,10 @@ public class Comment {
     public String getContent() {
         return content;
     }
-    public User getUser() {
+    public String getUser() {
         return user;
         }
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 }
