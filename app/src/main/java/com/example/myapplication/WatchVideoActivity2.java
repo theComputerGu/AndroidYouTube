@@ -139,7 +139,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         btnDislike.setOnClickListener(v -> {
             if (UserManager.getInstance().getSignedInUser()!=null)
             {
-                for (User user : currentVideo.getUsersShares()) {
+                for (User user : currentVideo.getUsersDislike()) {
                     if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
                     {
                         Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
@@ -167,7 +167,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         btnLike.setOnClickListener(v -> {
             if(UserManager.getInstance().getSignedInUser()!=null)
             {
-                for (User user : currentVideo.getUsersShares()) {
+                for (User user : currentVideo.getUsersLike()) {
                     if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
                     {
                         Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
