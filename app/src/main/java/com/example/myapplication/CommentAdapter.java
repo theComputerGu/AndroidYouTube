@@ -5,8 +5,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +22,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private Video currentVideo;
     private User currentUser;
 
-    public CommentAdapter(List<Comment> comments, Video currentVideo, User currentUser) {
+    public interface onCommentDelete{
+        void onCommentDelete(Comment comment);
+    }
+
+    private onCommentDelete ontDelete;
+
+    public CommentAdapter(List<Comment> comments, Video currentVideo, User currentUser, onCommentDelete onCommentDelete) {
         this.comments = comments;
         this.currentUser = currentUser;
         this.currentVideo = currentVideo;
+        this.ontDelete = onCommentDelete;
     }
 
     // Method to update the dataset and refresh the RecyclerView
@@ -42,7 +51,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = comments.get(position);
-        holder.bind(comment);
+        holder.bind(comment,ontDelete);
     }
 
     @Override
@@ -55,6 +64,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         private final TextView tvUserName;
         private final TextView tvCommentDate;
         private final TextView tvCommentText;
+        private Button tvDelete;
+
 
         CommentViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -62,9 +73,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvCommentDate = itemView.findViewById(R.id.tvCommentDate);
             tvCommentText = itemView.findViewById(R.id.tvCommentText);
+            tvDelete = itemView.findViewById(R.id.btnDelete);
         }
 
-        void bind(Comment comment) {
+        void bind(Comment comment, onCommentDelete onCommentDelete) {
             tvUserName.setText(comment.getUser());
 
             for (User users: UserManager.getInstance().getUsers())
@@ -85,6 +97,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             }
 
             tvCommentDate.setText(comment.getDate());
+
+
+            tvDelete.setOnClickListener(v -> {
+                    if (UserManager.getInstance().getSignedInUser().getUsername()==comment.getUser()) {
+                        if (onCommentDelete != null) {
+                            onCommentDelete.onCommentDelete(comment);
+                        }
+                    }
+            });
         }
     }
+
 }

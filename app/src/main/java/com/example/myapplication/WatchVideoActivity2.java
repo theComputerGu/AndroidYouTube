@@ -23,8 +23,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
-public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
+public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
     private Video currentVideo;
     private List<Video> otherVideos;
     private UserManager userManager;
@@ -34,7 +35,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private TextView tvLikes;
     private TextView tvDislikes;
     private TextView tvShares;
-    private CommentAdapter commentAdapter;
+    private CommentAdapter adapter1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +88,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
          //Setup the comments RecycleView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments(), currentVideo, UserManager.getInstance().getSignedInUser());
+        adapter1 = new CommentAdapter(currentVideo.getComments(), currentVideo, UserManager.getInstance().getSignedInUser(),this);
         commentsRecyclerView.setAdapter(adapter1);
 
 
@@ -96,6 +97,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         VideoAdapter adapter = new VideoAdapter(otherVideos, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(adapter);
+
 
 
 
@@ -245,6 +247,12 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         currentVideo.setShares();
         //int Shares = currentVideo.getShares();
         //tvShares.setText(String.valueOf(Shares));
+    }
+    @Override
+    public void onCommentDelete(Comment comment) {
+        // Remove the clicked video from the list
+        currentVideo.removeComment(comment);
+        adapter1.notifyDataSetChanged();
     }
 
 }
