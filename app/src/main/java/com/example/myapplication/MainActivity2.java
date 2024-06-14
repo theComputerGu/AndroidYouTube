@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -14,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class MainActivity2 extends AppCompatActivity implements VideoAdapter.OnVideoClickListener {
+public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
+
+    private static final String PREFS_NAME = "prefs";
+    private static final String PREF_DARK_MODE = "dark_mode";
     private EditText searchEditText;
     private ImageButton searchButton;
     private RecyclerView recyclerView;
@@ -27,6 +32,18 @@ public class MainActivity2 extends AppCompatActivity implements VideoAdapter.OnV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ImageButton btnDarkMode = findViewById(R.id.btnDarkMode);
+        btnDarkMode.setOnClickListener(v -> {
+            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+            boolean darkMode = preferences.getBoolean(PREF_DARK_MODE, false);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(PREF_DARK_MODE, !darkMode);
+            editor.apply();
+
+            // Restart the activity to apply the new theme
+            recreate();
+        });
 
         // Initialize VideoListManager with context
         videoManager = VideoListManager.getInstance(this);
@@ -88,7 +105,7 @@ public class MainActivity2 extends AppCompatActivity implements VideoAdapter.OnV
 
         // Check if user is signed in
         if (userManager.getSignedInUser() == null) {
-            Toast.makeText(this, "Please sign in to add a video.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
             return;
         }
 

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
-public class LogInActivity extends AppCompatActivity {
+public class LogInActivity extends BaseActivity {
 
     private List<User> userList;
     private EditText editTextUsername;

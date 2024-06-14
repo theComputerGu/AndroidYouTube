@@ -5,4 +5,16 @@
     <color name="red">#FFFF0000</color>
     <color name="green">#FF00FF00</color>
     <color name="blue">#FF0000FF</color>
+
+
+    <color name="lightColorPrimary">#FF0000</color>         <!-- Red color for primary in light mode -->
+    <color name="lightColorPrimaryDark">#FF0000</color>     <!-- Darker blue variant for primary dark in light mode -->
+    <color name="lightColorAccent">#FF0000</color>
+
+
+    <color name="darkColorPrimary">#372020</color>         <!-- Red color for primary in dark mode -->
+    <color name="darkColorPrimaryDark">#9C27B0</color>     <!-- Dark blue variant for primary dark in dark mode -->
+    <color name="darkColorAccent">#9C27B0</color>          <!-- Pink color for accent in dark mode -->
+    <color name="darkBackgroundColor">#9C27B0</color>      <!-- Dark background color for dark mode -->
+    <color name="darkTextColor">#ffff</color>
 </resources>
