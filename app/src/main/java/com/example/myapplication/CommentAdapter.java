@@ -27,7 +27,6 @@
 //    public CommentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 //        View view = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
 //        return new CommentViewHolder(view);
-//    }
 //
 //    @Override
 //    public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {

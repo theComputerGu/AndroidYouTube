@@ -105,7 +105,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         // Check if user is signed in
         if (userManager.getSignedInUser() == null) {
-            Toast.makeText(this, "Please sign in to add a video.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
             return;
         }
 

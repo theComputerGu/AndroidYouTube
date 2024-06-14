@@ -84,11 +84,11 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Start the video
         videoView.start();
 
-        // Setup the comments RecycleView
-        //RecyclerView commentsListView = findViewById(R.id.commentsListView);
-        //commentsListView.setLayoutManager(new LinearLayoutManager(this));
-        //CommentAdapter adapter1 = new VideoAdapter(currentVideo.getUsersComments());
-        //commentsListView.setAdapter(adapter1);
+//        // Setup the comments RecycleView
+//        RecyclerView commentsListView = findViewById(R.id.commentsListView);
+//        commentsListView.setLayoutManager(new LinearLayoutManager(this));
+//        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments());
+//        commentsListView.setAdapter(adapter1);
 
         // Setup the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
@@ -96,7 +96,15 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         VideoAdapter adapter = new VideoAdapter(otherVideos, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(adapter);
 
-        // add shares to current video
+
+
+//        Button commentTitle = findViewById(R.id.commentTitle);
+//        commentTitle.setOnClickListener(v -> {
+//            if()
+//        });
+
+
+
 
         ImageButton btnShare = findViewById(R.id.btnShare);
         btnShare.setOnClickListener(v -> {

@@ -16,6 +16,7 @@ public class Video implements Serializable {
     private int dislikes;
     private int shares;
     private String date;
+
     private List<Comment> comments;
 
     private List<User> usersLike;
@@ -129,5 +130,12 @@ public class Video implements Serializable {
 
     public void setUsersComments(User usersComments) {
         this.usersComments.add(usersComments);
+    }
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
