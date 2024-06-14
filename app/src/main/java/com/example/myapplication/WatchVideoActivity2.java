@@ -34,6 +34,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private TextView tvLikes;
     private TextView tvDislikes;
     private TextView tvShares;
+    private CommentAdapter commentAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,11 +84,11 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         videoView.start();
 
 
-//        // Setup the comments RecycleView
-//        RecyclerView commentsListView = findViewById(R.id.commentsListView);
-//        commentsListView.setLayoutManager(new LinearLayoutManager(this));
-//        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments());
-//        commentsListView.setAdapter(adapter1);
+         //Setup the comments RecycleView
+        RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments(), currentVideo, UserManager.getInstance().getSignedInUser());
+        commentsRecyclerView.setAdapter(adapter1);
 
 
         // Setup the RecyclerView
@@ -98,12 +99,32 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
 
 
-//        Button commentTitle = findViewById(R.id.commentTitle);
-//        commentTitle.setOnClickListener(v -> {
-//            if()
-//        });
+        // Setup comment button click listener
+        Button commentButton = findViewById(R.id.commentButton);
+        commentButton.setOnClickListener(v -> {
+                    if(UserManager.getInstance().getSignedInUser()!=null)
+                    {
+                        EditText commentEditText = findViewById(R.id.commentEditText);
+                        String commentContent = commentEditText.getText().toString().trim();
 
+                        if (!commentContent.isEmpty()) {
+                            // Create a new comment object
+                            User signedInUser = UserManager.getInstance().getSignedInUser();
+                            Comment comment = new Comment(commentContent,signedInUser.getUsername(), getCurrentDate());
 
+                            // Add the comment to the current video
+                            currentVideo.addComment(comment);
+                            adapter1.updateData(currentVideo.getComments());
+
+                            // Clear the comment text field
+                            commentEditText.setText("");
+                        } else {
+                            Toast.makeText(this, "Please enter a comment.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+                    }
+        });
 
 
         ImageButton btnShare = findViewById(R.id.btnShare);
@@ -189,25 +210,14 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         });
 
-//        // Setup the RecyclerView for comments
-//        RecyclerView recyclerView = findViewById(R.id.commentsRecyclerView);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        commentAdapter = new CommentAdapter(this, comments);
-//        recyclerView.setAdapter(commentAdapter);
-//
-//        // For testing, add a sample comment
-//        User signedInUser = UserManager.getSignedInUser();
-//        if (signedInUser != null) {
-//            Comment sampleComment = new Comment(signedInUser.getUsername(), "This is a sample comment", new Date());
-//            comments.add(sampleComment);
-//            commentAdapter.notifyDataSetChanged();
-//        }
+
     }
 
     private String getCurrentDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         return sdf.format(new Date());
     }
+
 
     @Override
     public void onVideoClick(Video video) {
