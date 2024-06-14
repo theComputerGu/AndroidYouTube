@@ -71,9 +71,9 @@ public class VideoListManager {
         videos.remove(video);
     }
 
-    public List<Video> getVideosByUser(User user) {
+    public List<Video> getVideosByUser(String username) {
         return videos.stream()
-                .filter(video -> video.getUsername().equals(user))
+                .filter(video -> video.getUsername().equals(username))
                 .collect(Collectors.toList());
     }
 

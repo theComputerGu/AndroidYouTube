@@ -45,7 +45,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         userManager = UserManager.getInstance();
 
         videoManager = VideoListManager.getInstance(this);
-        userVideos = videoManager.getVideosByUser(userManager.getSignedInUser());
+        userVideos = videoManager.getVideosByUser(userManager.getSignedInUser().getUsername());
 
         // Initialize views
         etTitle = findViewById(R.id.etTitle);
@@ -63,7 +63,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(userVideos, VideoAdapter.VIEW_TYPE_MAIN, this);
+        videoAdapter = new VideoAdapter(userVideos, VideoAdapter.VIEW_TYPE_ADD, this);
         recyclerView.setAdapter(videoAdapter);
 
 

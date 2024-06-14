@@ -1,8 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
@@ -72,9 +72,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         // Initialize the VideoView and set the video URL
         VideoView videoView = findViewById(R.id.videoView);
-        String videoPath = "android.resource://" + getPackageName() + "/raw/" + currentVideo.getTitle();
-        Uri uri = Uri.parse(videoPath);
-        videoView.setVideoURI(uri);
+        videoView.setVideoURI(currentVideo.getVideoUri());
 
         // Add media controls to the VideoView
         MediaController mediaController = new MediaController(this);
@@ -84,11 +82,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Start the video
         videoView.start();
 
+
 //        // Setup the comments RecycleView
 //        RecyclerView commentsListView = findViewById(R.id.commentsListView);
 //        commentsListView.setLayoutManager(new LinearLayoutManager(this));
 //        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments());
 //        commentsListView.setAdapter(adapter1);
+
 
         // Setup the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
