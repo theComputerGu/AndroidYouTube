@@ -1,10 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.MediaController;
@@ -16,17 +14,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
-    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 100;
     private Video currentVideo;
     private List<Video> otherVideos;
     private UserManager userManager;
@@ -231,43 +224,4 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         //int Shares = currentVideo.getShares();
         //tvShares.setText(String.valueOf(Shares));
     }
-    private void cacheVideo(Uri videoUri) {
-        File cacheDir = getCacheDir();
-        File videoFile = new File(cacheDir, "cached_video.mp4");
-
-        try (InputStream inputStream = getContentResolver().openInputStream(videoUri);
-             FileOutputStream outputStream = new FileOutputStream(videoFile)) {
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException e) {
-            Log.e("Cache", "Error caching video: " + e.getMessage());
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_READ_EXTERNAL_STORAGE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, proceed with the video setup
-                // The URI is accessible
-                VideoView videoView = findViewById(R.id.videoView);
-                Uri videoUri = currentVideo.getVideoUri();
-                videoView.setVideoURI(videoUri);
-                videoView.start();
-
-                // Add media controls to the VideoView
-                MediaController mediaController = new MediaController(this);
-                videoView.setMediaController(mediaController);
-                mediaController.setAnchorView(videoView);
-            } else {
-                // Permission denied, handle appropriately
-                Toast.makeText(this, "Permission denied to read external storage", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 }

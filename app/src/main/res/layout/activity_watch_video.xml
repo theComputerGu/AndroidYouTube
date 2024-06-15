@@ -6,9 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".WatchVideoActivity2">
 
-    <!-- Your existing layout code goes here -->
-
-    <!-- Add the additional code you provided -->
 
     <LinearLayout
         android:id="@+id/picture"
