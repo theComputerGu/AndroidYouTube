@@ -205,14 +205,18 @@
         </LinearLayout>
     </ScrollView>
 
-    <VideoView
-        android:id="@+id/videoView"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:layout_constraintBottom_toBottomOf="@id/picture"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/picture">
 
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
