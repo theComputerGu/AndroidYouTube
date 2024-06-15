@@ -6,13 +6,13 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,7 +33,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     private ImageView videoViewPhoto;
     private List<Video> userVideos;
     private UserManager userManager;
-    VideoListManager videoManager;
+    private VideoListManager videoManager;
     private VideoAdapter videoAdapter;
 
 
@@ -128,6 +128,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             else if (requestCode == REQUEST_CODE_VIDEO) {
                 videoUri = data.getData();
                 try {
+                    Log.v("URI",videoUri.toString());
                     Bitmap thumbnail = getVideoThumbnail(videoUri);
                     videoViewPhoto.setImageBitmap(thumbnail);
                 } catch (IOException e) {
@@ -150,7 +151,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         // Remove the clicked video from the list
         userVideos.remove(video);
         videoAdapter.notifyDataSetChanged();
-
         videoManager.removeVideo(video);
 
         Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();

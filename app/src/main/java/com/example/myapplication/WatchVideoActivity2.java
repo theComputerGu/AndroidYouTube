@@ -1,30 +1,32 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 100;
     private Video currentVideo;
     private List<Video> otherVideos;
     private UserManager userManager;
@@ -34,6 +36,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private TextView tvLikes;
     private TextView tvDislikes;
     private TextView tvShares;
+    private ActivityResultLauncher<String[]> requestPermissionsLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         String selectedUsername = getIntent().getStringExtra("selectedUsername");
         String selectedVideoTitle = getIntent().getStringExtra("selectedVideoTitle");
+
 
         // Get the video list from the singleton
         VideoListManager videoManager = VideoListManager.getInstance(this);
@@ -70,24 +74,15 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.getDate());
 
-        // Initialize the VideoView and set the video URL
         VideoView videoView = findViewById(R.id.videoView);
-        videoView.setVideoURI(currentVideo.getVideoUri());
+        Uri videoUri = currentVideo.getVideoUri();
 
-        // Add media controls to the VideoView
         MediaController mediaController = new MediaController(this);
-        videoView.setMediaController(mediaController);
         mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
 
-        // Start the video
+        videoView.setVideoURI(videoUri);
         videoView.start();
-
-
-//        // Setup the comments RecycleView
-//        RecyclerView commentsListView = findViewById(R.id.commentsListView);
-//        commentsListView.setLayoutManager(new LinearLayoutManager(this));
-//        CommentAdapter adapter1 = new CommentAdapter(currentVideo.getComments());
-//        commentsListView.setAdapter(adapter1);
 
 
         // Setup the RecyclerView
@@ -139,7 +134,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         btnDislike.setOnClickListener(v -> {
             if (UserManager.getInstance().getSignedInUser()!=null)
             {
-                for (User user : currentVideo.getUsersShares()) {
+                for (User user : currentVideo.getUsersDislike()) {
                     if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
                     {
                         Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
@@ -167,7 +162,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         btnLike.setOnClickListener(v -> {
             if(UserManager.getInstance().getSignedInUser()!=null)
             {
-                for (User user : currentVideo.getUsersShares()) {
+                for (User user : currentVideo.getUsersLike()) {
                     if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
                     {
                         Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
@@ -235,6 +230,44 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         currentVideo.setShares();
         //int Shares = currentVideo.getShares();
         //tvShares.setText(String.valueOf(Shares));
+    }
+    private void cacheVideo(Uri videoUri) {
+        File cacheDir = getCacheDir();
+        File videoFile = new File(cacheDir, "cached_video.mp4");
+
+        try (InputStream inputStream = getContentResolver().openInputStream(videoUri);
+             FileOutputStream outputStream = new FileOutputStream(videoFile)) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            Log.e("Cache", "Error caching video: " + e.getMessage());
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CODE_READ_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with the video setup
+                // The URI is accessible
+                VideoView videoView = findViewById(R.id.videoView);
+                Uri videoUri = currentVideo.getVideoUri();
+                videoView.setVideoURI(videoUri);
+                videoView.start();
+
+                // Add media controls to the VideoView
+                MediaController mediaController = new MediaController(this);
+                videoView.setMediaController(mediaController);
+                mediaController.setAnchorView(videoView);
+            } else {
+                // Permission denied, handle appropriately
+                Toast.makeText(this, "Permission denied to read external storage", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 }
