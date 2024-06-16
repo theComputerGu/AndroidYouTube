@@ -1,21 +1,18 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-
-import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.MediaController;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +20,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
     private Video currentVideo;
@@ -36,6 +32,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private TextView tvDislikes;
     private TextView tvShares;
     private CommentAdapter adapter1;
+    private ActivityResultLauncher<String[]> requestPermissionsLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +42,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         String selectedUsername = getIntent().getStringExtra("selectedUsername");
         String selectedVideoTitle = getIntent().getStringExtra("selectedVideoTitle");
+
 
         // Get the video list from the singleton
         VideoListManager videoManager = VideoListManager.getInstance(this);
@@ -72,16 +70,14 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.getDate());
 
-        // Initialize the VideoView and set the video URL
         VideoView videoView = findViewById(R.id.videoView);
-        videoView.setVideoURI(currentVideo.getVideoUri());
+        Uri videoUri = currentVideo.getVideoUri();
 
-        // Add media controls to the VideoView
         MediaController mediaController = new MediaController(this);
-        videoView.setMediaController(mediaController);
         mediaController.setAnchorView(videoView);
+        videoView.setMediaController(mediaController);
 
-        // Start the video
+        videoView.setVideoURI(videoUri);
         videoView.start();
 
 
@@ -134,7 +130,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             if(UserManager.getInstance().getSignedInUser()!=null)
             {
                 for (User user : currentVideo.getUsersShares()) {
-                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    if(user.getUsername().equals(UserManager.getInstance().getSignedInUser().getUsername()))
                     {
                         Toast.makeText(this, "The User shared the video once already", Toast.LENGTH_SHORT).show();
                         counterForShrares=1;
@@ -163,7 +159,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             if (UserManager.getInstance().getSignedInUser()!=null)
             {
                 for (User user : currentVideo.getUsersDislike()) {
-                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    if(user.getUsername().equals(UserManager.getInstance().getSignedInUser().getUsername()))
                     {
                         Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
                         counterForDislikes=1;
@@ -191,7 +187,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             if(UserManager.getInstance().getSignedInUser()!=null)
             {
                 for (User user : currentVideo.getUsersLike()) {
-                    if(user.getUsername() == UserManager.getInstance().getSignedInUser().getUsername())
+                    if(user.getUsername().equals(UserManager.getInstance().getSignedInUser().getUsername()) )
                     {
                         Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
                         counterForLikes=1;
@@ -254,5 +250,4 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         currentVideo.removeComment(comment);
         adapter1.notifyDataSetChanged();
     }
-
 }

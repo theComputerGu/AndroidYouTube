@@ -203,15 +203,34 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/black" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/btnSingOut"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:onClick="onSignOutClicked"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_log_in" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign Out"
+                    android:gravity="center"
+                    android:layout_marginTop="-12dp"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
 
 
-            <ImageButton
-                android:id="@+id/btnDarkMode"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_subscribe" />
 
             <View
                 android:layout_width="1dp"
@@ -232,11 +251,13 @@
                 android:background="@android:color/black" />
 
             <ImageButton
+                android:id="@+id/btnDarkMode"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_shorts" />
+                app:srcCompat="@drawable/ic_subscribe" />
+
 
             <View
                 android:layout_width="1dp"

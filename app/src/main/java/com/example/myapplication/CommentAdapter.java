@@ -1,21 +1,16 @@
 package com.example.myapplication;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private List<Comment> comments;
@@ -108,5 +103,4 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             });
         }
     }
-
 }

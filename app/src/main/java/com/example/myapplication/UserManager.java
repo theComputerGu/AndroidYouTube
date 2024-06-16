@@ -37,4 +37,7 @@ public class UserManager {
     public List<User> getUsers() {
         return userList;
     }
+    public void signOut() {
+        userSignedIn = null;
+    }
 }

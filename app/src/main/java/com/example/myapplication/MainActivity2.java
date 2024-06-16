@@ -5,12 +5,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +25,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private List<Video> videoList;
     VideoListManager videoManager;
     UserManager userManager;
+    ImageButton imageViewProfilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
 
         // Initialize the profile photo
-        ImageButton imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
+        imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
         // Retrieve signed-in user from UserManager
         User signedInUser = userManager.getSignedInUser();
         // Display profile photo and nickname if user is signed in
@@ -114,7 +113,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     }
         @Override
     public void onVideoClick(Video video) {
-
         Intent intent = new Intent(this, WatchVideoActivity2.class);
         intent.putExtra("selectedVideoUsername", video.getUsername());
         intent.putExtra("selectedVideoTitle", video.getTitle());
@@ -124,5 +122,14 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     public void onProfilePhotoClicked(View view) {
         Intent i = new Intent(this, LogInActivity.class);
         startActivity(i);
+    }
+    public void onSignOutClicked(View view) {
+        if (userManager.getSignedInUser() == null) {
+            Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
+        } else {
+            userManager.signOut();
+            imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+            Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 }
