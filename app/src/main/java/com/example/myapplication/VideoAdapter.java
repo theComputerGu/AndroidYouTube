@@ -103,7 +103,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvDate.setText(video.getDate());
 
             // Set up the VideoView with the video URI
-            videoView.setVideoURI(video.getVideoUri());
+            videoView.setVideoPath(video.getVideoPath());
             // Optionally, you can set up other properties of the video view such as controls, autoplay, etc.
         }
     }

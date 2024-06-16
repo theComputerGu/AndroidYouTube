@@ -10,7 +10,7 @@ import java.util.List;
 public class Video implements Serializable {
     private String title;
     private String username;
-    private Uri videoUri;
+    private String videoPath;
     private Bitmap pic;
     private int likes;
     private int dislikes;
@@ -27,12 +27,12 @@ public class Video implements Serializable {
     private List<User> usersComments;
 
 
-    public Video(String title, String username,  String date, Bitmap pic, Uri videoUri) {
+    public Video(String title, String username,  String date, Bitmap pic, String videoPath) {
         this.title = title;
         this.username = username;
         this.pic = pic;
         this.date = date;
-        this.videoUri = videoUri;
+        this.videoPath = videoPath;
         this.comments = new ArrayList<>();
         this.likes = 0;
         this.dislikes = 0;
@@ -84,12 +84,12 @@ public class Video implements Serializable {
     public void setPic(Bitmap pic) {
         this.pic = pic;
     }
-    public Uri getVideoUri() {
-        return videoUri;
+    public String getVideoPath() {
+        return videoPath;
     }
 
     public void setVideoUri(Uri videoUri) {
-        this.videoUri = videoUri;
+        this.videoPath = videoPath;
     }
 
     public int getShares() {
