@@ -19,7 +19,7 @@ Overall, Mark handled creating the main page and the page for viewing and adding
 
 
 
-GitHub rip: https://github.com/TomU2611/YouTube-Web.git
+GitHub rip: https://github.com/theComputerGu/AndroidYouTube
 
 Gira: https://itayzahor1.atlassian.net/jira/software/projects/SCRUM/pages
 
