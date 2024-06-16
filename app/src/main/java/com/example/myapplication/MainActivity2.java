@@ -132,6 +132,8 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             userManager.signOut();
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(this, LogInActivity.class);
+            startActivity(i);
         }
     }
     @Override
