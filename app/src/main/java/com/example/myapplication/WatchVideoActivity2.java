@@ -1,13 +1,11 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -71,13 +69,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvDate.setText(currentVideo.getDate());
 
         VideoView videoView = findViewById(R.id.videoView);
-        Uri videoUri = currentVideo.getVideoUri();
+        String videoPath = currentVideo.getVideoPath();
 
-        MediaController mediaController = new MediaController(this);
-        mediaController.setAnchorView(videoView);
+        CustomMediaController mediaController = new CustomMediaController(this,videoView);
         videoView.setMediaController(mediaController);
 
-        videoView.setVideoURI(videoUri);
+        // Set the video path
+        videoView.setVideoPath(videoPath);
         videoView.start();
 
 

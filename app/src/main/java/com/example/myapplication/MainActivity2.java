@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
@@ -130,6 +132,30 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             userManager.signOut();
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        adapter.updateVideos(videoManager.getVideos());
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Perform cleanup operations here
+        clearFilesInInternalStorage();
+    }
+
+    private void clearFilesInInternalStorage() {
+        // Your method to clear files from internal storage
+        File[] files = getFilesDir().listFiles();
+        if (files != null) {
+            for (File file : files) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    Log.e("FileDeletion", "Failed to delete file: " + file.getName());
+                }
+            }
         }
     }
 }

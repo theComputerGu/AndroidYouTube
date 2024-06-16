@@ -16,7 +16,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -89,9 +92,17 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             Toast.makeText(this, "Please fill all fields and select a video.", Toast.LENGTH_SHORT).show();
             return;
         }
+        // Save video file to internal storage
+        String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
+        File videoFile = saveVideoToFile(videoUri, videoFileName);
+
+        if (videoFile == null) {
+            Toast.makeText(this, "Failed to save video file.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Create new Video object
-        Video newVideo = new Video(title, userManager.getSignedInUser().getUsername(), getCurrentDate(), thumbnailBitmap, videoUri);
+        Video newVideo = new Video(title, userManager.getSignedInUser().getUsername(), getCurrentDate(), thumbnailBitmap, videoFile.getAbsolutePath());
 
         userVideos.add(newVideo);
 
@@ -154,5 +165,23 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         videoManager.removeVideo(video);
 
         Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
+    }
+    private File saveVideoToFile(Uri videoUri, String fileName) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(videoUri);
+            File videoFile = new File(getFilesDir(), fileName);
+            FileOutputStream outputStream = new FileOutputStream(videoFile);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            outputStream.close();
+            inputStream.close();
+            return videoFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
