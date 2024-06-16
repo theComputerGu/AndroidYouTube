@@ -2,7 +2,16 @@ ANDROID PROJECT PART 1
 
 Tom Uklein 206594053 Itay zahor 208127480 Mark Sheinberg 324078708
 
+
+
 to run the project:
+
+Run the app in the android studio.
+
+The emulator will open the project and bring you to the HomePage(main activity).
+
+At the bottom of the HOMEPAGE, you can see the toolbar. There are 5 buttons (a button that returns to the HOMEPAGE + DARK MODE + SIGN OUT + ADD VIDEO + LOG IN).
+
 
 
 Android project process:
