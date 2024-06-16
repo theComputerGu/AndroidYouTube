@@ -138,4 +138,9 @@ public class Video implements Serializable {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
+    public void removeComment (Comment comment)
+    {
+        this.comments.remove(comment);
+    }
 }
