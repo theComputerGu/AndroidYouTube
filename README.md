@@ -16,9 +16,7 @@ At the bottom of the HOMEPAGE, you can see the toolbar. There are 5 buttons (a b
 
 Android project process:
 
-At first, everyone worked separately on different pages, writing simple page logic and design. Tom worked on the Login and Register page, Mark worked on everything related to the homepage and Itay worked on on the videoList, videoItems and addVIdeo page.
-
-Afterward, Mark and Itay continued the Android project while Tom worked on connecting all the different components and implementing all the necessary logic for the site to work (routing, handling all the states, user interaction, etc).
+Mark and Itay started the Android project while Tom worked on connecting all the different components and implementing all the necessary logic for the WEB (routing, handling all the states, user interaction, etc).
 
 We learned from our mistake in web development, so we decided to build the pages as quickly as possible and connect them in order to work as much as possible on the logic behind it. Therefore, in about the first three days,
 
