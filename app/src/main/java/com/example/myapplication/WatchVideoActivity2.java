@@ -35,10 +35,9 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_video);
 
-        String selectedUsername = getIntent().getStringExtra("selectedUsername");
-        String selectedVideoTitle = getIntent().getStringExtra("selectedVideoTitle");
+        String videoPath = getIntent().getStringExtra("selectedVideoPath");
 
-        currentVideo = videoManager.getVideosByTag(selectedUsername, selectedVideoTitle);
+        currentVideo = videoManager.getVideoByPath(videoPath);
         otherVideos = videoManager.getVideosExcluding(currentVideo);
 
         // Initialize the TextViews
@@ -62,7 +61,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvDate.setText(currentVideo.getDate());
 
         VideoView videoView = findViewById(R.id.videoView);
-        String videoPath = currentVideo.getVideoPath();
 
         CustomMediaController mediaController = new CustomMediaController(this,videoView);
         videoView.setMediaController(mediaController);
