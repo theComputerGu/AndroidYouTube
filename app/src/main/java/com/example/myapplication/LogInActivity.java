@@ -7,8 +7,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.List;
 
 public class LogInActivity extends BaseActivity {
@@ -17,7 +15,6 @@ public class LogInActivity extends BaseActivity {
     private EditText editTextUsername;
     private EditText editTextPassword;
     private Button buttonLogIn;
-    private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +25,6 @@ public class LogInActivity extends BaseActivity {
         editTextPassword = findViewById(R.id.editTextTextPassword);
         buttonLogIn = findViewById(R.id.buttonLogIn);
 
-        userManager = UserManager.getInstance();
         userList = userManager.getUsers();
 
         buttonLogIn.setOnClickListener(v -> {

@@ -1,25 +1,34 @@
 package com.example.myapplication;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity {
 
-    private static final String PREFS_NAME = "prefs";
-    private static final String PREF_DARK_MODE = "dark_mode";
+    private static boolean isDarkMode = false;
+    protected VideoListManager videoManager;
+    protected UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        boolean darkMode = preferences.getBoolean(PREF_DARK_MODE, false);
-        if (darkMode) {
+        // Apply the theme based on the isDarkMode variable before setting the content view
+        if (isDarkMode) {
             setTheme(R.style.AppTheme_Dark);
         } else {
             setTheme(R.style.AppTheme);
         }
 
         super.onCreate(savedInstanceState);
+
+        // Initialize VideoListManager with context
+        videoManager = VideoListManager.getInstance(this);
+        userManager = UserManager.getInstance();
+    }
+
+    // Method to toggle dark mode
+    protected void toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        recreate(); // Restart the activity to apply the new theme
     }
 }

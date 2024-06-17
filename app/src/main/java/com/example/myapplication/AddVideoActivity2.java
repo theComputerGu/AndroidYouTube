@@ -35,8 +35,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     private ImageView imageViewPhoto;
     private ImageView videoViewPhoto;
     private List<Video> userVideos;
-    private UserManager userManager;
-    private VideoListManager videoManager;
     private VideoAdapter videoAdapter;
 
 
@@ -106,8 +104,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
 
         userVideos.add(newVideo);
 
-        // Add the video to the VideoListManager
-        VideoListManager videoManager = VideoListManager.getInstance(this);
         videoManager.addVideo(newVideo);
         videoAdapter.updateVideos(userVideos);
 

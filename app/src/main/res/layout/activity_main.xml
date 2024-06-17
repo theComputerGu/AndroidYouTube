@@ -255,8 +255,10 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="1"
+                android:onClick="onDarkModeClicked"
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/ic_subscribe" />
+
 
 
             <View

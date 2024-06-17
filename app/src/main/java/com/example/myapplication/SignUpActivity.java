@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,7 +34,6 @@ public class SignUpActivity extends BaseActivity {
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
     private Bitmap selectedPhotoBitmap;
-    private UserManager userManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +48,6 @@ public class SignUpActivity extends BaseActivity {
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
 
-        userManager = UserManager.getInstance();
         userList = userManager.getUsers();
 
         buttonUploadPhoto.setOnClickListener(v -> {

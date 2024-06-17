@@ -1,10 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -13,7 +11,6 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.File;
 import java.util.List;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
@@ -25,30 +22,12 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private RecyclerView recyclerView;
     private VideoAdapter adapter;
     private List<Video> videoList;
-    VideoListManager videoManager;
-    UserManager userManager;
     ImageButton imageViewProfilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ImageButton btnDarkMode = findViewById(R.id.btnDarkMode);
-        btnDarkMode.setOnClickListener(v -> {
-            SharedPreferences preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-            boolean darkMode = preferences.getBoolean(PREF_DARK_MODE, false);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(PREF_DARK_MODE, !darkMode);
-            editor.apply();
-
-            // Restart the activity to apply the new theme
-            recreate();
-        });
-
-        // Initialize VideoListManager with context
-        videoManager = VideoListManager.getInstance(this);
-        userManager = UserManager.getInstance();
 
         // Get the video list from the singleton
         videoList = videoManager.getVideos();
@@ -58,7 +37,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new VideoAdapter(videoList, VideoAdapter.VIEW_TYPE_MAIN, this);
         recyclerView.setAdapter(adapter);
-
 
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
@@ -141,23 +119,8 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         super.onResume();
         adapter.updateVideos(videoManager.getVideos());
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Perform cleanup operations here
-        clearFilesInInternalStorage();
-    }
 
-    private void clearFilesInInternalStorage() {
-        // Your method to clear files from internal storage
-        File[] files = getFilesDir().listFiles();
-        if (files != null) {
-            for (File file : files) {
-                boolean deleted = file.delete();
-                if (!deleted) {
-                    Log.e("FileDeletion", "Failed to delete file: " + file.getName());
-                }
-            }
-        }
+    public void onDarkModeClicked(View view) {
+        toggleDarkMode();
     }
 }
