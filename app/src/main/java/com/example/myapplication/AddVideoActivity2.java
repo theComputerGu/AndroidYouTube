@@ -90,6 +90,10 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             Toast.makeText(this, "Please fill all fields and select a video.", Toast.LENGTH_SHORT).show();
             return;
         }
+        if (!isTitleAvailable(title)) {
+            Toast.makeText(this, "Video title already exists for this user.", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Save video file to internal storage
         String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
         File videoFile = saveVideoToFile(videoUri, videoFileName);
@@ -117,6 +121,15 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         videoUri = null;
         thumbnailBitmap = null;
     }
+    public boolean isTitleAvailable(String title) {
+        for (Video video : userVideos) {
+            if (video.getTitle().equalsIgnoreCase(title)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     // Handle result of video selection (if implemented)
     @Override

@@ -114,9 +114,11 @@ public class VideoListManager {
                 .filter(v -> !v.equals(video))
                 .collect(Collectors.toList());
     }
-    public Video getVideoByPath(String videoPath) {
+    public Video getVideoByTag(String username,String title) {
         for (Video video : videos) {
-            if (video.getVideoPath() != null && video.getVideoPath().equalsIgnoreCase(videoPath)) {
+            boolean matchesUsername = username == null || username.isEmpty() || video.getUsername().equalsIgnoreCase(username);
+            boolean matchesTitle = title == null || title.isEmpty() || video.getTitle().equalsIgnoreCase(title);
+            if (matchesUsername && matchesTitle) {
                 return video;
             }
         }
