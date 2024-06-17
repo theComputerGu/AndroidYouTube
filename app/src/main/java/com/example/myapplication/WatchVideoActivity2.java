@@ -209,8 +209,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
-        intent.putExtra("selectedVideoUsername", video.getUsername());
-        intent.putExtra("selectedVideoTitle", video.getTitle());
+        intent.putExtra("selectedVideoPath", video.getVideoPath());
         startActivity(intent);
         finish();
     }
