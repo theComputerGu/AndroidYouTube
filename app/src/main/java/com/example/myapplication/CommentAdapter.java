@@ -14,8 +14,6 @@ import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private List<Comment> comments;
-    private Video currentVideo;
-    private User currentUser;
 
     public interface onCommentDelete{
         void onCommentDelete(Comment comment);
@@ -23,10 +21,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     private onCommentDelete ontDelete;
 
-    public CommentAdapter(List<Comment> comments, Video currentVideo, User currentUser, onCommentDelete onCommentDelete) {
+    public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete) {
         this.comments = comments;
-        this.currentUser = currentUser;
-        this.currentVideo = currentVideo;
         this.ontDelete = onCommentDelete;
     }
 
@@ -72,30 +68,13 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
-            tvUserName.setText(comment.getUser());
-
-            for (User users: UserManager.getInstance().getUsers())
-            {
-                if(users.getUsername()==currentUser.getUsername())
-                {
-                    ivUserPic.setImageBitmap(currentUser.getPhoto());
-                    tvCommentText.setText(comment.getContent());
-                }
-                else {
-                    if(users.getUsername()==comment.getUser())
-                    {
-                        ivUserPic.setImageBitmap(users.getPhoto());
-                        tvCommentText.setText(comment.getContent());
-                        return;
-                    }
-                }
-            }
-
+            tvUserName.setText(comment.getUser().getUsername());
             tvCommentDate.setText(comment.getDate());
-
+            ivUserPic.setImageBitmap(comment.getUser().getPhoto());
+            tvCommentText.setText(comment.getContent());
 
             tvDelete.setOnClickListener(v -> {
-                    if (UserManager.getInstance().getSignedInUser().getUsername()==comment.getUser()) {
+                    if (UserManager.getInstance().getSignedInUser().getUsername().equals(comment.getUser().getUsername())) {
                         if (onCommentDelete != null) {
                             onCommentDelete.onCommentDelete(comment);
                         }

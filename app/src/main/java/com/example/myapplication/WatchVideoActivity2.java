@@ -35,9 +35,10 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_video);
 
-        String videoPath = getIntent().getStringExtra("selectedVideoPath");
+        String selectedVideoUsername = getIntent().getStringExtra("selectedVideoUsername");
+        String selectedVideoTitle = getIntent().getStringExtra("selectedVideoTitle");
 
-        currentVideo = videoManager.getVideoByPath(videoPath);
+        currentVideo = videoManager.getVideoByTag(selectedVideoUsername, selectedVideoTitle);
         otherVideos = videoManager.getVideosExcluding(currentVideo);
 
         // Initialize the TextViews
@@ -61,6 +62,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvDate.setText(currentVideo.getDate());
 
         VideoView videoView = findViewById(R.id.videoView);
+        String videoPath = currentVideo.getVideoPath();
 
         CustomMediaController mediaController = new CustomMediaController(this,videoView);
         videoView.setMediaController(mediaController);
@@ -69,21 +71,17 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         videoView.setVideoPath(videoPath);
         videoView.start();
 
-
-         //Setup the comments RecycleView
-        RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
-        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter1 = new CommentAdapter(currentVideo.getComments(), currentVideo, userManager.getSignedInUser(),this);
-        commentsRecyclerView.setAdapter(adapter1);
-
-
         // Setup the RecyclerView
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         VideoAdapter adapter = new VideoAdapter(otherVideos, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(adapter);
 
-
+        //Setup the comments RecycleView
+        RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter1 = new CommentAdapter(currentVideo.getComments(),this);
+        commentsRecyclerView.setAdapter(adapter1);
 
 
         // Setup comment button click listener
@@ -96,8 +94,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
                         if (!commentContent.isEmpty()) {
                             // Create a new comment object
-                            User signedInUser = userManager.getSignedInUser();
-                            Comment comment = new Comment(commentContent,signedInUser.getUsername(), getCurrentDate());
+                            Comment comment = new Comment(commentContent,userManager.getSignedInUser(), getCurrentDate());
 
                             // Add the comment to the current video
                             currentVideo.addComment(comment);
@@ -138,7 +135,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             else {
                 Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
             }
-
 
         });
 
@@ -209,7 +205,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
-        intent.putExtra("selectedVideoPath", video.getVideoPath());
+        intent.putExtra("selectedVideoUsername", video.getUsername());
+        intent.putExtra("selectedVideoTitle", video.getTitle());
         startActivity(intent);
         finish();
     }
