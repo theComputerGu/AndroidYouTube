@@ -231,8 +231,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
     @Override
     public void onCommentDelete(Comment comment) {
-        // Remove the clicked video from the list
-        currentVideo.removeComment(comment);
-        adapter1.notifyDataSetChanged();
+        if (userManager.getSignedInUser() != null && userManager.getSignedInUser().getUsername().equals(comment.getUser().getUsername())) {
+            currentVideo.removeComment(comment);
+            adapter1.notifyDataSetChanged();
+        }
+        else {
+            Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

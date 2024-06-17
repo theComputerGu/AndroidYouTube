@@ -74,11 +74,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             tvCommentText.setText(comment.getContent());
 
             tvDelete.setOnClickListener(v -> {
-                    if (UserManager.getInstance().getSignedInUser().getUsername().equals(comment.getUser().getUsername())) {
-                        if (onCommentDelete != null) {
-                            onCommentDelete.onCommentDelete(comment);
-                        }
-                    }
+                if (onCommentDelete != null) {
+                    onCommentDelete.onCommentDelete(comment);
+                }
             });
         }
     }
