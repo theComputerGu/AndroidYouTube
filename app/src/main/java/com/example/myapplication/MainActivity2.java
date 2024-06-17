@@ -15,8 +15,6 @@ import java.util.List;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
-    private static final String PREFS_NAME = "prefs";
-    private static final String PREF_DARK_MODE = "dark_mode";
     private EditText searchEditText;
     private ImageButton searchButton;
     private RecyclerView recyclerView;
