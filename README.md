@@ -30,4 +30,4 @@ GitHub rip: https://github.com/theComputerGu/AndroidYouTube
 
 Gira: https://itayzahor1.atlassian.net/jira/software/projects/SCRUM/boards/1/backlog?epics=visible
 
-some side notes: -we chose to do a purple dark mode, it's not very polished but it looks better than just putting a lot of grey and black
+some side notes: -we chose to do a purple dark mode, it's not very polished but it looks better than just putting a lot of grey and black.
