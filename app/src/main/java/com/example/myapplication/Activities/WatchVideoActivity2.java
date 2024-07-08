@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,14 @@ import android.widget.VideoView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.Adapters.CommentAdapter;
+import com.example.myapplication.Models.CustomMediaController;
+import com.example.myapplication.R;
+import com.example.myapplication.Entities.User;
+import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Adapters.VideoAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,7 +102,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
                         if (!commentContent.isEmpty()) {
                             // Create a new comment object
-                            Comment comment = new Comment(commentContent,userManager.getSignedInUser(), getCurrentDate());
+                            Comment comment = new Comment(commentContent,userManager.getSignedInUser().getId(), getCurrentDate(), currentVideo.getId());
 
                             // Add the comment to the current video
                             currentVideo.addComment(comment);
@@ -231,7 +239,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
     @Override
     public void onCommentDelete(Comment comment) {
-        if (userManager.getSignedInUser() != null && userManager.getSignedInUser().getUsername().equals(comment.getUser().getUsername())) {
+        if (userManager.getSignedInUser() != null && userManager.getSignedInUser().getUsername().equals(getUserById(comment.getUserId()))) {
             currentVideo.removeComment(comment);
             adapter1.notifyDataSetChanged();
         }

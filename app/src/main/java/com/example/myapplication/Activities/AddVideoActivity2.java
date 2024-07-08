@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +15,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.myapplication.R;
+import com.example.myapplication.UserManager;
+import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Adapters.VideoAdapter;
+import com.example.myapplication.VideoListManager;
 
 import java.io.File;
 import java.io.FileOutputStream;

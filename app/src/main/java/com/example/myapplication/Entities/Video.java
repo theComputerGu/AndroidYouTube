@@ -1,29 +1,65 @@
-package com.example.myapplication;
+package com.example.myapplication.Entities;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.myapplication.API.Convertors;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
 public class Video implements Serializable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    @ColumnInfo(name = "title")
     private String title;
+
+    @ColumnInfo(name = "idUserName")
     private String username;
+
+    @ColumnInfo(name = "videoPath")
     private String videoPath;
+
+    @ColumnInfo(name = "pic")
+    @TypeConverters(Convertors.class)
     private Bitmap pic;
+
+    @ColumnInfo(name = "likes")
     private int likes;
+
+    @ColumnInfo(name = "dislikes")
     private int dislikes;
+
+    @ColumnInfo(name = "shares")
     private int shares;
+
+    @ColumnInfo(name = "date")
     private String date;
 
+    @ColumnInfo(name = "comments")
+    @TypeConverters(Convertors.class)
     private List<Comment> comments;
 
+    @ColumnInfo(name = "usersLike")
+    @TypeConverters(Convertors.class)
     private List<User> usersLike;
 
+    @ColumnInfo(name = "usersDislike")
+    @TypeConverters(Convertors.class)
     private List<User> usersDislike;
 
+    @ColumnInfo(name = "usersShares")
+    @TypeConverters(Convertors.class)
     private List<User> usersShares;
+
+    @ColumnInfo(name = "usersComments")
+    @TypeConverters(Convertors.class)
     private List<User> usersComments;
 
 
@@ -41,6 +77,9 @@ public class Video implements Serializable {
         this.usersComments = new ArrayList<>();
         this.usersLike = new ArrayList<>();
         this.usersShares = new ArrayList<>();
+    }
+    public int getId() {
+        return id;
     }
     public void addComment(Comment comment) {
         comments.add(comment);
@@ -88,9 +127,6 @@ public class Video implements Serializable {
         return videoPath;
     }
 
-    public void setVideoUri(Uri videoUri) {
-        this.videoPath = videoPath;
-    }
 
     public int getShares() {
         return shares;

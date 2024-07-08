@@ -1,8 +1,12 @@
-package com.example.myapplication;
+package com.example.myapplication.Activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.myapplication.R;
+import com.example.myapplication.UserManager;
+import com.example.myapplication.VideoListManager;
 
 public class BaseActivity extends AppCompatActivity {
 

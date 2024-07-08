@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.example.myapplication.Entities.Video;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

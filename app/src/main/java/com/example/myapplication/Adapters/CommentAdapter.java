@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.R;
 
 import java.util.List;
 
@@ -68,9 +71,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
-            tvUserName.setText(comment.getUser().getUsername());
+//            tvUserName.setText(getUserById(comment.getUserId()));
+//            ivUserPic.setImageBitmap(comment.getUserId());
             tvCommentDate.setText(comment.getDate());
-            ivUserPic.setImageBitmap(comment.getUser().getPhoto());
             tvCommentText.setText(comment.getContent());
 
             tvDelete.setOnClickListener(v -> {
