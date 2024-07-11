@@ -7,14 +7,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.R;
-import com.example.myapplication.Entities.User;
+import androidx.lifecycle.ViewModelProvider;
 
-import java.util.List;
+import com.example.myapplication.Entities.User;
+import com.example.myapplication.Models.UserViewModel;
+import com.example.myapplication.R;
 
 public class LogInActivity extends BaseActivity {
 
-    private List<User> userList;
+    private UserViewModel userViewModel;
     private EditText editTextUsername;
     private EditText editTextPassword;
     private Button buttonLogIn;
@@ -28,16 +29,13 @@ public class LogInActivity extends BaseActivity {
         editTextPassword = findViewById(R.id.editTextTextPassword);
         buttonLogIn = findViewById(R.id.buttonLogIn);
 
-        userList = userManager.getUsers();
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         buttonLogIn.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
-            if (isValidLogin(username, password)) {
-                Intent i = new Intent(this, MainActivity2.class);
-                startActivity(i);
-            }
+            validateLogin(username, password);
         });
 
         TextView ToSignUp = findViewById(R.id.ToSignUp);
@@ -47,21 +45,29 @@ public class LogInActivity extends BaseActivity {
         });
     }
 
-    private boolean isValidLogin(String username, String password) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                if (user.getPassword().equals(password)) {
-                    userManager.saveSignedInUser(user);
-                    Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                    return true; // Login successful
-                } else {
-                    Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
-                    return false; // Wrong password
+    private void validateLogin(String username, String password) {
+        userViewModel.getAllUsers().observe(this, users -> {
+            if (users != null) {
+                boolean validUser = false;
+                for (User user : users) {
+                    if (user.getUsername().equals(username)) {
+                        if (user.getPassword().equals(password)) {
+                            userViewModel.signIn(user);
+                            Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(this, MainActivity2.class);
+                            startActivity(i);
+                            validUser = true;
+                            break;
+                        } else {
+                            Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                }
+                if (!validUser) {
+                    Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
-        Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT).show();
-        return false; // Invalid username
+        });
     }
-
 }

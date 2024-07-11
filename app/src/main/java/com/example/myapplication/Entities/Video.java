@@ -9,174 +9,188 @@ import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-@Entity
-public class Video implements Serializable {
+@Entity(tableName = "videos")
+public class Video {
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     @ColumnInfo(name = "title")
     private String title;
 
-    @ColumnInfo(name = "idUserName")
-    private String username;
+    @ColumnInfo(name = "author")
+    private String author;
 
-    @ColumnInfo(name = "videoPath")
-    private String videoPath;
+    @ColumnInfo(name = "author_display_name")
+    private String authorDisplayName;
 
-    @ColumnInfo(name = "pic")
+
+    @ColumnInfo(name = "time_ago")
+    private Date timeAgo;
+
+    @ColumnInfo(name = "views")
+    private int views;
+
+    @ColumnInfo(name = "photo")
     @TypeConverters(Convertors.class)
-    private Bitmap pic;
+    private Bitmap photo;
+
+    @ColumnInfo(name = "path")
+    private String path;
 
     @ColumnInfo(name = "likes")
     private int likes;
 
+    @ColumnInfo(name = "liked_by")
+    private List<String> likedBy;
+
     @ColumnInfo(name = "dislikes")
     private int dislikes;
 
-    @ColumnInfo(name = "shares")
-    private int shares;
+    @ColumnInfo(name = "disliked_by")
+    private List<String> dislikedBy;
 
-    @ColumnInfo(name = "date")
-    private String date;
+    @ColumnInfo(name = "comments_num")
+    private int commentsNum;
 
     @ColumnInfo(name = "comments")
-    @TypeConverters(Convertors.class)
-    private List<Comment> comments;
+    private List<String> comments;
 
-    @ColumnInfo(name = "usersLike")
-    @TypeConverters(Convertors.class)
-    private List<User> usersLike;
-
-    @ColumnInfo(name = "usersDislike")
-    @TypeConverters(Convertors.class)
-    private List<User> usersDislike;
-
-    @ColumnInfo(name = "usersShares")
-    @TypeConverters(Convertors.class)
-    private List<User> usersShares;
-
-    @ColumnInfo(name = "usersComments")
-    @TypeConverters(Convertors.class)
-    private List<User> usersComments;
-
-
-    public Video(String title, String username,  String date, Bitmap pic, String videoPath) {
+    public Video(String title, String author,String authorDisplayName, Date timeAgo, Bitmap photo, String path) {
         this.title = title;
-        this.username = username;
-        this.pic = pic;
-        this.date = date;
-        this.videoPath = videoPath;
-        this.comments = new ArrayList<>();
+        this.author = author;
+        this.authorDisplayName = authorDisplayName;
+        this.timeAgo = timeAgo;
+        this.photo = photo;
+        this.path = path;
         this.likes = 0;
         this.dislikes = 0;
-        this.shares = 0;
-        this.usersDislike = new ArrayList<>();
-        this.usersComments = new ArrayList<>();
-        this.usersLike = new ArrayList<>();
-        this.usersShares = new ArrayList<>();
+        this.dislikedBy = new ArrayList<>();
+        this.likedBy = new ArrayList<>();
+        this.commentsNum = 0;
+        this.comments = new ArrayList<>();
     }
+
     public int getId() {
         return id;
     }
-    public void addComment(Comment comment) {
-        comments.add(comment);
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public String getUsername() {
-        return username;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Bitmap getPic() {
-        return pic;
+    public String getAuthor() {
+        return author;
     }
 
-    public String getDate() {
-        return date;
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthorDisplayName() {
+        return authorDisplayName;
+    }
+
+    public void setAuthorDisplayName(String authorDisplayName) {
+        this.authorDisplayName = authorDisplayName;
+    }
+
+    public Date getTimeAgo() {
+        return timeAgo;
+    }
+
+    public void setTimeAgo(Date timeAgo) {
+        this.timeAgo = timeAgo;
+    }
+
+    public int getViews() {
+        return views;
+    }
+
+    public void setViews(int views) {
+        this.views = views;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public int getLikes() {
         return likes;
     }
-    public void setUsername(String username) {
-        this.username = username;
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
-    public void setLikes() {
-        this.likes++;
+    public List<String> getLikedBy() {
+        return likedBy;
     }
 
+    public void setLikedBy(List<String> likedBy) {
+        this.likedBy = likedBy;
+    }
 
     public int getDislikes() {
         return dislikes;
     }
 
-    public void setDislikes() {
-        this.dislikes++;
-    }
-    public void setPic(Bitmap pic) {
-        this.pic = pic;
-    }
-    public String getVideoPath() {
-        return videoPath;
+    public void setDislikes(int dislikes) {
+        this.dislikes = dislikes;
     }
 
-
-    public int getShares() {
-        return shares;
+    public List<String> getDislikedBy() {
+        return dislikedBy;
     }
 
-    public void setShares() {
-        this.shares++;
+    public void setDislikedBy(List<String> dislikedBy) {
+        this.dislikedBy = dislikedBy;
     }
 
-    public List<User> getUsersLike() {
-        return usersLike;
+    public int getCommentsNum() {
+        return commentsNum;
     }
 
-    public void setUsersLike(User usersLike) {
-        this.usersLike.add(usersLike);
+    public void setCommentsNum(int commentsNum) {
+        this.commentsNum = commentsNum;
     }
 
-    public List<User> getUsersDislike() {
-        return usersDislike;
-    }
-
-    public void setUsersDislike(User usersDislike) {
-        this.usersDislike.add(usersDislike);
-    }
-
-    public List<User> getUsersShares() {
-        return usersShares;
-    }
-
-    public void setUsersShares(User usersShares) {
-        this.usersShares.add(usersShares);
-    }
-
-    public List<User> getUsersComments() {
-        return usersComments;
-    }
-
-    public void setUsersComments(User usersComments) {
-        this.usersComments.add(usersComments);
-    }
-    public List<Comment> getComments() {
+    public List<String> getComments() {
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(List<String> comments) {
         this.comments = comments;
     }
-
-    public void removeComment (Comment comment)
-    {
-        this.comments.remove(comment);
+    public void incrementDislikes(String username) {
+        dislikedBy.add(username);
+        this.dislikes++;
+    }
+    public void incrementLikes(String username) {
+        likedBy.add(username);
+        this.likes++;
     }
 }

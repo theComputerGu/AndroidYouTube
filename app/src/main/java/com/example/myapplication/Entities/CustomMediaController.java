@@ -1,4 +1,4 @@
-package com.example.myapplication.Models;
+package com.example.myapplication.Entities;
 
 import android.content.Context;
 import android.view.View;

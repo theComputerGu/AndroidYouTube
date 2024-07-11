@@ -1,42 +1,22 @@
 package com.example.myapplication.Models;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.Entities.User;
-import com.example.myapplication.Entities.UserRepository;
+import com.example.myapplication.Repositories.UserRepository;
 
 import java.util.List;
 
-public class UserViewModel extends AndroidViewModel {
-    private UserRepository userRepository;
-    private LiveData<List<User>> allUsers;
-
-    public UserViewModel(Application application) {
-        super(application);
-        userRepository = new UserRepository(application);
-        allUsers = userRepository.getAllUsers();
+public class UserViewModel extends ViewModel {
+    private UserRepository mRepository;
+    private LiveData<List<User>> users;
+    public UserViewModel(){
+        mRepository = new UserRepository();
+        users = mRepository.getAll();
     }
-
-    public LiveData<List<User>> getAllUsers() {
-        return allUsers;
-    }
-
-    public LiveData<User> getUserById(int id) {
-        return userRepository.getUserById(id);
-    }
-
-    public void insert(User user) {
-        userRepository.insert(user);
-    }
-
-    public void update(User user) {
-        userRepository.update(user);
-    }
-
-    public void delete(User user) {
-        userRepository.delete(user);
+    public LiveData<List<User>> get() {return users; }
+    public void setUsers(List<User> u) {
+        mRepository.setUsers(u);
     }
 }

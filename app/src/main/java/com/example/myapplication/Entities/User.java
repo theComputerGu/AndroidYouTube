@@ -1,18 +1,14 @@
 package com.example.myapplication.Entities;
 
-import android.graphics.Bitmap;
-
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "users")
 public class User {
+
     @PrimaryKey(autoGenerate = true)
     private int id;
-
-    @ColumnInfo(name = "nickname")
-    private String nickname;
 
     @ColumnInfo(name = "username")
     private String username;
@@ -20,53 +16,58 @@ public class User {
     @ColumnInfo(name = "password")
     private String password;
 
-    @ColumnInfo(name = "photo")
-    private Bitmap photo;
+    @ColumnInfo(name = "displayName")
+    private String displayName;
 
-    public User(String nickname, String username, String password, Bitmap photo) {
-        this.nickname = nickname;
+    @ColumnInfo(name = "profilePicture")
+    private String profilePicture; // Assuming the profile picture is stored as a string (URL or base64)
+
+    // Constructor
+    public User(String username, String password, String displayName, String profilePicture) {
         this.username = username;
         this.password = password;
-        this.photo = photo;
+        this.displayName = displayName;
+        this.profilePicture = profilePicture;
     }
 
+    // Getters and setters
     public int getId() {
         return id;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Bitmap getPhoto() {
-        return photo;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public String getUsername() {
+        return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public void setPhoto(Bitmap photo) {
-        this.photo = photo;
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

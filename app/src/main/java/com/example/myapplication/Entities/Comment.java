@@ -1,70 +1,92 @@
 package com.example.myapplication.Entities;
 
+import android.graphics.Bitmap;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
-@Entity
+import com.example.myapplication.API.Convertors;
+
+@Entity(tableName = "comments")
 public class Comment {
+
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int id;
 
-    @ColumnInfo(name = "content")
-    private String content;
+    @ColumnInfo(name = "username")
+    private String username;
 
-    @ColumnInfo(name = "user_id")
-    private int userId;
+    @ColumnInfo(name = "displayName")
+    private String displayName;
 
-    @ColumnInfo(name = "date")
-    private String date;
+    @ColumnInfo(name = "photo")
+    @TypeConverters(Convertors.class)
+    private Bitmap photo;
 
-    @ColumnInfo(name = "video_id")
-    private int videoId;
+    @ColumnInfo(name = "videoId")
+    private String videoId;
 
-    public Comment(String content, int userId, String date, int videoId) {
-        this.content = content;
-        this.userId = userId;
-        this.date = date;
+    @ColumnInfo(name = "text")
+    private String text;
+
+    public Comment(String username, String displayName, Bitmap photo, String videoId, String text) {
+        this.username = username;
+        this.displayName = displayName;
+        this.photo = photo;
         this.videoId = videoId;
+        this.text = text;
     }
+
+    // Getters and setters for all fields
 
     public int getId() {
         return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public int getVideoId() {
-        return videoId;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setVideoId(int videoId) {
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public Bitmap getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Bitmap photo) {
+        this.photo = photo;
+    }
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
         this.videoId = videoId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
