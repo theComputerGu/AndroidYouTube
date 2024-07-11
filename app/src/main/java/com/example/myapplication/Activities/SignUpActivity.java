@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +17,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myapplication.Entities.User;
+import com.example.myapplication.Models.UserViewModel;
+import com.example.myapplication.R;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,11 +39,19 @@ public class SignUpActivity extends BaseActivity {
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
     private Bitmap selectedPhotoBitmap;
+    private UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up2);
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        userViewModel.getAllUsers().observe(this, users -> {
+            if (users != null) {
+                userList = users;
+            }
+        });
 
         nicknameEditText = findViewById(R.id.editTextNickname);
         usernameEditText = findViewById(R.id.editTextUsername);
@@ -48,7 +61,6 @@ public class SignUpActivity extends BaseActivity {
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
         buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
 
-        userList = userManager.getUsers();
 
         buttonUploadPhoto.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -67,8 +79,8 @@ public class SignUpActivity extends BaseActivity {
             } else {
                 // Create User with selected photo Bitmap
                 User newUser = new User(nickname, username, password, selectedPhotoBitmap);
-                userManager.addUser(newUser);
-                userManager.saveSignedInUser(newUser);
+                userViewModel.insert(newUser);
+                userViewModel.signIn(newUser);
 
                 Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
 

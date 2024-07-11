@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,10 +8,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import com.example.myapplication.Adapters.VideoAdapter;
+import com.example.myapplication.Entities.User;
+import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Models.UserViewModel;
+import com.example.myapplication.Models.VideoViewModel;
+import com.example.myapplication.R;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
@@ -19,37 +26,55 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private ImageButton searchButton;
     private RecyclerView recyclerView;
     private VideoAdapter adapter;
-    private List<Video> videoList;
+    private VideoViewModel videoViewModel;
+    private UserViewModel userViewModel;
     ImageButton imageViewProfilePhoto;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Get the video list from the singleton
-        videoList = videoManager.getVideos();
+        // Initialize ViewModel
+        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // Initialize RecyclerView and Adapter
         recyclerView = findViewById(R.id.lstPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new VideoAdapter(videoList, VideoAdapter.VIEW_TYPE_MAIN, this);
+        adapter = new VideoAdapter(null,userViewModel, VideoAdapter.VIEW_TYPE_MAIN, this); // Pass null initially
         recyclerView.setAdapter(adapter);
+
+        // Observe LiveData for video list
+        videoViewModel.getAllVideos().observe(this, videos -> {
+            if (videos != null) {
+                adapter.updateVideos(videos); // Update adapter with new list of videos
+            }
+        });
 
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
         // Retrieve signed-in user from UserManager
-        User signedInUser = userManager.getSignedInUser();
-        // Display profile photo and nickname if user is signed in
-        if (signedInUser != null) {
-            Bitmap photo = signedInUser.getPhoto();
-            if (photo != null) {
-                imageViewProfilePhoto.setImageBitmap(photo);
-            } else {
-                // Use default photo if photo is null
-                imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+        // Retrieve signed-in user from UserManager
+        userViewModel.getSignedInUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(User signedInUser) {
+                if (signedInUser != null) {
+                    // Display profile photo if available
+                    Bitmap photo = signedInUser.getPhoto();
+                    if (photo != null) {
+                        imageViewProfilePhoto.setImageBitmap(photo);
+                    } else {
+                        // Use default photo if photo is null
+                        imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+                    }
+                } else {
+                    // Handle case when user is not signed in
+                    imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+                }
             }
-        }
+        });
 
         ImageButton buttonToHomePage = findViewById(R.id.buttonToHomePage);
         buttonToHomePage.setOnClickListener(v -> {
@@ -71,9 +96,9 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             public void onClick(View v) {
                 String query = searchEditText.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    VideoListManager videoManager = VideoListManager.getInstance(MainActivity2.this);
-                    List<Video> searchResults = videoManager.searchVideos(query);
-                    adapter.updateVideos(searchResults);
+                    videoViewModel.getVideosByTitle(query).observe(MainActivity2.this, searchResults -> {
+                        adapter.updateVideos(searchResults);
+                    });
                 }
             }
         });
@@ -81,7 +106,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private void startAddVideoActivity() {
 
         // Check if user is signed in
-        if (userManager.getSignedInUser() == null) {
+        if (userViewModel.getSignedInUser() == null) {
             Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -92,8 +117,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
-        intent.putExtra("selectedVideoUsername", video.getUsername());
-        intent.putExtra("selectedVideoTitle", video.getTitle());
+        intent.putExtra("selectedVideoId", video.getId());
         startActivity(intent);
     }
 
@@ -102,10 +126,10 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         startActivity(i);
     }
     public void onSignOutClicked(View view) {
-        if (userManager.getSignedInUser() == null) {
+        if (userViewModel.getSignedInUser() == null) {
             Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
         } else {
-            userManager.signOut();
+            userViewModel.signOut();
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, LogInActivity.class);
@@ -115,9 +139,10 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.updateVideos(videoManager.getVideos());
+        videoViewModel.getAllVideos().observe(this, videos -> {
+            adapter.updateVideos(videos);
+        });
     }
-
     public void onDarkModeClicked(View view) {
         toggleDarkMode();
     }
