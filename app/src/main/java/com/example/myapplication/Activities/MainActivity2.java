@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,10 +16,6 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
@@ -60,6 +55,8 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
         adapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
         recyclerView.setAdapter(adapter);
+
+        videoViewModel.getAll();
         videoViewModel.get().observe(this, videos -> {
             adapter.updateVideos(videos);
         });
@@ -84,8 +81,13 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             public void onClick(View v) {
                 String query = searchEditText.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    videoViewModel.getVideoByPrefix(query).observe(this, videos -> {
-                        adapter.updateVideos(videos);
+                    videoViewModel.getVideoByPrefix(query);
+                    videoViewModel.get().observe(MainActivity2.this, videos -> {
+                        if (videos == null) {
+                            Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
+                        } else {
+                            adapter.updateVideos(videos);
+                        }
                     });
                 }
             }
@@ -102,7 +104,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         Intent intent = new Intent(this, AddVideoActivity2.class);
         startActivity(intent);
     }
-        @Override
+    @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
         intent.putExtra("selectedVideoId", video.getId());
@@ -127,24 +129,9 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     @Override
     protected void onResume() {
         super.onResume();
-        videoApi.getVideos(new Callback<List<Video>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
-                videoList = response.body();
-                videoDao = appDB.videoDao();
-                for(Video p:videoList){
-                    new Thread(() -> videoDao.insert(p)).start();
-                }
-                // Initialize RecyclerView and Adapter
-
-                videoViewModel.setVideos(videoList);
-                videoViewModel.get().observe(MainActivity2.this, posts -> adapter.updateVideos(videoList));
-            }
-
-            @Override
-            public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
+        videoViewModel.getAll();
+        videoViewModel.get().observe(this, videos -> {
+            adapter.updateVideos(videos);
         });
     }
     public void onDarkModeClicked(View view) {
