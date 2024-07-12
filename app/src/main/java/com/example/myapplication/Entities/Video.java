@@ -4,10 +4,10 @@ import android.graphics.Bitmap;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,8 +15,8 @@ import java.util.List;
 @Entity(tableName = "videos")
 public class Video {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @SerializedName("_id")
+    private String videoId;
 
     @ColumnInfo(name = "title")
     private String title;
@@ -74,12 +74,12 @@ public class Video {
         this.comments = new ArrayList<>();
     }
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return videoId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String id) {
+        this.videoId = id;
     }
 
     public String getTitle() {

@@ -7,6 +7,7 @@ import com.example.myapplication.Activities.BaseActivity;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -53,10 +54,26 @@ public class VideoAPI {
         });
     }
 
-    public void getVideoById(String videoId, Callback<Video> callback) {
+    public void getVideoById(String videoId, MutableLiveData<Video> video) {
         Call<Video> call = webServiceAPI.getVideoById(videoId);
-        call.enqueue(callback);
+        call.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
+                if (response.isSuccessful()) {
+                    video.setValue(response.body());
+                } else {
+                    // Handle the case where the video is not found or some other error occurred
+                    video.setValue(null);
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                video.setValue(null);
+            }
+        });
     }
+
 
     public void updateVideo(String videoId, Video video, Callback<Video> callback) {
         Call<Video> call = webServiceAPI.updateVideo(videoId, video);
@@ -78,6 +95,37 @@ public class VideoAPI {
             @Override
             public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
+            }
+        });
+    }
+    public void getVideosExcept(MutableLiveData<List<Video>> videos,String videoId) {
+        Call<List<Video>> call = webServiceAPI.getVideos();
+        call.enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
+                if (response.isSuccessful()) {
+                    List<Video> allVideos = response.body();
+                    List<Video> filteredList = new ArrayList<>();
+
+                    // Filter out the video with the specified videoId
+                    for (Video video : allVideos) {
+                        if (!video.getId().equals(videoId)) { // Adjust this based on your Video model structure
+                            filteredList.add(video);
+                        }
+                    }
+
+                    videos.setValue(filteredList);
+                } else {
+                    // Handle unsuccessful response
+                    // You might want to set an empty list or handle errors here
+                    videos.setValue(new ArrayList<>());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Video>> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                videos.setValue(new ArrayList<>());
             }
         });
     }

@@ -45,13 +45,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_video);
 
-        // Initialize ViewModels
-        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        commentViewModel = new ViewModelProvider(this).get(CommentViewModel.class);
-
         // Retrieve selected video ID from Intent
-        int selectedVideoId = getIntent().getIntExtra("selectedVideoId", 0);
+        String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
 
         // Observe the current video
         videoViewModel.getVideoById(selectedVideoId).observe(this, video -> {
@@ -66,8 +61,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(otherVideos, userViewModel, VideoAdapter.VIEW_TYPE_WATCH, this);
+        videoAdapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(videoAdapter);
+
+        videoViewModel.getVideosExcept(selectedVideoId);
+        videoViewModel.get().observe(this, videos -> {
+            videoAdapter.updateVideos(videos);
+        });
 
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
