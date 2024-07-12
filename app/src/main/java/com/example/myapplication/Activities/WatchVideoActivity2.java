@@ -132,6 +132,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             commentAdapter.updateData(comments);
         });
     }
+    //
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
