@@ -8,17 +8,19 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Adapters.VideoAdapter;
-import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.Video;
-import com.example.myapplication.Models.UserViewModel;
-import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
@@ -26,9 +28,8 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private ImageButton searchButton;
     private RecyclerView recyclerView;
     private VideoAdapter adapter;
-    private VideoViewModel videoViewModel;
-    private UserViewModel userViewModel;
     ImageButton imageViewProfilePhoto;
+    private List<Video> videoList;
 
 
     @Override
@@ -36,44 +37,31 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize ViewModel
-        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-
-        // Initialize RecyclerView and Adapter
-        recyclerView = findViewById(R.id.lstPosts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new VideoAdapter(null,userViewModel, VideoAdapter.VIEW_TYPE_MAIN, this); // Pass null initially
-        recyclerView.setAdapter(adapter);
-
-        // Observe LiveData for video list
-        videoViewModel.getAllVideos().observe(this, videos -> {
-            if (videos != null) {
-                adapter.updateVideos(videos); // Update adapter with new list of videos
-            }
-        });
 
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
         // Retrieve signed-in user from UserManager
         // Retrieve signed-in user from UserManager
-        userViewModel.getSignedInUser().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User signedInUser) {
-                if (signedInUser != null) {
-                    // Display profile photo if available
-                    Bitmap photo = signedInUser.getPhoto();
-                    if (photo != null) {
-                        imageViewProfilePhoto.setImageBitmap(photo);
-                    } else {
-                        // Use default photo if photo is null
-                        imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
-                    }
-                } else {
-                    // Handle case when user is not signed in
-                    imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
-                }
+        if (signedInUser != null) {
+            // Display profile photo if available
+            Bitmap photo = signedInUser.getProfilePicture();
+            if (photo != null) {
+                imageViewProfilePhoto.setImageBitmap(photo);
+            } else {
+                // Use default photo if photo is null
+                imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             }
+        } else {
+            // Handle case when user is not signed in
+            imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+        }
+
+        recyclerView = findViewById(R.id.lstPosts);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
+        adapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
+        recyclerView.setAdapter(adapter);
+        videoViewModel.get().observe(this, videos -> {
+            adapter.updateVideos(videos);
         });
 
         ImageButton buttonToHomePage = findViewById(R.id.buttonToHomePage);
@@ -96,8 +84,8 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             public void onClick(View v) {
                 String query = searchEditText.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    videoViewModel.getVideosByTitle(query).observe(MainActivity2.this, searchResults -> {
-                        adapter.updateVideos(searchResults);
+                    videoViewModel.getVideoByPrefix(query).observe(this, videos -> {
+                        adapter.updateVideos(videos);
                     });
                 }
             }
@@ -106,7 +94,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private void startAddVideoActivity() {
 
         // Check if user is signed in
-        if (userViewModel.getSignedInUser() == null) {
+        if (signedInUser == null) {
             Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -126,10 +114,10 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         startActivity(i);
     }
     public void onSignOutClicked(View view) {
-        if (userViewModel.getSignedInUser() == null) {
+        if (signedInUser == null) {
             Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
         } else {
-            userViewModel.signOut();
+            signedInUser = null;
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, LogInActivity.class);
@@ -139,8 +127,24 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     @Override
     protected void onResume() {
         super.onResume();
-        videoViewModel.getAllVideos().observe(this, videos -> {
-            adapter.updateVideos(videos);
+        videoApi.getVideos(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
+                videoList = response.body();
+                videoDao = appDB.videoDao();
+                for(Video p:videoList){
+                    new Thread(() -> videoDao.insert(p)).start();
+                }
+                // Initialize RecyclerView and Adapter
+
+                videoViewModel.setVideos(videoList);
+                videoViewModel.get().observe(MainActivity2.this, posts -> adapter.updateVideos(videoList));
+            }
+
+            @Override
+            public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
         });
     }
     public void onDarkModeClicked(View view) {

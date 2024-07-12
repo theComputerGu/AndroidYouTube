@@ -19,4 +19,9 @@ public class VideoViewModel extends ViewModel {
     public void setVideos(List<Video> v) {
         mRepository.setVideos(v);
     }
+
+    public void getVideoByPrefix(String prefix){
+        mRepository.getVideoByPrefix(prefix);
+    }
+
 }

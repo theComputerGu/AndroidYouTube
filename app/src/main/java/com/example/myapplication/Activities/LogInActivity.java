@@ -7,11 +7,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.myapplication.Entities.User;
+import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.R;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LogInActivity extends BaseActivity {
 
@@ -35,39 +41,37 @@ public class LogInActivity extends BaseActivity {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
-            validateLogin(username, password);
+            if (!username.isEmpty() && !password.isEmpty()) {
+                UserCredentials credentials = new UserCredentials(username, password);
+                userApi.login(credentials, new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                        int statusCode = response.code();
+                        if (statusCode == 200) {
+                            signedInUser = userApi.getUserByUsername(credentials.getUsername());
+                            Intent intent = new Intent(LogInActivity.this, MainActivity2.class);
+                            startActivity(intent);
+                            finish(); // Optionally, close the login activity so it can't be returned to
+                        } else {
+                            Toast.makeText(LogInActivity.this, "Login failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                        t.printStackTrace();
+                        Toast.makeText(LogInActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(LogInActivity.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
+            }
         });
 
         TextView ToSignUp = findViewById(R.id.ToSignUp);
         ToSignUp.setOnClickListener(v -> {
             Intent intent = new Intent(this, SignUpActivity.class);
             startActivity(intent);
-        });
-    }
-
-    private void validateLogin(String username, String password) {
-        userViewModel.getAllUsers().observe(this, users -> {
-            if (users != null) {
-                boolean validUser = false;
-                for (User user : users) {
-                    if (user.getUsername().equals(username)) {
-                        if (user.getPassword().equals(password)) {
-                            userViewModel.signIn(user);
-                            Toast.makeText(this, "Login successful", Toast.LENGTH_SHORT).show();
-                            Intent i = new Intent(this, MainActivity2.class);
-                            startActivity(i);
-                            validUser = true;
-                            break;
-                        } else {
-                            Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-                }
-                if (!validUser) {
-                    Toast.makeText(this, "Invalid username", Toast.LENGTH_SHORT).show();
-                }
-            }
         });
     }
 }

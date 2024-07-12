@@ -1,5 +1,6 @@
 package com.example.myapplication.Activities;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,19 +13,27 @@ import com.example.myapplication.API.UserAPI;
 import com.example.myapplication.API.UserDao;
 import com.example.myapplication.API.VideoAPI;
 import com.example.myapplication.API.VideoDao;
+import com.example.myapplication.Entities.User;
+import com.example.myapplication.Models.CommentViewModel;
+import com.example.myapplication.Models.UserViewModel;
+import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 public class BaseActivity extends AppCompatActivity {
 
-    public static String ServerIP = "10.0.2.2";
     private static boolean isDarkMode = false;
-    private AppDB appDB;
-    private UserDao userDao;
-    private VideoDao videoDao;
-    private CommentDao commentDao;
-    private VideoAPI videoApi;
-    private UserAPI userApi;
-    private CommentAPI commentApi;
+    protected AppDB appDB;
+    protected UserDao userDao;
+    protected VideoDao videoDao;
+    protected CommentDao commentDao;
+    protected VideoAPI videoApi;
+    protected UserAPI userApi;
+    protected CommentAPI commentApi;
+    protected User signedInUser;
+    protected VideoViewModel videoViewModel;
+    protected UserViewModel userViewModel;
+    protected CommentViewModel commentViewModel;
+    public static Context context;
 
 
     @Override
@@ -37,6 +46,7 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+        context = getApplicationContext();
 
         appDB = Room.databaseBuilder(this, AppDB.class, "app_database")
                 .fallbackToDestructiveMigration()
@@ -45,11 +55,9 @@ public class BaseActivity extends AppCompatActivity {
         videoDao = appDB.videoDao();
         commentDao = appDB.commentDao();
 
-
-        videoApi = new VideoAPI(ServerIP);
-        userApi = new UserAPI(ServerIP);
-        commentApi = new CommentAPI(ServerIP);
-
+        videoViewModel = new VideoViewModel();
+        userViewModel = new UserViewModel();
+        commentViewModel = new CommentViewModel();
     }
 
     // Method to toggle dark mode

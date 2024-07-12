@@ -41,7 +41,7 @@ public interface WebServiceAPI {
 
     // User-related API calls
     @POST("users")
-    Call<User> createUser(@Body User user);
+    Call<ResponseBody> createUser(@Body User user);
 
     @POST("login")
     Call<ResponseBody> login(@Body UserCredentials credentials);

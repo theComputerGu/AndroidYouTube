@@ -21,7 +21,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int VIEW_TYPE_WATCH = 2;
     public static final int VIEW_TYPE_ADD = 3;
     private List<Video> videos;
-    private final UserViewModel userViewModel;
     private final int viewType;
     public interface OnVideoClickListener {
         void onVideoClick(Video video);
@@ -29,10 +28,9 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnVideoClickListener onVideoClickListener;
 
     // Constructor with additional viewType parameter
-    public VideoAdapter(List<Video> videos, UserViewModel userViewModel, int viewType,  OnVideoClickListener onVideoClickListener) {
+    public VideoAdapter(List<Video> videos, int viewType,  OnVideoClickListener onVideoClickListener) {
         this.videos = videos;
         this.viewType = viewType;
-        this.userViewModel = userViewModel;
         this.onVideoClickListener = onVideoClickListener;
     }
 

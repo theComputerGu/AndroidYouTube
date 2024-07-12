@@ -1,7 +1,9 @@
 package com.example.myapplication.API;
 
+import com.example.myapplication.Activities.BaseActivity;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.UpdateComment;
+import com.example.myapplication.R;
 
 import java.util.List;
 
@@ -12,14 +14,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CommentAPI {
-    private String serverUrl;
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
 
-    public CommentAPI(String url) {
-        this.serverUrl = url;
+    public CommentAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(this.serverUrl)
+                .baseUrl(BaseActivity.context.getString(R.string.baseServerURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
