@@ -3,13 +3,17 @@ package com.example.myapplication.Repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.API.UserAPI;
 import com.example.myapplication.Entities.User;
+import com.example.myapplication.Entities.Video;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
     private UserRepository.UserListData userListData;
+
+    private UserAPI userAPI;
 
     public UserRepository(){
         userListData=new UserRepository.UserListData();
@@ -34,4 +38,17 @@ public class UserRepository {
 
     }
     public LiveData<List<User>> getAll() {return userListData; }
+
+    public MutableLiveData<User> getUserById(String idOfUser) {
+        MutableLiveData<User> userData = new MutableLiveData<>();
+        userAPI.getUserById(idOfUser, userData);
+        return userData;
+    }
+
+    public MutableLiveData<User> getUserByUsername(String username) {
+        MutableLiveData<User> userData = new MutableLiveData<>();
+        userAPI.getUserByUsername(username, userData);
+        return userData;
+    }
+
 }

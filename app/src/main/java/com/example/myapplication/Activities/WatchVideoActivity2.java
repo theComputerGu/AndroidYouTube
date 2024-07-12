@@ -58,6 +58,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             }
         });
 
+
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -79,9 +80,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         Button commentButton = findViewById(R.id.commentButton);
         commentButton.setOnClickListener(v -> addComment());
 
-        // Setup the share button click listener
-        ImageButton btnShare = findViewById(R.id.btnShare);
-        btnShare.setOnClickListener(v -> shareVideo());
+
 
         // Setup the dislike button click listener
         ImageButton btnDislike = findViewById(R.id.btnDislike);
@@ -96,7 +95,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Initialize the TextViews
         tvLikes = findViewById(R.id.tvLikes);
         tvDislikes = findViewById(R.id.tvDislikes);
-        tvShares = findViewById(R.id.tvShares);
 
         // Initialize the video details TextViews
         TextView tvAuthor = findViewById(R.id.tvAuthor);
@@ -104,25 +102,24 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         TextView tvDate = findViewById(R.id.tvDate);
 
         // Set the video details
-        userViewModel.getUserById(currentVideo.getUserId()).observe(this, user -> {
+        userViewModel.getUserByUsername(currentVideo.getAuthor()).observe(this, user -> {
             if (user != null) {
                 String username = user.getUsername();
                 tvAuthor.setText(username);
             }
         });
         tvContent.setText(currentVideo.getTitle());
-        tvDate.setText(currentVideo.getDate());
+        tvDate.setText(currentVideo.getTimeAgo().toString());
 
         // Initialize the like, dislike, and share counts
         tvLikes.setText(String.valueOf(currentVideo.getLikes()));
         tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
-        tvShares.setText(String.valueOf(currentVideo.getShares()));
 
         // Setup the VideoView
         VideoView videoView = findViewById(R.id.videoView);
         CustomMediaController mediaController = new CustomMediaController(this, videoView);
         videoView.setMediaController(mediaController);
-        videoView.setVideoPath(currentVideo.getVideoPath());
+        videoView.setVideoPath(currentVideo.getPath());
         videoView.start();
     }
 
@@ -136,8 +133,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
-        videoViewModel.getVideosExcluding(currentVideo).observe(this, videos -> {
-            otherVideos = videos;
+        videoViewModel.getVideosExcept(currentVideo.getId());
+        videoViewModel.get().observe(this, videos -> {
             videoAdapter.updateVideos(videos);
         });
     }
@@ -161,21 +158,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         });
     }
 
-    private void shareVideo() {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                if (currentVideo.getUsersShares().contains(user.getUsername())) {
-                    Toast.makeText(this, "The User shared the video once already", Toast.LENGTH_SHORT).show();
-                } else {
-                    currentVideo.incrementShares(user.getUsername());
-                    tvShares.setText(String.valueOf(currentVideo.getShares()));
-                    videoViewModel.update(currentVideo);
-                }
-            } else {
-                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     private void dislikeVideo() {
         userViewModel.getSignedInUser().observe(this, user -> {
