@@ -1,9 +1,11 @@
 package com.example.myapplication.API;
 
+import com.example.myapplication.Activities.BaseActivity;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.R;
 
 import java.util.List;
 
@@ -14,14 +16,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserAPI {
-    private String serverUrl;
     private Retrofit retrofit;
     private WebServiceAPI webServiceAPI;
 
-    public UserAPI(String url) {
-        this.serverUrl = url;
+    public UserAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(this.serverUrl)
+                .baseUrl(BaseActivity.context.getString(R.string.baseServerURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
@@ -31,8 +31,8 @@ public class UserAPI {
         return webServiceAPI;
     }
 
-    public void createUser(User user, Callback<User> callback) {
-        Call<User> call = webServiceAPI.createUser(user);
+    public void createUser(User user, Callback<ResponseBody> callback) {
+        Call<ResponseBody> call = webServiceAPI.createUser(user);
         call.enqueue(callback);
     }
 

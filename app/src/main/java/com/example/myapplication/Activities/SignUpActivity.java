@@ -16,8 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Models.UserViewModel;
@@ -25,6 +25,11 @@ import com.example.myapplication.R;
 
 import java.io.IOException;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class SignUpActivity extends BaseActivity {
@@ -46,12 +51,12 @@ public class SignUpActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up2);
 
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getAllUsers().observe(this, users -> {
-            if (users != null) {
-                userList = users;
-            }
-        });
+//        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+//        userViewModel.getAllUsers().observe(this, users -> {
+//            if (users != null) {
+//                userList = users;
+//            }
+//        });
 
         nicknameEditText = findViewById(R.id.editTextNickname);
         usernameEditText = findViewById(R.id.editTextUsername);
@@ -68,25 +73,39 @@ public class SignUpActivity extends BaseActivity {
         });
 
         signUpButton.setOnClickListener(v -> {
-            String nickname = nicknameEditText.getText().toString();
+            String displayName = nicknameEditText.getText().toString();
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String confirmPassword = confirmPasswordEditText.getText().toString();
 
-            String validationMessage = checkInfo(username, password, confirmPassword);
+            String validationMessage = checkPassword(password, confirmPassword);
             if (validationMessage != null) {
                 Toast.makeText(this, validationMessage, Toast.LENGTH_SHORT).show();
             } else {
                 // Create User with selected photo Bitmap
-                User newUser = new User(nickname, username, password, selectedPhotoBitmap);
-                userViewModel.insert(newUser);
-                userViewModel.signIn(newUser);
+                User request =  new User(username, displayName, password, selectedPhotoBitmap);
+                userApi.createUser(request, new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
+                        int statusCode = response.code();
+                        if (statusCode == 200) {
+                            Toast.makeText(SignUpActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                            signedInUser = request;
+                            Intent intent = new Intent(SignUpActivity.this, MainActivity2.class);
+                            startActivity(intent);
 
-                Toast.makeText(this, "Sign up successful", Toast.LENGTH_SHORT).show();
+                            // Finish SignUpActivity so it's removed from the back stack
+                            finish();
+                        } else {
+                            Toast.makeText(SignUpActivity.this, "Username is already taken", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-                // Proceed to MainActivity after successful sign-up
-                Intent intent = new Intent(SignUpActivity.this, MainActivity2.class);
-                startActivity(intent);
+                    @Override
+                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
+                        Toast.makeText(SignUpActivity.this, "Failed to connect to server", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
@@ -135,10 +154,8 @@ public class SignUpActivity extends BaseActivity {
     }
 
 
-    private String checkInfo(String username, String password, String confirmPassword) {
-        if (isUsernameTaken(username)) {
-            return "This username is already taken";
-        } else if (!password.equals(confirmPassword)) {
+    private String checkPassword(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
             return "Passwords don't match";
         } else if (password.length() < 8) {
             return "Password needs to be at least 8 characters";
@@ -146,14 +163,5 @@ public class SignUpActivity extends BaseActivity {
             return "Password needs to have a mix of numbers and letters";
         }
         return null;
-    }
-
-    private boolean isUsernameTaken(String username) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

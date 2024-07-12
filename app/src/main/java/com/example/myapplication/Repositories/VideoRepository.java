@@ -3,6 +3,7 @@ package com.example.myapplication.Repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.API.VideoAPI;
 import com.example.myapplication.Entities.Video;
 
 import java.util.ArrayList;
@@ -10,11 +11,13 @@ import java.util.List;
 
 public class VideoRepository {
     private VideoListData videoListData;
+    private VideoAPI videoAPI;
     public VideoRepository(){
         videoListData= new VideoListData();
         //api = new VideoAPI(VideoListData);
 
     }
+
     public void setVideos(List<Video> Videos) {
         videoListData.setValue(Videos);
     }
@@ -28,11 +31,17 @@ public class VideoRepository {
         @Override
         protected void onActive(){
             super.onActive();
-            new Thread(()-> {
-                //VideoListData.VideoValue(dao.get());
-            }).start();
+            VideoAPI videoAPI = new VideoAPI();
+            videoAPI.getVideos(this);
         }
-
     }
     public LiveData<List<Video>> getAll() {return videoListData; }
+
+//    public void insert(Video video) {
+//        videoAPI.insertVideo(video);
+//    }
+
+    public void getVideoByPrefix(String prefix) {
+        videoAPI.getVideosByPrefix(prefix, videoListData);
+    }
 }

@@ -1,8 +1,13 @@
 package com.example.myapplication.Entities;
 
+import android.graphics.Bitmap;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.myapplication.API.Convertors;
 
 @Entity(tableName = "users")
 public class User {
@@ -20,10 +25,11 @@ public class User {
     private String displayName;
 
     @ColumnInfo(name = "profilePicture")
-    private String profilePicture; // Assuming the profile picture is stored as a string (URL or base64)
+    @TypeConverters(Convertors.class)
+    private Bitmap profilePicture;
 
     // Constructor
-    public User(String username, String password, String displayName, String profilePicture) {
+    public User(String username, String password, String displayName, Bitmap profilePicture) {
         this.username = username;
         this.password = password;
         this.displayName = displayName;
@@ -63,11 +69,11 @@ public class User {
         this.displayName = displayName;
     }
 
-    public String getProfilePicture() {
+    public Bitmap getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(String profilePicture) {
+    public void setProfilePicture(Bitmap profilePicture) {
         this.profilePicture = profilePicture;
     }
 }
