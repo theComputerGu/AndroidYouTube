@@ -71,8 +71,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         }
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
-            tvUserName.setText(getUserById(comment.getUserId()));
-            ivUserPic.setImageBitmap(comment.getUserId());
+            tvUserName.setText(comment.getDisplayName());
+            ivUserPic.setImageBitmap(comment.getPhoto());
             tvCommentText.setText(comment.getText());
 
             tvDelete.setOnClickListener(v -> {
