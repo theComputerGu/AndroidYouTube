@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,14 +17,10 @@ import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.Video;
-import com.example.myapplication.Models.CommentViewModel;
-import com.example.myapplication.Models.UserViewModel;
-import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
@@ -96,13 +91,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         TextView tvContent = findViewById(R.id.tvContent);
         TextView tvDate = findViewById(R.id.tvDate);
 
-        // Set the video details
-        userViewModel.getUserByUsername(currentVideo.getAuthor()).observe(this, user -> {
-            if (user != null) {
-                String username = user.getUsername();
-                tvAuthor.setText(username);
-            }
-        });
+        tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.getTimeAgo().toString());
 

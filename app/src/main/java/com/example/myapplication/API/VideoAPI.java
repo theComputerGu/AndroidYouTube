@@ -3,7 +3,7 @@ package com.example.myapplication.API;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Activities.BaseActivity;
+import com.example.myapplication.Entities.MyApplication;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
 
@@ -24,7 +24,7 @@ public class VideoAPI {
 
     public VideoAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(BaseActivity.context.getString(R.string.baseServerURL))
+                .baseUrl(MyApplication.context.getString(R.string.baseServerURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -35,8 +35,8 @@ public class VideoAPI {
         return webServiceAPI;
     }
 
-    public void createVideo(Video video, Callback<Video> callback) {
-        Call<Video> call = webServiceAPI.createVideo(video);
+    public void createVideo(Video video, Callback<ResponseBody> callback) {
+        Call<ResponseBody> call = webServiceAPI.createVideo(video);
         call.enqueue(callback);
     }
 
@@ -109,23 +109,16 @@ public class VideoAPI {
 
                     // Filter out the video with the specified videoId
                     for (Video video : allVideos) {
-                        if (!video.getId().equals(videoId)) { // Adjust this based on your Video model structure
+                        if (!video.getId().equals(videoId)) {
                             filteredList.add(video);
                         }
                     }
-
                     videos.setValue(filteredList);
-                } else {
-                    // Handle unsuccessful response
-                    // You might want to set an empty list or handle errors here
-                    videos.setValue(new ArrayList<>());
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
-                videos.setValue(new ArrayList<>());
             }
         });
     }

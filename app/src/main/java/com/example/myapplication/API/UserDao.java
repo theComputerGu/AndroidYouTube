@@ -10,9 +10,6 @@ import com.example.myapplication.Entities.User;
 
 @Dao
 public interface UserDao {
-    @Query("SELECT * FROM users WHERE id = :id")
-    User getUserById(String id);
-
     @Update
     void updateUser(User user);
 

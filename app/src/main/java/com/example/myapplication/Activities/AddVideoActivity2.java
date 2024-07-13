@@ -1,5 +1,7 @@
 package com.example.myapplication.Activities;
 
+import static com.example.myapplication.API.Convertors.bitmapToBase64;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -12,24 +14,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
-import com.example.myapplication.Models.UserViewModel;
-import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
     private static final int REQUEST_CODE_PHOTO = 1;
@@ -41,8 +39,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     private ImageView imageViewPhoto;
     private ImageView videoViewPhoto;
     private VideoAdapter videoAdapter;
-    private VideoViewModel videoViewModel;
-    private UserViewModel userViewModel;
     private List<Video> userVideos;
 
 
@@ -50,9 +46,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_video);
-
-        videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
 
         // Initialize views
         etTitle = findViewById(R.id.etTitle);
@@ -70,21 +63,14 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(null,userViewModel, VideoAdapter.VIEW_TYPE_ADD, this);
+        videoAdapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_ADD, this);
         recyclerView.setAdapter(videoAdapter);
 
         // Get signed-in user's videos
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                videoViewModel.getUserVideos(user.getId()).observe(this, videos -> {
-                    userVideos = videos;
-                    videoAdapter.updateVideos(videos);
-                });
-            }
+        userViewModel.getUserVideos(signedInUser.getId()).observe(this, videos -> {
+            userVideos = videos;
+            videoAdapter.updateVideos(videos);
         });
-
-
-
     }
     private void uploadPhoto() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -95,9 +81,9 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_VIDEO);
     }
-    private String getCurrentDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return sdf.format(new Date());
+    private static Date getCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getTime();
     }
 
     private void addVideo() {
@@ -120,30 +106,22 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             return;
         }
 
-        // Create new Video object
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                Video newVideo = new Video(title, user.getId(), getCurrentDate(), thumbnailBitmap, videoFile.getAbsolutePath());
-
-                videoViewModel.insert(newVideo);
-
-                // Observe the addition of the video
-                videoViewModel.getUserVideos(user.getId()).observe(this, videos -> {
-                    userVideos = videos;
-                    videoAdapter.updateVideos(videos);
-                });
-
-                // Show success message
+        userViewModel.createUserVideo(signedInUser.getId(),title, signedInUser.getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
+            if (result.isSuccess()) {
+                userVideos.add(new Video(title, signedInUser.getUsername(),signedInUser.getDisplayName(), getCurrentDate(),thumbnailBitmap, videoFile.getAbsolutePath()));
+                videoAdapter.updateVideos(userVideos);
                 Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
-
-                // Clear input fields or perform any other necessary actions
-                etTitle.setText("");
-                imageViewPhoto.setImageResource(0); // Clear image
-                videoViewPhoto.setImageResource(0); // Clear video thumbnail
-                videoUri = null;
-                thumbnailBitmap = null;
+            } else {
+                Toast.makeText(AddVideoActivity2.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
+        // Clear input fields or perform any other necessary actions
+        etTitle.setText("");
+        imageViewPhoto.setImageResource(0); // Clear image
+        videoViewPhoto.setImageResource(0); // Clear video thumbnail
+        videoUri = null;
+        thumbnailBitmap = null;
     }
     public boolean isTitleAvailable(String title) {
         for (Video video : userVideos) {
@@ -191,19 +169,13 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     }
     @Override
     public void onVideoClick(Video video) {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
+        userViewModel.deleteUserVideo(signedInUser.getId(), video.getId(), userViewModel.getToken()).observe(this, result -> {
+            if (result.isSuccess()) {
                 userVideos.remove(video);
-                videoAdapter.notifyDataSetChanged();
-                videoViewModel.delete(video);
-
-                // Refresh video list
-                videoViewModel.getUserVideos(user.getId()).observe(this, videos -> {
-                    userVideos = videos;
-                    videoAdapter.updateVideos(videos);
-                });
-
+                videoAdapter.updateVideos(userVideos);
                 Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(AddVideoActivity2.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
