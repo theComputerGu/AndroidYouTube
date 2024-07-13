@@ -67,7 +67,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         recyclerView.setAdapter(videoAdapter);
 
         // Get signed-in user's videos
-        userViewModel.getUserVideos(signedInUser.getId()).observe(this, videos -> {
+        userViewModel.getUserVideos(signedInUser.getUserId()).observe(this, videos -> {
             userVideos = videos;
             videoAdapter.updateVideos(videos);
         });
@@ -106,7 +106,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             return;
         }
 
-        userViewModel.createUserVideo(signedInUser.getId(),title, signedInUser.getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
+        userViewModel.createUserVideo(signedInUser.getUserId(),title, signedInUser.getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
             if (result.isSuccess()) {
                 userVideos.add(new Video(title, signedInUser.getUsername(),signedInUser.getDisplayName(), getCurrentDate(),thumbnailBitmap, videoFile.getAbsolutePath()));
                 videoAdapter.updateVideos(userVideos);
@@ -169,7 +169,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     }
     @Override
     public void onVideoClick(Video video) {
-        userViewModel.deleteUserVideo(signedInUser.getId(), video.getId(), userViewModel.getToken()).observe(this, result -> {
+        userViewModel.deleteUserVideo(signedInUser.getUserId(), video.getVideoId(), userViewModel.getToken()).observe(this, result -> {
             if (result.isSuccess()) {
                 userVideos.remove(video);
                 videoAdapter.updateVideos(userVideos);

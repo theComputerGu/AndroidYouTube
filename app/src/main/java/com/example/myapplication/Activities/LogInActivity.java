@@ -12,7 +12,6 @@ import com.example.myapplication.R;
 public class LogInActivity extends BaseActivity {
     private EditText editTextUsername;
     private EditText editTextPassword;
-    private Button buttonLogIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +20,7 @@ public class LogInActivity extends BaseActivity {
 
         editTextUsername = findViewById(R.id.editTextText);
         editTextPassword = findViewById(R.id.editTextTextPassword);
-        buttonLogIn = findViewById(R.id.buttonLogIn);
+        Button buttonLogIn = findViewById(R.id.buttonLogIn);
 
         buttonLogIn.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();

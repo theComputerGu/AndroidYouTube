@@ -2,6 +2,7 @@ package com.example.myapplication.Entities;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -12,7 +13,8 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "comments")
 public class Comment {
-
+    @PrimaryKey
+    @NonNull
     @SerializedName("_id")
     private String commentId;
     @ColumnInfo(name = "username")

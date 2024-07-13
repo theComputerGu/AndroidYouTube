@@ -109,7 +109,7 @@ public class VideoAPI {
 
                     // Filter out the video with the specified videoId
                     for (Video video : allVideos) {
-                        if (!video.getId().equals(videoId)) {
+                        if (!video.getVideoId().equals(videoId)) {
                             filteredList.add(video);
                         }
                     }

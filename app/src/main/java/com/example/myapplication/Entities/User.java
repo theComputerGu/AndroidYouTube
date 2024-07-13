@@ -2,8 +2,10 @@ package com.example.myapplication.Entities;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
@@ -11,7 +13,8 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "users")
 public class User {
-
+    @PrimaryKey
+    @NonNull
     @SerializedName("_id")
     private String userId;
 
@@ -37,11 +40,11 @@ public class User {
     }
 
     // Getters and setters
-    public String getId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setId(String id) {
+    public void setUserId(String id) {
         this.userId = id;
 
     }
