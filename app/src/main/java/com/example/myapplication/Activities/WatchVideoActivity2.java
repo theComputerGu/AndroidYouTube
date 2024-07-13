@@ -30,13 +30,8 @@ import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
     private Video currentVideo;
-    private List<Video> otherVideos;
     private TextView tvLikes;
     private TextView tvDislikes;
-    private TextView tvShares;
-    private VideoViewModel videoViewModel;
-    private UserViewModel userViewModel;
-    private CommentViewModel commentViewModel;
     private CommentAdapter commentAdapter;
     private VideoAdapter videoAdapter;
 
@@ -96,7 +91,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Initialize the TextViews
         tvLikes = findViewById(R.id.tvLikes);
         tvDislikes = findViewById(R.id.tvDislikes);
-        tvShares = findViewById(R.id.tvShares);
 
         // Initialize the video details TextViews
         TextView tvAuthor = findViewById(R.id.tvAuthor);
@@ -116,7 +110,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Initialize the like, dislike, and share counts
         tvLikes.setText(String.valueOf(currentVideo.getLikes()));
         tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
-        tvShares.setText(String.valueOf(currentVideo.getShares()));
 
         // Setup the VideoView
         VideoView videoView = findViewById(R.id.videoView);

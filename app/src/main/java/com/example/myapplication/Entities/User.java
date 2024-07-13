@@ -4,16 +4,16 @@ import android.graphics.Bitmap;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "users")
 public class User {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @SerializedName("_id")
+    private String userId;
 
     @ColumnInfo(name = "username")
     private String username;
@@ -37,12 +37,12 @@ public class User {
     }
 
     // Getters and setters
-    public int getId() {
-        return id;
+    public String getId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String id) {
+        this.userId = id;
     }
 
     public String getUsername() {

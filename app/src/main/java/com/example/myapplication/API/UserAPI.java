@@ -1,16 +1,15 @@
 package com.example.myapplication.API;
 
-import androidx.annotation.NonNull;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Activities.BaseActivity;
+import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
-import com.google.gson.Gson;
 
-import java.io.IOException;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -36,42 +35,49 @@ public class UserAPI {
         return webServiceAPI;
     }
 
-    public void createUser(User user, Callback<ResponseBody> callback) {
+    public void createUser(User user, MutableLiveData<Result> result) {
         Call<ResponseBody> call = webServiceAPI.createUser(user);
-        call.enqueue(callback);
-    }
-
-    public void login(UserCredentials credentials, Callback<TokenResponse> callback) {
-        Call<ResponseBody> call = webServiceAPI.login(credentials);
-
         call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        String responseBody = response.body().string();
-                        Gson gson = new Gson();
-                        TokenResponse tokenResponse = gson.fromJson(responseBody, TokenResponse.class);
-                        callback.onResponse(call, Response.success(tokenResponse));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        callback.onFailure(call, e);
-                    }
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(new Result(true, null));
                 } else {
-                    try {
-                        String errorBody = response.errorBody().string();
-                        callback.onFailure(call, new Throwable(errorBody));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        callback.onFailure(call, new Throwable("Login failed"));
-                    }
+                    // Customize this message based on the specific response
+                    String errorMessage = "Failed to create user: " + response.message();
+                    result.setValue(new Result(false, errorMessage));
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                t.printStackTrace();
-                callback.onFailure(call, t);
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String errorMessage = "Network error: " + t.getMessage();
+                result.setValue(new Result(false, errorMessage));
+            }
+        });
+    }
+
+
+
+    public void login(String username, String password, MutableLiveData<Result> result) {
+        UserCredentials credentials = new UserCredentials(username, password);
+        Call<ResponseBody> call = webServiceAPI.login(credentials);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(new Result(true, null));
+                } else {
+                    // Customize this message based on the specific response
+                    String errorMessage = "Failed to create user: " + response.message();
+                    result.setValue(new Result(false, errorMessage));
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String errorMessage = "Network error: " + t.getMessage();
+                result.setValue(new Result(false, errorMessage));
             }
         });
     }
