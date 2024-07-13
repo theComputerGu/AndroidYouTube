@@ -124,8 +124,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
 
     private void setupCommentSection() {
-        // Observe comments for the current video
-        commentViewModel.getCommentsByVideoId(currentVideo.getId()).observe(this, comments -> {
+        commentViewModel.get().observe(this, comments -> {
             commentAdapter.updateData(comments);
         });
     }
@@ -140,55 +139,54 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
 
     private void addComment() {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                EditText commentEditText = findViewById(R.id.commentEditText);
-                String commentContent = commentEditText.getText().toString().trim();
-
+        if ( signedInUser != null ) {
+            EditText commentEditText = findViewById(R.id.commentEditText);
+            String commentContent = commentEditText.getText().toString().trim();
+            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
                 if (!commentContent.isEmpty()) {
-                    Comment comment = new Comment(commentContent, user.getId(), getCurrentDate(), currentVideo.getId());
-                    commentViewModel.insert(comment);
+                    Comment comment = new Comment(user.getAuthor(), currentVideo.getTitle(),user.getPhoto() ,currentVideo.getId(),commentContent);
+                    commentViewModel.createComment(comment);
                     commentEditText.setText("");
                 } else {
                     Toast.makeText(this, "Please enter a comment.", Toast.LENGTH_SHORT).show();
                 }
-            } else {
-                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        } else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
     private void dislikeVideo() {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                if (currentVideo.getUsersDislike().contains(user.getUsername())) {
+        if ( signedInUser != null ) {
+            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
+                if (currentVideo.getDislikedBy().contains(signedInUser.getUsername())) {
                     Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
-                    currentVideo.incrementDislikes(user.getUsername());
+                    currentVideo.incrementDislikes(signedInUser.getUsername());
                     tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
-                    videoViewModel.update(currentVideo);
                 }
-            } else {
-                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void likeVideo() {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null) {
-                if (currentVideo.getUsersLike().contains(user.getUsername())) {
+        if ( signedInUser != null ) {
+            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
+                if (currentVideo.getLikedBy().contains(signedInUser.getUsername())) {
                     Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
-                    currentVideo.incrementLikes(user.getUsername());
+                    currentVideo.incrementLikes(signedInUser.getUsername());
                     tvLikes.setText(String.valueOf(currentVideo.getLikes()));
-                    videoViewModel.update(currentVideo);
                 }
-            } else {
-                Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
+        }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String getCurrentDate() {
@@ -206,13 +204,19 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     @Override
     public void onCommentDelete(Comment comment) {
-        userViewModel.getSignedInUser().observe(this, user -> {
-            if (user != null && user.getId() == (comment.getUserId())) {
-                commentViewModel.delete(comment);
-                Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
-            }
-        });
+
+        if ( signedInUser != null ) {
+            commentViewModel.getComments(comment).observe(this, user -> {
+                if (signedInUser.getUsername().equals (comment.getUsername())) {
+                    commentViewModel.deleteComment(comment);
+                    Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -25,16 +25,16 @@ public interface WebServiceAPI {
 
     // Comment-related API calls
     @GET("videos/{id}/comments")
-    Call<List<Comment>> getComments(@Header("Authorization") String token, @Path("id") String videoId);
+    Call<List<Comment>> getComments(@Path("id") String videoId);
 
     @POST("videos/{id}/comments")
-    Call<Comment> createComment(@Header("Authorization") String token, @Body Comment comment, @Path("id") String videoId);
+    Call<Comment> createComment(@Header("Authorization") Comment comment, @Path("id") String videoId);
 
     @PUT("videos/{id}/comments/{cid}")
     Call<Comment> updateComment(@Header("Authorization") String token, @Path("cid") String commentId, @Body UpdateComment comment);
 
     @DELETE("videos/{id}/comments/{cid}")
-    Call<ResponseBody> deleteComment(@Header("Authorization") String token, @Path("id") String videoId, @Path("cid") String commentId);
+    Call<ResponseBody> deleteComment(@Path("id") String videoId, @Path("cid") String commentId);
 
     @DELETE("videos/{id}/comments")
     Call<ResponseBody> deleteComments(@Header("Authorization") String token, @Path("id") String videoId);

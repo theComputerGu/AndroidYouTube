@@ -8,14 +8,13 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "comments")
 public class Comment {
 
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id")
-    private int id;
-
+    @SerializedName("_id")
+    private String commentId;
     @ColumnInfo(name = "username")
     private String username;
 
@@ -42,14 +41,13 @@ public class Comment {
 
     // Getters and setters for all fields
 
-    public int getId() {
-        return id;
+    public String getCommentId() {
+        return commentId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
     }
-
     public String getUsername() {
         return username;
     }
