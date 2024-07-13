@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.User;
+import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Repositories.UserRepository;
 
 import java.util.List;
@@ -21,11 +22,19 @@ public class UserViewModel extends ViewModel {
         mRepository.setUsers(u);
     }
 
+
     public LiveData<Result> getLoginResult(String username, String password) {
         return mRepository.login(username, password);
     }
 
     public LiveData<Result> getCreateUserResult(User user) {
         return mRepository.createUser(user);
+
+    public LiveData<User> getUserById(String idOfUser){
+        mRepository.getUserById(idOfUser);
+    }
+
+    public LiveData<User> getUserByUsername(String username){
+        mRepository.getUserByUsername(username);
     }
 }

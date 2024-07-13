@@ -1,5 +1,7 @@
 package com.example.myapplication.API;
 
+import androidx.annotation.NonNull;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Activities.BaseActivity;
@@ -88,14 +90,44 @@ public class UserAPI {
         call.enqueue(callback);
     }
 
-    public void getUserByUsername(String username, Callback<User> callback) {
+    public void getUserByUsername(String username, MutableLiveData<User> user) {
         Call<User> call = webServiceAPI.getUserByUsername(username);
-        call.enqueue(callback);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful()) {
+                    user.setValue(response.body());
+                } else {
+                    // Handle the case where the video is not found or some other error occurred
+                    user.setValue(null);
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                user.setValue(null);
+            }
+        });
     }
 
-    public void getUserById(String id, Callback<User> callback) {
+    public void getUserById(String id, MutableLiveData<User> user) {
         Call<User> call = webServiceAPI.getUserById(id);
-        call.enqueue(callback);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful()) {
+                    user.setValue(response.body());
+                } else {
+                    // Handle the case where the video is not found or some other error occurred
+                    user.setValue(null);
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                user.setValue(null);
+            }
+        });
     }
 
     public void getUserByIdWithPassword(String id, Callback<User> callback) {
