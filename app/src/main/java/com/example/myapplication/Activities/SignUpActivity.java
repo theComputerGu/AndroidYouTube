@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.myapplication.Entities.User;
@@ -25,11 +24,6 @@ import com.example.myapplication.R;
 
 import java.io.IOException;
 import java.util.List;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class SignUpActivity extends BaseActivity {
@@ -83,27 +77,12 @@ public class SignUpActivity extends BaseActivity {
                 Toast.makeText(this, validationMessage, Toast.LENGTH_SHORT).show();
             } else {
                 // Create User with selected photo Bitmap
-                User request =  new User(username, displayName, password, selectedPhotoBitmap);
-                userApi.createUser(request, new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ResponseBody> call, @NonNull Response<ResponseBody> response) {
-                        int statusCode = response.code();
-                        if (statusCode == 200) {
-                            Toast.makeText(SignUpActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                            signedInUser = request;
-                            Intent intent = new Intent(SignUpActivity.this, MainActivity2.class);
-                            startActivity(intent);
-
-                            // Finish SignUpActivity so it's removed from the back stack
-                            finish();
-                        } else {
-                            Toast.makeText(SignUpActivity.this, "Username is already taken", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ResponseBody> call, @NonNull Throwable t) {
-                        Toast.makeText(SignUpActivity.this, "Failed to connect to server", Toast.LENGTH_SHORT).show();
+                User newUser =  new User(username, displayName, password, selectedPhotoBitmap);
+                userViewModel.getCreateUserResult(newUser).observe(this, result -> {
+                    if (result.isSuccess()) {
+                        Toast.makeText(SignUpActivity.this, "Created user successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(SignUpActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }

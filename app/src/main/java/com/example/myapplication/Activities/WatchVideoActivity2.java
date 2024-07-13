@@ -30,13 +30,8 @@ import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
     private Video currentVideo;
-    private List<Video> otherVideos;
     private TextView tvLikes;
     private TextView tvDislikes;
-    private TextView tvShares;
-    private VideoViewModel videoViewModel;
-    private UserViewModel userViewModel;
-    private CommentViewModel commentViewModel;
     private CommentAdapter commentAdapter;
     private VideoAdapter videoAdapter;
 

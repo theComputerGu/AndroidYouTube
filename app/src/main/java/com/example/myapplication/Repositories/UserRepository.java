@@ -4,6 +4,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.API.UserAPI;
+
+import com.example.myapplication.Entities.Result;
+
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.Video;
 
@@ -12,12 +15,13 @@ import java.util.List;
 
 public class UserRepository {
     private UserRepository.UserListData userListData;
+    private UserAPI userAPI;
 
     private UserAPI userAPI;
 
     public UserRepository(){
         userListData=new UserRepository.UserListData();
-        //api = new PostAPI(postListData);
+        userAPI = new UserAPI();
 
     }
     public void setUsers(List<User> users) {
@@ -39,6 +43,19 @@ public class UserRepository {
     }
     public LiveData<List<User>> getAll() {return userListData; }
 
+
+    public MutableLiveData<Result> login(String username, String password) {
+        MutableLiveData<Result> loginResult = new MutableLiveData<>();
+        userAPI.login(username, password, loginResult);
+        return loginResult;
+    }
+
+    public MutableLiveData<Result> createUser(User user) {
+        MutableLiveData<Result> Result = new MutableLiveData<>();
+        userAPI.createUser(user, Result);
+        return Result;
+    }
+
     public MutableLiveData<User> getUserById(String idOfUser) {
         MutableLiveData<User> userData = new MutableLiveData<>();
         userAPI.getUserById(idOfUser, userData);
@@ -50,5 +67,4 @@ public class UserRepository {
         userAPI.getUserByUsername(username, userData);
         return userData;
     }
-
 }
