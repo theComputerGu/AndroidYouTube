@@ -8,12 +8,14 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "users")
 public class User {
 
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+
+    @SerializedName("_id")
+    private String userId;
 
     @ColumnInfo(name = "username")
     private String username;
@@ -36,13 +38,12 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    // Getters and setters
-    public int getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
