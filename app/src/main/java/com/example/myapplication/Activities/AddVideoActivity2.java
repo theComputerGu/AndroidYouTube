@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.API.Converters;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.io.File;
@@ -170,7 +171,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     }
     @Override
     public void onVideoClick(Video video) {
-        userViewModel.deleteUserVideo(signedInUser.getUserId(), video.getVideoId(), userViewModel.getToken()).observe(this, result -> {
+        userViewModel.deleteUserVideo(signedInUser.getUserId(), video.getVideoId(), Helper.getToken()).observe(this, result -> {
             if (result.isSuccess()) {
                 userVideos.remove(video);
                 videoAdapter.updateVideos(userVideos);

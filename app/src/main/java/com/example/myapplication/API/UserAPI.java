@@ -4,20 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Helper;
+import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
-import com.example.myapplication.Entities.UserLoginResponse;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,42 +33,17 @@ public class UserAPI {
     private WebServiceAPI webServiceAPI;
 
     public UserAPI() {
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         webServiceAPI = retrofit.create(WebServiceAPI.class);
     }
 
-    public LiveData<Result> login(String username, String password) {
-        MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
-
-        webServiceAPI.login(new UserCredentials(username, password))
-                .enqueue(new Callback<UserLoginResponse>() {
-                    @Override
-                    public void onResponse(Call<UserLoginResponse> call, Response<UserLoginResponse> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            // Save the token using UserLoginResponse
-                            response.body().saveToken(Helper.context);
-                            resultLiveData.setValue(new Result(true, null));
-                        } else {
-                            String errorMessage = "Login failed: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserLoginResponse> call, Throwable t) {
-                        String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
-                    }
-                });
-
-        return resultLiveData;
-    }
-    public String getToken() {
-        return UserLoginResponse.getToken(Helper.context);
-    }
 
     public WebServiceAPI getWebServiceAPI() {
         return webServiceAPI;
@@ -78,21 +55,48 @@ public class UserAPI {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    result.setValue(new Result(true, null));
+                    result.setValue(new Result(true,null, null));
                 } else {
                     // Customize this message based on the specific response
                     String errorMessage = "Failed to create user: " + response.message();
-                    result.setValue(new Result(false, errorMessage));
+                    result.setValue(new Result(false,null, errorMessage));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String errorMessage = "Network error: " + t.getMessage();
-                result.setValue(new Result(false, errorMessage));
+                result.setValue(new Result(false,null, errorMessage));
             }
         });
     }
+
+    public LiveData<Result<String>> login(String username, String password) {
+        MutableLiveData<Result<String>> resultLiveData = new MutableLiveData<>();
+
+        webServiceAPI.login(new UserCredentials(username, password)).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resultLiveData.postValue(new Result<>(true, response.body(), null));
+                } else {
+                    String errorMessage = "Login failed: " + response.message();
+                    resultLiveData.postValue(new Result<>(false, null, errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                String errorMessage = "Network error: " + t.getMessage();
+                resultLiveData.postValue(new Result<>(false, null, errorMessage));
+            }
+        });
+
+        return resultLiveData;
+    }
+
+
+
     public MutableLiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
         MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
 
@@ -114,17 +118,17 @@ public class UserAPI {
                     @Override
                     public void onResponse(Call<Video> call, Response<Video> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            resultLiveData.setValue(new Result(true, null));
+                            resultLiveData.setValue(new Result(true,null, null));
                         } else {
                             String errorMessage = "Failed to create video: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
+                            resultLiveData.setValue(new Result(false,null, errorMessage));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Video> call, Throwable t) {
                         String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
+                        resultLiveData.setValue(new Result(false,null, errorMessage));
                     }
                 });
 
@@ -157,25 +161,27 @@ public class UserAPI {
         });
     }
 
-    public void getUserById(String id, MutableLiveData<User> user) {
-        Call<User> call = webServiceAPI.getUserById(id);
-        call.enqueue(new Callback<User>() {
+    public LiveData<User> getUserById(String id) {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        webServiceAPI.getUserById(id).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    user.setValue(response.body());
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    userLiveData.setValue(response.body());
                 } else {
-                    // Handle the case where the video is not found or some other error occurred
-                    user.setValue(null);
+                    userLiveData.setValue(null); // Handle error case
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
-                user.setValue(null);
+                userLiveData.setValue(null); // Handle failure case
             }
         });
+        return userLiveData;
     }
+
 
     public void getUserByIdWithPassword(String id, Callback<User> callback) {
         Call<User> call = webServiceAPI.getUserByIdWithPassword(id);
@@ -205,17 +211,17 @@ public class UserAPI {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            resultLiveData.setValue(new Result(true, null));
+                            resultLiveData.setValue(new Result(true,null, null));
                         } else {
                             String errorMessage = "Failed to delete video: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
+                            resultLiveData.setValue(new Result(false,null, errorMessage));
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
+                        resultLiveData.setValue(new Result(false,null, errorMessage));
                     }
                 });
 

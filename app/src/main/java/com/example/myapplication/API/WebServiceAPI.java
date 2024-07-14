@@ -5,7 +5,6 @@ import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
-import com.example.myapplication.Entities.UserLoginResponse;
 import com.example.myapplication.Entities.Video;
 
 import java.util.List;
@@ -46,8 +45,8 @@ public interface WebServiceAPI {
     @POST("users")
     Call<ResponseBody> createUser(@Body User user);
 
-    @POST("login")
-    Call<UserLoginResponse> login(@Body UserCredentials credentials);
+    @POST("/login")
+    Call<String> login(@Body UserCredentials credentials);
 
     @GET("users/{username}")
     Call<User> getUser(@Header("Authorization") String token, @Path("username") String username);

@@ -2,11 +2,13 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 public class LogInActivity extends BaseActivity {
@@ -29,13 +31,13 @@ public class LogInActivity extends BaseActivity {
             if (!username.isEmpty() && !password.isEmpty()) {
                 userViewModel.login(username, password).observe(this, result -> {
                     if (result.isSuccess()) {
-                        // Proceed to the next activity
+                        Helper.setToken(result.getData());
+                        Helper.setSignedInUser(userViewModel.getUserByUsername(username).getValue());
                         Toast.makeText(LogInActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-                        signedInUser = userViewModel.getUserByUsername(username).getValue();
+                        Log.d("Login successful!", Helper.getSignedInUser().getUsername());
                         Intent intent = new Intent(this, MainActivity2.class);
                         startActivity(intent);
                         finish();
-
                     } else {
                         Toast.makeText(LogInActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
