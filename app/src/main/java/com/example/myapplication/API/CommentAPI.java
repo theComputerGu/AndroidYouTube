@@ -24,7 +24,7 @@ public class CommentAPI {
 
     public CommentAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(Helper.context.getString(R.string.baseServerURL))
+                .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
