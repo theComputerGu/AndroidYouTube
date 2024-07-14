@@ -1,14 +1,10 @@
 package com.example.myapplication.Entities;
 
-import android.graphics.Bitmap;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
-import com.example.myapplication.API.Convertors;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "comments")
@@ -24,8 +20,7 @@ public class Comment {
     private String displayName;
 
     @ColumnInfo(name = "photo")
-    @TypeConverters(Convertors.class)
-    private Bitmap photo;
+    private String photo;
 
     @ColumnInfo(name = "videoId")
     private String videoId;
@@ -33,7 +28,7 @@ public class Comment {
     @ColumnInfo(name = "text")
     private String text;
 
-    public Comment(String username, String displayName, Bitmap photo, String videoId, String text) {
+    public Comment(String username, String displayName, String photo, String videoId, String text) {
         this.username = username;
         this.displayName = displayName;
         this.photo = photo;
@@ -66,11 +61,11 @@ public class Comment {
         this.displayName = displayName;
     }
 
-    public Bitmap getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(Bitmap photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

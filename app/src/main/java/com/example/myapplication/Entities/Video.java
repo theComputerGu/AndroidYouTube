@@ -1,14 +1,12 @@
 package com.example.myapplication.Entities;
 
-import android.graphics.Bitmap;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.myapplication.API.Convertors;
+import com.example.myapplication.API.Converters;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -19,6 +17,7 @@ public class Video {
     @PrimaryKey
     @NonNull
     @SerializedName("_id")
+    @ColumnInfo(name = "video_id")
     private String videoId;
 
     @ColumnInfo(name = "title")
@@ -32,14 +31,14 @@ public class Video {
 
 
     @ColumnInfo(name = "time_ago")
+    @TypeConverters(Converters.class)
     private Date timeAgo;
 
     @ColumnInfo(name = "views")
     private int views;
 
     @ColumnInfo(name = "photo")
-    @TypeConverters(Convertors.class)
-    private Bitmap photo;
+    private String photo;
 
     @ColumnInfo(name = "path")
     private String path;
@@ -62,7 +61,7 @@ public class Video {
     @ColumnInfo(name = "comments")
     private List<String> comments;
 
-    public Video(String title, String author,String authorDisplayName, Date timeAgo, Bitmap photo, String path) {
+    public Video(String title, String author,String authorDisplayName, Date timeAgo, String photo, String path) {
         this.title = title;
         this.author = author;
         this.authorDisplayName = authorDisplayName;
@@ -124,11 +123,11 @@ public class Video {
         this.views = views;
     }
 
-    public Bitmap getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(Bitmap photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

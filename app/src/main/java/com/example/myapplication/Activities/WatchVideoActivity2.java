@@ -56,7 +56,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         recyclerView.setAdapter(videoAdapter);
 
         videoViewModel.getVideosExcept(selectedVideoId);
-        videoViewModel.get().observe(this, videos -> {
+        videoViewModel.getVideoListData().observe(this, videos -> {
             videoAdapter.updateVideos(videos);
         });
 
@@ -117,7 +117,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
         videoViewModel.getVideosExcept(currentVideo.getVideoId());
-        videoViewModel.get().observe(this, videos -> {
+        videoViewModel.getVideoListData().observe(this, videos -> {
             videoAdapter.updateVideos(videos);
         });
     }

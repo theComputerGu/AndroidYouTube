@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.example.myapplication.API.Converters;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.R;
@@ -75,7 +76,7 @@ public class SignUpActivity extends BaseActivity {
                 Toast.makeText(this, validationMessage, Toast.LENGTH_SHORT).show();
             } else {
                 // Create User with selected photo Bitmap
-                User newUser =  new User(username, displayName, password, selectedPhotoBitmap);
+                User newUser =  new User(username, displayName, password, Converters.bitmapToBase64(selectedPhotoBitmap));
                 userViewModel.getCreateUserResult(newUser).observe(this, result -> {
                     if (result.isSuccess()) {
                         Toast.makeText(SignUpActivity.this, "Created user successfully", Toast.LENGTH_SHORT).show();

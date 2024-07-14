@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-public class Convertors {
+public class Converters {
     static Gson gson = new Gson();
     @TypeConverter
     public static String fromList(List<String> list) {

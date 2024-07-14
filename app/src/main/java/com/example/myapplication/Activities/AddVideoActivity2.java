@@ -1,6 +1,6 @@
 package com.example.myapplication.Activities;
 
-import static com.example.myapplication.API.Convertors.bitmapToBase64;
+import static com.example.myapplication.API.Converters.bitmapToBase64;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.API.Converters;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
@@ -108,7 +109,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
 
         userViewModel.createUserVideo(signedInUser.getUserId(),title, signedInUser.getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
             if (result.isSuccess()) {
-                userVideos.add(new Video(title, signedInUser.getUsername(),signedInUser.getDisplayName(), getCurrentDate(),thumbnailBitmap, videoFile.getAbsolutePath()));
+                userVideos.add(new Video(title, signedInUser.getUsername(),signedInUser.getDisplayName(), getCurrentDate(), Converters.bitmapToBase64(thumbnailBitmap), videoFile.getAbsolutePath()));
                 videoAdapter.updateVideos(userVideos);
                 Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
             } else {

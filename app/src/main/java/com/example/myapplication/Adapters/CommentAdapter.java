@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.API.Converters;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.R;
 
@@ -70,7 +71,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
             tvUserName.setText(comment.getDisplayName());
-            ivUserPic.setImageBitmap(comment.getPhoto());
+            ivUserPic.setImageBitmap(Converters.base64ToBitmap(comment.getPhoto()));
             tvCommentText.setText(comment.getText());
 
             tvDelete.setOnClickListener(v -> {
