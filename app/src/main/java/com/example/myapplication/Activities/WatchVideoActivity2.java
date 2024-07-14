@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,14 +17,10 @@ import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.Video;
-import com.example.myapplication.Models.CommentViewModel;
-import com.example.myapplication.Models.UserViewModel;
-import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
@@ -96,13 +91,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         TextView tvContent = findViewById(R.id.tvContent);
         TextView tvDate = findViewById(R.id.tvDate);
 
-        // Set the video details
-        userViewModel.getUserByUsername(currentVideo.getAuthor()).observe(this, user -> {
-            if (user != null) {
-                String username = user.getUsername();
-                tvAuthor.setText(username);
-            }
-        });
+        tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.getTimeAgo().toString());
 
@@ -127,7 +116,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
-        videoViewModel.getVideosExcept(currentVideo.getId());
+        videoViewModel.getVideosExcept(currentVideo.getVideoId());
         videoViewModel.get().observe(this, videos -> {
             videoAdapter.updateVideos(videos);
         });
@@ -137,9 +126,9 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         if ( signedInUser != null ) {
             EditText commentEditText = findViewById(R.id.commentEditText);
             String commentContent = commentEditText.getText().toString().trim();
-            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
+            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
                 if (!commentContent.isEmpty()) {
-                    Comment comment = new Comment(user.getAuthor(), currentVideo.getTitle(),user.getPhoto() ,currentVideo.getId(),commentContent);
+                    Comment comment = new Comment(user.getAuthor(), currentVideo.getTitle(),user.getPhoto() ,currentVideo.getVideoId(),commentContent);
                     commentViewModel.createComment(comment);
                     commentEditText.setText("");
                 } else {
@@ -154,7 +143,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void dislikeVideo() {
         if ( signedInUser != null ) {
-            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
+            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
                 if (currentVideo.getDislikedBy().contains(signedInUser.getUsername())) {
                     Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
@@ -170,7 +159,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void likeVideo() {
         if ( signedInUser != null ) {
-            videoViewModel.getVideoById(currentVideo.getId()).observe(this, user -> {
+            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
                 if (currentVideo.getLikedBy().contains(signedInUser.getUsername())) {
                     Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
@@ -192,7 +181,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
-        intent.putExtra("selectedVideoId", video.getId());
+        intent.putExtra("selectedVideoId", video.getVideoId());
         startActivity(intent);
         finish();
     }

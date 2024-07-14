@@ -2,8 +2,10 @@ package com.example.myapplication.Entities;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import com.example.myapplication.API.Convertors;
@@ -14,7 +16,8 @@ import java.util.Date;
 import java.util.List;
 @Entity(tableName = "videos")
 public class Video {
-
+    @PrimaryKey
+    @NonNull
     @SerializedName("_id")
     private String videoId;
 
@@ -74,11 +77,10 @@ public class Video {
         this.comments = new ArrayList<>();
     }
 
-    public String getId() {
+    public String getVideoId() {
         return videoId;
     }
-
-    public void setId(String id) {
+    public void setVideoId(String id) {
         this.videoId = id;
     }
 

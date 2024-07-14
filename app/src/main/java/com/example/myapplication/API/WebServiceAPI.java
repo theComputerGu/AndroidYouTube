@@ -5,17 +5,20 @@ import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
+import com.example.myapplication.Entities.UserLoginResponse;
 import com.example.myapplication.Entities.Video;
 
 import java.util.List;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -44,7 +47,7 @@ public interface WebServiceAPI {
     Call<ResponseBody> createUser(@Body User user);
 
     @POST("login")
-    Call<ResponseBody> login(@Body UserCredentials credentials);
+    Call<UserLoginResponse> login(@Body UserCredentials credentials);
 
     @GET("users/{username}")
     Call<User> getUser(@Header("Authorization") String token, @Path("username") String username);
@@ -70,13 +73,14 @@ public interface WebServiceAPI {
     @GET("users/{id}/videos")
     Call<List<Video>> getUserVideos(@Header("Authorization") String token, @Path("id") String userId);
 
-    @POST("videos")
+    @Multipart
+    @POST("users/{id}/videos")
     Call<Video> createUserVideo(
-            @Header("Authorization") String token,
-            @Part("title") String title,
-            @Part("author") String author,
+            @Path("id") String userId,
+            @Part("title") RequestBody title,
+            @Part("author") RequestBody author,
             @Part MultipartBody.Part videoFile,
-            @Part("photo") String photo
+            @Part("photo") RequestBody photo
     );
 
     @PUT("videos/{id}/{pid}")
@@ -87,15 +91,15 @@ public interface WebServiceAPI {
             @Path("title") String title
     );
 
-    @DELETE("videos/{id}/{pid}")
-    Call<List<Video>> deleteUserVideo(
-            @Header("Authorization") String token,
+    @DELETE("users/{id}/videos/{pid}")
+    Call<ResponseBody> deleteUserVideo(
+            @Path("id") String userId,
             @Path("pid") String videoId,
-            @Path("id") String userId
+            @Header("Authorization") String token
     );
 
     @POST("videos")
-    Call<Video> createVideo(@Body Video video);
+    Call<ResponseBody> createVideo(@Body Video video);
 
     @GET("videos")
     Call<List<Video>> getVideos();
@@ -112,5 +116,7 @@ public interface WebServiceAPI {
     @GET("videos/prefix/{prefix}")
     Call<List<Video>> getVideosByPrefix(@Path("prefix") String prefix);
 
+    @GET("users/{id}/videos")
+    Call<List<Video>> getUserVideos(@Path("id") String userId);
 
 }

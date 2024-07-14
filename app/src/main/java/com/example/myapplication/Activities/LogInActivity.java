@@ -12,7 +12,6 @@ import com.example.myapplication.R;
 public class LogInActivity extends BaseActivity {
     private EditText editTextUsername;
     private EditText editTextPassword;
-    private Button buttonLogIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,18 +20,24 @@ public class LogInActivity extends BaseActivity {
 
         editTextUsername = findViewById(R.id.editTextText);
         editTextPassword = findViewById(R.id.editTextTextPassword);
-        buttonLogIn = findViewById(R.id.buttonLogIn);
+        Button buttonLogIn = findViewById(R.id.buttonLogIn);
 
         buttonLogIn.setOnClickListener(v -> {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
             if (!username.isEmpty() && !password.isEmpty()) {
-                userViewModel.getLoginResult(username, password).observe(this, loginResult -> {
-                    if (loginResult.isSuccess()) {
+                userViewModel.login(username, password).observe(this, result -> {
+                    if (result.isSuccess()) {
+                        // Proceed to the next activity
                         Toast.makeText(LogInActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                        signedInUser = userViewModel.getUserByUsername(username).getValue();
+                        Intent intent = new Intent(this, MainActivity2.class);
+                        startActivity(intent);
+                        finish();
+
                     } else {
-                        Toast.makeText(LogInActivity.this, loginResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LogInActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {

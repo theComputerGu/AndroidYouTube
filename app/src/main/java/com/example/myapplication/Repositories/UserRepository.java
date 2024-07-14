@@ -4,12 +4,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.API.UserAPI;
-
 import com.example.myapplication.Entities.Result;
-
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.Video;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +16,9 @@ public class UserRepository {
     private UserRepository.UserListData userListData;
     private UserAPI userAPI;
 
-    private UserAPI userAPI;
-
-    public UserRepository(){
-        userListData=new UserRepository.UserListData();
-        userAPI = new UserAPI();
-
+    public UserRepository() {
+        userListData = new UserListData();
+        this.userAPI = new UserAPI();
     }
     public void setUsers(List<User> users) {
         userListData.setValue(users);
@@ -43,11 +39,11 @@ public class UserRepository {
     }
     public LiveData<List<User>> getAll() {return userListData; }
 
-
-    public MutableLiveData<Result> login(String username, String password) {
-        MutableLiveData<Result> loginResult = new MutableLiveData<>();
-        userAPI.login(username, password, loginResult);
-        return loginResult;
+    public LiveData<Result> login(String username, String password) {
+        return userAPI.login(username, password);
+    }
+    public String getToken() {
+        return userAPI.getToken();
     }
 
     public MutableLiveData<Result> createUser(User user) {
@@ -66,5 +62,15 @@ public class UserRepository {
         MutableLiveData<User> userData = new MutableLiveData<>();
         userAPI.getUserByUsername(username, userData);
         return userData;
+    }
+    public LiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
+        return userAPI.createUserVideo(userId, title, author, videoFile, photo);
+    }
+    public LiveData<Result> deleteUserVideo(String userId, String videoId, String token) {
+        return userAPI.deleteUserVideo(userId, videoId, token);
+    }
+
+    public LiveData<List<Video>> getUserVideos(String userId) {
+        return userAPI.getUserVideos(userId);
     }
 }

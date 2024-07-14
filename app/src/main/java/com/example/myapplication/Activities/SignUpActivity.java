@@ -23,13 +23,11 @@ import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.R;
 
 import java.io.IOException;
-import java.util.List;
 
 
 public class SignUpActivity extends BaseActivity {
 
     private static final int PICK_IMAGE = 1;
-    private List<User> userList;
     private EditText nicknameEditText;
     private EditText usernameEditText;
     private EditText passwordEditText;

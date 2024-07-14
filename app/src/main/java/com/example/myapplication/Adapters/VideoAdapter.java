@@ -11,7 +11,6 @@ import android.widget.VideoView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Entities.Video;
-import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -66,12 +65,10 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
 
-    // Return item count
     @Override
     public int getItemCount() {
-        return videos.size();
+        return videos != null ? videos.size() : 0; // Check for null before accessing size
     }
-
     // Return the view type based on the adapter's viewType field
     @Override
     public int getItemViewType(int position) {
@@ -101,15 +98,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             videoView = itemView.findViewById(R.id.videoView);
         }
         public void bind(Video video) {
-            userViewModel.getUserById(video.getUserId()).observeForever(user -> {
-                if (user != null) {
-                    tvAuthor.setText(user.getUsername());
-                }
-            });
+            tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
-            ivPic.setImageBitmap(video.getPic());
-            tvDate.setText(video.getDate());
-            videoView.setVideoPath(video.getVideoPath());
+            ivPic.setImageBitmap(video.getPhoto());
+            tvDate.setText(video.getTimeAgo().toString());
+            videoView.setVideoPath(video.getPath());
         }
     }
 
@@ -131,14 +124,10 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         public void bind(Video video, OnVideoClickListener onVideoClickListener) {
-            userViewModel.getUserById(video.getUserId()).observeForever(user -> {
-                if (user != null) {
-                    tvAuthor.setText(user.getUsername());
-                }
-            });
+            tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
-            ivPic.setImageBitmap(video.getPic());
-            tvDate.setText(video.getDate());
+            ivPic.setImageBitmap(video.getPhoto());
+            tvDate.setText(video.getTimeAgo().toString());
 
             btnDelete.setOnClickListener(v -> {
                 if (onVideoClickListener != null) {

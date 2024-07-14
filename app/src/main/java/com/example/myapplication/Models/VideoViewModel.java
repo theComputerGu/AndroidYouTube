@@ -12,7 +12,6 @@ public class VideoViewModel extends ViewModel {
     private VideoRepository mRepository;
     public VideoViewModel(){
         mRepository = new VideoRepository();
-        mRepository.getAll();
     }
     public LiveData<List<Video>> get() {
         return mRepository.getVideoListData();
@@ -33,4 +32,5 @@ public class VideoViewModel extends ViewModel {
     public void getVideosExcept(String videoId) {
         mRepository.getVideosExcept(videoId);
     }
+
 }
