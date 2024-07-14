@@ -22,5 +22,6 @@
     <string name="add_button_description">Add</string>
     <string name="delete_button_description">Delete</string>
 
-    <string name="baseServerURL">"http://10.0.2.2:12345/api/"</string>
+   <string name="baseServerURL">"http://10.0.2.2:12345/api/"</string>
+<!--    <string name="baseServerURL">"http://172.18.40.199:12345/api/"</string>-->
 </resources>

@@ -15,7 +15,11 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static final int VIEW_TYPE_MAIN = 1;
@@ -98,10 +102,17 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvDate = itemView.findViewById(R.id.tvDate);
             videoView = itemView.findViewById(R.id.videoView);
         }
+
+        private String formatDate(Date date) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return dateFormat.format(date);
+        }
+
         public void bind(Video video) {
             tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
-            tvDate.setText(video.getTimeAgo().toString());
+            tvDate.setText(formatDate(video.getTimeAgo()));
+            //tvDate.setText(video.getTimeAgo().toString());
             videoView.setVideoPath(video.getPath());
 
             String photoPath = video.getPhoto(); // This is the string you received
@@ -130,9 +141,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             btnDelete = itemView.findViewById(R.id.btnDelete);
         }
 
+
         public void bind(Video video, OnVideoClickListener onVideoClickListener) {
             tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
+            //tvDate.setText(video.getTimeAgo().toString());
             tvDate.setText(video.getTimeAgo().toString());
 
             String photoPath = video.getPhoto();
