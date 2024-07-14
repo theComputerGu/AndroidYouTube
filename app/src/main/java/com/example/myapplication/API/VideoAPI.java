@@ -1,15 +1,20 @@
 package com.example.myapplication.API;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Entities.MyApplication;
+import com.example.myapplication.Entities.AuthInterceptor;
+import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,8 +28,11 @@ public class VideoAPI {
 
 
     public VideoAPI() {
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
         retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.baseServerURL))
+                .baseUrl(Helper.context.getString(R.string.baseServerURL))
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -45,11 +53,12 @@ public class VideoAPI {
         call.enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
-                videos.setValue(response.body());
+                Log.i("VideoAPI", "Videos:" + response.raw().toString());
+                videos.postValue(response.body());
             }
             @Override
             public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
-                t.printStackTrace();
+                Log.e("VideoAPI", "Error fetching videos", t);
             }
         });
     }

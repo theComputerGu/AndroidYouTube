@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.Comment;
-import com.example.myapplication.Entities.MyApplication;
+import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.R;
 
@@ -24,7 +24,7 @@ public class CommentAPI {
 
     public CommentAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.baseServerURL))
+                .baseUrl(Helper.context.getString(R.string.baseServerURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);

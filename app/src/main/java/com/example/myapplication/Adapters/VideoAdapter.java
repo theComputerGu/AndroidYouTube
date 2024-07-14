@@ -10,7 +10,9 @@ import android.widget.VideoView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.util.List;
@@ -63,12 +65,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             ((AddViewHolder) holder).bind(videos.get(position), onVideoClickListener);
         }
     }
-
-
     @Override
     public int getItemCount() {
-        return videos != null ? videos.size() : 0; // Check for null before accessing size
+        return videos.size();
     }
+
     // Return the view type based on the adapter's viewType field
     @Override
     public int getItemViewType(int position) {
@@ -100,9 +101,15 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void bind(Video video) {
             tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
-            ivPic.setImageBitmap(video.getPhoto());
             tvDate.setText(video.getTimeAgo().toString());
             videoView.setVideoPath(video.getPath());
+
+            String photoPath = video.getPhoto(); // This is the string you received
+            String baseUrl = Helper.context.getString(R.string.baseServerURL);
+            String fullUrl = baseUrl + photoPath;
+
+            // Use itemView.getContext() to get the context associated with the item view
+            Glide.with(itemView.getContext()).load(fullUrl).into(ivPic);
         }
     }
 
@@ -126,8 +133,13 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void bind(Video video, OnVideoClickListener onVideoClickListener) {
             tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
-            ivPic.setImageBitmap(video.getPhoto());
             tvDate.setText(video.getTimeAgo().toString());
+
+            String photoPath = video.getPhoto();
+            String baseUrl = Helper.context.getString(R.string.baseServerURL);
+            String fullUrl = baseUrl + photoPath;
+
+            Glide.with(itemView.getContext()).load(fullUrl).into(ivPic);
 
             btnDelete.setOnClickListener(v -> {
                 if (onVideoClickListener != null) {

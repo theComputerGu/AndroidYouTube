@@ -1,14 +1,10 @@
 package com.example.myapplication.Entities;
 
-import android.graphics.Bitmap;
-
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
-import com.example.myapplication.API.Convertors;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "users")
@@ -28,11 +24,10 @@ public class User {
     private String displayName;
 
     @ColumnInfo(name = "profilePicture")
-    @TypeConverters(Convertors.class)
-    private Bitmap profilePicture;
+    private String profilePicture;
 
     // Constructor
-    public User(String username, String password, String displayName, Bitmap profilePicture) {
+    public User(String username, String password, String displayName, String profilePicture) {
         this.username = username;
         this.password = password;
         this.displayName = displayName;
@@ -73,11 +68,11 @@ public class User {
         this.displayName = displayName;
     }
 
-    public Bitmap getProfilePicture() {
+    public String getProfilePicture() {
         return profilePicture;
     }
 
-    public void setProfilePicture(Bitmap profilePicture) {
+    public void setProfilePicture(String profilePicture) {
         this.profilePicture = profilePicture;
     }
 }

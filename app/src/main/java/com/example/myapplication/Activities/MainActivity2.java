@@ -11,10 +11,12 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.API.Converters;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
@@ -39,7 +41,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         // Retrieve signed-in user from UserManager
         if (signedInUser != null) {
             // Display profile photo if available
-            Bitmap photo = signedInUser.getProfilePicture();
+            Bitmap photo = Converters.base64ToBitmap(signedInUser.getProfilePicture());
             if (photo != null) {
                 imageViewProfilePhoto.setImageBitmap(photo);
             } else {
@@ -51,15 +53,16 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
         }
 
-        recyclerView = findViewById(R.id.lstPosts);
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
-        adapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
-        recyclerView.setAdapter(adapter);
+
+        adapter = new VideoAdapter(new ArrayList<>(), VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
 
         videoViewModel.getAll();
-        videoViewModel.get().observe(this, videos -> {
+        videoViewModel.getVideoListData().observe(this, videos -> {
             adapter.updateVideos(videos);
         });
+        recyclerView = findViewById(R.id.lstPosts);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
 
         ImageButton buttonToHomePage = findViewById(R.id.buttonToHomePage);
         buttonToHomePage.setOnClickListener(v -> {
@@ -82,7 +85,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
                 String query = searchEditText.getText().toString().trim();
                 if (!query.isEmpty()) {
                     videoViewModel.getVideoByPrefix(query);
-                    videoViewModel.get().observe(MainActivity2.this, videos -> {
+                    videoViewModel.getVideoListData().observe(MainActivity2.this, videos -> {
                         if (videos == null) {
                             Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
                         } else {
@@ -130,7 +133,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     protected void onResume() {
         super.onResume();
         videoViewModel.getAll();
-        videoViewModel.get().observe(this, videos -> {
+        videoViewModel.getVideoListData().observe(this, videos -> {
             adapter.updateVideos(videos);
         });
     }

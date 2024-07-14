@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Entities.MyApplication;
+import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
@@ -32,7 +32,7 @@ public class UserAPI {
 
     public UserAPI() {
         retrofit = new Retrofit.Builder()
-                .baseUrl(MyApplication.context.getString(R.string.baseServerURL))
+                .baseUrl(Helper.context.getString(R.string.baseServerURL))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         webServiceAPI = retrofit.create(WebServiceAPI.class);
@@ -47,7 +47,7 @@ public class UserAPI {
                     public void onResponse(Call<UserLoginResponse> call, Response<UserLoginResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             // Save the token using UserLoginResponse
-                            response.body().saveToken(MyApplication.context);
+                            response.body().saveToken(Helper.context);
                             resultLiveData.setValue(new Result(true, null));
                         } else {
                             String errorMessage = "Login failed: " + response.message();
@@ -65,7 +65,7 @@ public class UserAPI {
         return resultLiveData;
     }
     public String getToken() {
-        return UserLoginResponse.getToken(MyApplication.context);
+        return UserLoginResponse.getToken(Helper.context);
     }
 
     public WebServiceAPI getWebServiceAPI() {
