@@ -30,7 +30,7 @@ public class VideoAPI {
     public VideoAPI() {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
         retrofit = new Retrofit.Builder()
-                .baseUrl(Helper.context.getString(R.string.baseServerURL))
+                .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
                 .client(client)
                 .callbackExecutor(Executors.newSingleThreadExecutor())
                 .addConverterFactory(GsonConverterFactory.create())

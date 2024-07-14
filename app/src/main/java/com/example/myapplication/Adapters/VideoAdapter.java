@@ -1,5 +1,6 @@
 package com.example.myapplication.Adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,6 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
     private OnVideoClickListener onVideoClickListener;
 
-    // Constructor with additional viewType parameter
     public VideoAdapter(List<Video> videos, int viewType,  OnVideoClickListener onVideoClickListener) {
         this.videos = videos;
         this.viewType = viewType;
@@ -104,11 +104,12 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             tvDate.setText(video.getTimeAgo().toString());
             videoView.setVideoPath(video.getPath());
 
-            String photoPath = video.getPhoto(); // This is the string you received
+            String photoPath = video.getPhoto();
             String baseUrl = Helper.context.getString(R.string.baseServerURL);
             String fullUrl = baseUrl + photoPath;
 
-            // Use itemView.getContext() to get the context associated with the item view
+            Log.d("VideoAdapter", "Full URL: " + fullUrl);
+
             Glide.with(itemView.getContext()).load(fullUrl).into(ivPic);
         }
     }
