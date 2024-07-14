@@ -13,6 +13,7 @@ public class VideoRepository {
     private VideoListData videoListData;
     private VideoAPI videoAPI;
     public VideoRepository(){
+        videoAPI = new VideoAPI();
         videoListData= new VideoListData();
     }
 

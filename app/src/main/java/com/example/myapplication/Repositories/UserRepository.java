@@ -17,6 +17,7 @@ public class UserRepository {
     private UserAPI userAPI;
 
     public UserRepository() {
+        userListData = new UserListData();
         this.userAPI = new UserAPI();
     }
     public void setUsers(List<User> users) {
