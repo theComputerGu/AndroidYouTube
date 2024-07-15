@@ -42,26 +42,16 @@ public class UserRepository {
     public LiveData<Result> login(String username, String password) {
         return userAPI.login(username, password);
     }
-    public String getToken() {
-        return userAPI.getToken();
+
+    public LiveData<Result> createUser(User user) {
+        return userAPI.createUser(user);
     }
 
-    public MutableLiveData<Result> createUser(User user) {
-        MutableLiveData<Result> Result = new MutableLiveData<>();
-        userAPI.createUser(user, Result);
-        return Result;
+    public LiveData<User> getUserByUsername(String username) {
+        return userAPI.getUserByUsername(username);
     }
-
-    public MutableLiveData<User> getUserById(String idOfUser) {
-        MutableLiveData<User> userData = new MutableLiveData<>();
-        userAPI.getUserById(idOfUser, userData);
-        return userData;
-    }
-
-    public MutableLiveData<User> getUserByUsername(String username) {
-        MutableLiveData<User> userData = new MutableLiveData<>();
-        userAPI.getUserByUsername(username, userData);
-        return userData;
+    public LiveData<User> getUserById(String userId) {
+        return userAPI.getUserById(userId);
     }
     public LiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
         return userAPI.createUserVideo(userId, title, author, videoFile, photo);

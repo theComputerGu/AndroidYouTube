@@ -5,7 +5,6 @@ import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
-import com.example.myapplication.Entities.UserLoginResponse;
 import com.example.myapplication.Entities.Video;
 
 import java.util.List;
@@ -43,16 +42,16 @@ public interface WebServiceAPI {
     Call<ResponseBody> deleteComments(@Header("Authorization") String token, @Path("id") String videoId);
 
     // User-related API calls
-    @POST("users")
-    Call<ResponseBody> createUser(@Body User user);
+    @POST("users/")
+    Call<User> createUser(@Body User user);
 
-    @POST("login")
-    Call<UserLoginResponse> login(@Body UserCredentials credentials);
+    @POST("tokens")
+    Call<ResponseBody> login(@Body UserCredentials credentials);
 
     @GET("users/{username}")
     Call<User> getUser(@Header("Authorization") String token, @Path("username") String username);
 
-    @GET("users/{username}")
+    @GET("users/{username}/username")
     Call<User> getUserByUsername(@Path("username") String username);
 
     @GET("users/id/{id}")

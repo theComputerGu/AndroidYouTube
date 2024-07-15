@@ -1,6 +1,5 @@
 package com.example.myapplication.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -115,13 +113,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             //tvDate.setText(video.getTimeAgo().toString());
             videoView.setVideoPath(video.getPath());
 
-            String photoPath = video.getPhoto();
-            String baseUrl = Helper.context.getString(R.string.baseServerURL);
-            String fullUrl = baseUrl + photoPath;
-
-            Log.d("VideoAdapter", "Full URL: " + fullUrl);
-
-            Glide.with(itemView.getContext()).load(fullUrl).into(ivPic);
+            Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
         }
     }
 

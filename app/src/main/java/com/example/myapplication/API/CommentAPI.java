@@ -3,6 +3,7 @@ package com.example.myapplication.API;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.UpdateComment;
@@ -10,7 +11,9 @@ import com.example.myapplication.R;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executors;
 
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,10 +26,14 @@ public class CommentAPI {
     private static WebServiceAPI webServiceAPI;
 
     public CommentAPI() {
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         webServiceAPI = retrofit.create(WebServiceAPI.class);
     }
 

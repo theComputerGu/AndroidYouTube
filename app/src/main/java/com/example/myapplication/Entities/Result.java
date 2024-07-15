@@ -2,6 +2,7 @@ package com.example.myapplication.Entities;
 
 public class Result {
     private boolean success;
+
     private String errorMessage;
 
     public Result(boolean success, String errorMessage) {
@@ -12,8 +13,9 @@ public class Result {
     public boolean isSuccess() {
         return success;
     }
+
+
     public String getErrorMessage() {
         return errorMessage;
     }
 }
-

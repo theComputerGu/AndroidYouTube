@@ -12,37 +12,37 @@ import java.io.File;
 import java.util.List;
 
 public class UserViewModel extends ViewModel {
+    private static UserViewModel instance;
     private UserRepository mRepository;
-    private LiveData<List<User>> users;
-    public UserViewModel() {
+
+    // Private constructor to prevent instantiation outside this class
+    private UserViewModel() {
         this.mRepository = new UserRepository();
-        this.users = mRepository.getAll();
     }
 
-
-    public String getToken() {
-        return mRepository.getToken();
+    // Public static method to access the singleton instance
+    public static synchronized UserViewModel getInstance() {
+        if (instance == null) {
+            instance = new UserViewModel();
+        }
+        return instance;
     }
-    public LiveData<List<User>> get() {return users; }
+
     public void setUsers(List<User> u) {
         mRepository.setUsers(u);
     }
 
-
     public LiveData<Result> login(String username, String password) {
         return mRepository.login(username, password);
     }
-
-    public LiveData<Result> getCreateUserResult(User user) {
+    public LiveData<Result> createUser(User user) {
         return mRepository.createUser(user);
     }
-
-    public LiveData<User> getUserById(String idOfUser){
-        return mRepository.getUserById(idOfUser);
-    }
-
     public LiveData<User> getUserByUsername(String username){
         return mRepository.getUserByUsername(username);
+    }
+    public LiveData<User> getUserById(String userId){
+        return mRepository.getUserById(userId);
     }
     public LiveData<List<Video>> getUserVideos(String userId) {
         return mRepository.getUserVideos(userId);

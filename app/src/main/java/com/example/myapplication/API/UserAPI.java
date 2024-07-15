@@ -4,20 +4,24 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.Helper;
+import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
-import com.example.myapplication.Entities.UserLoginResponse;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -31,68 +35,84 @@ public class UserAPI {
     private WebServiceAPI webServiceAPI;
 
     public UserAPI() {
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
+                .client(client)
+                .callbackExecutor(Executors.newSingleThreadExecutor())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
         webServiceAPI = retrofit.create(WebServiceAPI.class);
     }
 
-    public LiveData<Result> login(String username, String password) {
-        MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
-
-        webServiceAPI.login(new UserCredentials(username, password))
-                .enqueue(new Callback<UserLoginResponse>() {
-                    @Override
-                    public void onResponse(Call<UserLoginResponse> call, Response<UserLoginResponse> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            // Save the token using UserLoginResponse
-                            response.body().saveToken(Helper.context);
-                            resultLiveData.setValue(new Result(true, null));
-                        } else {
-                            String errorMessage = "Login failed: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<UserLoginResponse> call, Throwable t) {
-                        String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
-                    }
-                });
-
-        return resultLiveData;
-    }
-    public String getToken() {
-        return UserLoginResponse.getToken(Helper.context);
-    }
 
     public WebServiceAPI getWebServiceAPI() {
         return webServiceAPI;
     }
 
-    public void createUser(User user, MutableLiveData<Result> result) {
-        Call<ResponseBody> call = webServiceAPI.createUser(user);
-        call.enqueue(new Callback<ResponseBody>() {
+    public LiveData<Result> createUser(User user) {
+        MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
+
+        webServiceAPI.createUser(user).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resultLiveData.postValue(new Result(true, null));
+                } else {
+                    String errorMessage = "Failed to create user: " + response.message();
+                    resultLiveData.postValue(new Result(false, errorMessage));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                String errorMessage = "Network error: " + t.getMessage();
+                resultLiveData.postValue(new Result(false, errorMessage));
+            }
+        });
+
+        return resultLiveData;
+    }
+
+
+    public LiveData<Result> login(String username, String password) {
+        MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
+
+        webServiceAPI.login(new UserCredentials(username, password)).enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    result.setValue(new Result(true, null));
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        String token = jsonObject.getString("token");
+                        Helper.setToken(token);
+
+                        resultLiveData.postValue(new Result(true, null));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultLiveData.postValue(new Result(false, "Error parsing response"));
+                    }
                 } else {
-                    // Customize this message based on the specific response
-                    String errorMessage = "Failed to create user: " + response.message();
-                    result.setValue(new Result(false, errorMessage));
+                    String errorMessage = "Login failed: " + response.message();
+                    resultLiveData.postValue(new Result(false, errorMessage));
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String errorMessage = "Network error: " + t.getMessage();
-                result.setValue(new Result(false, errorMessage));
+                resultLiveData.postValue(new Result(false,  errorMessage));
             }
         });
+
+        return resultLiveData;
     }
+
+
+
+
     public MutableLiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
         MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
 
@@ -137,45 +157,48 @@ public class UserAPI {
         call.enqueue(callback);
     }
 
-    public void getUserByUsername(String username, MutableLiveData<User> user) {
-        Call<User> call = webServiceAPI.getUserByUsername(username);
-        call.enqueue(new Callback<User>() {
+    public LiveData<User> getUserByUsername(String username) {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        webServiceAPI.getUserByUsername(username).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    user.setValue(response.body());
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    userLiveData.postValue(response.body());
                 } else {
-                    // Handle the case where the video is not found or some other error occurred
-                    user.setValue(null);
+                    userLiveData.postValue(null); // Handle error case
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
-                user.setValue(null);
+                userLiveData.postValue(null); // Handle failure case
             }
         });
+        return userLiveData;
     }
 
-    public void getUserById(String id, MutableLiveData<User> user) {
-        Call<User> call = webServiceAPI.getUserById(id);
-        call.enqueue(new Callback<User>() {
+    public LiveData<User> getUserById(String id) {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        webServiceAPI.getUserById(id).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    user.setValue(response.body());
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    userLiveData.setValue(response.body());
                 } else {
-                    // Handle the case where the video is not found or some other error occurred
-                    user.setValue(null);
+                    userLiveData.setValue(null); // Handle error case
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
-                user.setValue(null);
+                userLiveData.setValue(null); // Handle failure case
             }
         });
+        return userLiveData;
     }
+
 
     public void getUserByIdWithPassword(String id, Callback<User> callback) {
         Call<User> call = webServiceAPI.getUserByIdWithPassword(id);
@@ -221,27 +244,18 @@ public class UserAPI {
 
         return resultLiveData;
     }
-    public MutableLiveData<List<Video>> getUserVideos(String userId) {
+    public LiveData<List<Video>> getUserVideos(String userId) {
         MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
-        Call<List<Video>> call = webServiceAPI.getUserVideos(userId);
-
-        call.enqueue(new Callback<List<Video>>() {
+        webServiceAPI.getUserVideos(userId).enqueue(new Callback<List<Video>>() {
             @Override
-            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-                if (response.isSuccessful()) {
-                    userVideos.setValue(response.body());
-                } else {
-                    userVideos.setValue(null);
-                }
+            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
+                userVideos.postValue(response.body());
             }
-
             @Override
-            public void onFailure(Call<List<Video>> call, Throwable t) {
+            public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
-                userVideos.setValue(null);
             }
         });
-
         return userVideos;
     }
 }

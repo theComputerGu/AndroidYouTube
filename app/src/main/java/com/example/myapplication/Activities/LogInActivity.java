@@ -2,11 +2,13 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 public class LogInActivity extends BaseActivity {
@@ -26,23 +28,7 @@ public class LogInActivity extends BaseActivity {
             String username = editTextUsername.getText().toString();
             String password = editTextPassword.getText().toString();
 
-            if (!username.isEmpty() && !password.isEmpty()) {
-                userViewModel.login(username, password).observe(this, result -> {
-                    if (result.isSuccess()) {
-                        // Proceed to the next activity
-                        Toast.makeText(LogInActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-                        signedInUser = userViewModel.getUserByUsername(username).getValue();
-                        Intent intent = new Intent(this, MainActivity2.class);
-                        startActivity(intent);
-                        finish();
-
-                    } else {
-                        Toast.makeText(LogInActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(LogInActivity.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
-            }
+            login(username, password);
         });
 
         TextView ToSignUp = findViewById(R.id.ToSignUp);
@@ -50,5 +36,30 @@ public class LogInActivity extends BaseActivity {
             Intent intent = new Intent(this, SignUpActivity.class);
             startActivity(intent);
         });
+    }
+
+    public void login(String username, String password) {
+        if (!username.isEmpty() && !password.isEmpty()) {
+            userViewModel.login(username, password).observe(this, result -> {
+                if (result.isSuccess()) {
+                    userViewModel.getUserByUsername(username).observe(this, user -> {
+                        if (user != null) {
+                            Helper.setSignedInUser(user);
+                            Log.d("Login successful! Username", Helper.getSignedInUser().getUsername());
+                            Toast.makeText(LogInActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(this, MainActivity2.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.d("Login successful! Username", "null");
+                        }
+                    });
+                } else {
+                    Toast.makeText(LogInActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(LogInActivity.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
+        }
     }
 }

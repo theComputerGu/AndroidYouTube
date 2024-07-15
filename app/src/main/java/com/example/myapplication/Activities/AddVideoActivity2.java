@@ -20,12 +20,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.API.Converters;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -64,11 +66,11 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_ADD, this);
+        videoAdapter = new VideoAdapter(new ArrayList<>(), VideoAdapter.VIEW_TYPE_ADD, this);
         recyclerView.setAdapter(videoAdapter);
 
         // Get signed-in user's videos
-        userViewModel.getUserVideos(signedInUser.getUserId()).observe(this, videos -> {
+        userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
             userVideos = videos;
             videoAdapter.updateVideos(videos);
         });
@@ -107,9 +109,9 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             return;
         }
 
-        userViewModel.createUserVideo(signedInUser.getUserId(),title, signedInUser.getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
+        userViewModel.createUserVideo(Helper.getSignedInUser().getUserId(),title, Helper.getSignedInUser().getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
             if (result.isSuccess()) {
-                userVideos.add(new Video(title, signedInUser.getUsername(),signedInUser.getDisplayName(), getCurrentDate(), Converters.bitmapToBase64(thumbnailBitmap), videoFile.getAbsolutePath()));
+                userVideos.add(new Video(title, Helper.getSignedInUser().getUsername(),Helper.getSignedInUser().getDisplayName(), getCurrentDate(), Converters.bitmapToBase64(thumbnailBitmap), videoFile.getAbsolutePath()));
                 videoAdapter.updateVideos(userVideos);
                 Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
             } else {
@@ -170,7 +172,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     }
     @Override
     public void onVideoClick(Video video) {
-        userViewModel.deleteUserVideo(signedInUser.getUserId(), video.getVideoId(), userViewModel.getToken()).observe(this, result -> {
+        userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId(), Helper.getToken()).observe(this, result -> {
             if (result.isSuccess()) {
                 userVideos.remove(video);
                 videoAdapter.updateVideos(userVideos);
