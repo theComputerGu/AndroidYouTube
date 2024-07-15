@@ -45,13 +45,13 @@ public interface WebServiceAPI {
     @POST("users")
     Call<ResponseBody> createUser(@Body User user);
 
-    @POST("/login")
-    Call<String> login(@Body UserCredentials credentials);
+    @POST("tokens")
+    Call<ResponseBody> login(@Body UserCredentials credentials);
 
     @GET("users/{username}")
     Call<User> getUser(@Header("Authorization") String token, @Path("username") String username);
 
-    @GET("users/{username}")
+    @GET("users/{username}/username")
     Call<User> getUserByUsername(@Path("username") String username);
 
     @GET("users/id/{id}")

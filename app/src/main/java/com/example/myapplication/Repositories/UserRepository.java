@@ -49,10 +49,8 @@ public class UserRepository {
         return Result;
     }
 
-    public MutableLiveData<User> getUserByUsername(String username) {
-        MutableLiveData<User> userData = new MutableLiveData<>();
-        userAPI.getUserByUsername(username, userData);
-        return userData;
+    public LiveData<User> getUserByUsername(String username) {
+        return userAPI.getUserByUsername(username);
     }
     public LiveData<User> getUserById(String userId) {
         return userAPI.getUserById(userId);

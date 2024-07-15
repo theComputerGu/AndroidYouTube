@@ -1,6 +1,5 @@
 package com.example.myapplication.API;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -12,6 +11,8 @@ import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.List;
@@ -70,15 +71,24 @@ public class UserAPI {
             }
         });
     }
-
     public LiveData<Result<String>> login(String username, String password) {
         MutableLiveData<Result<String>> resultLiveData = new MutableLiveData<>();
 
-        webServiceAPI.login(new UserCredentials(username, password)).enqueue(new Callback<String>() {
+        webServiceAPI.login(new UserCredentials(username, password)).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    resultLiveData.postValue(new Result<>(true, response.body(), null));
+                    try {
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        String token = jsonObject.getString("token");
+                        Helper.setToken(token);
+
+                        resultLiveData.postValue(new Result<>(true, token, null));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        resultLiveData.postValue(new Result<>(false, null, "Error parsing response"));
+                    }
                 } else {
                     String errorMessage = "Login failed: " + response.message();
                     resultLiveData.postValue(new Result<>(false, null, errorMessage));
@@ -86,7 +96,7 @@ public class UserAPI {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String errorMessage = "Network error: " + t.getMessage();
                 resultLiveData.postValue(new Result<>(false, null, errorMessage));
             }
@@ -94,6 +104,7 @@ public class UserAPI {
 
         return resultLiveData;
     }
+
 
 
 
@@ -141,24 +152,25 @@ public class UserAPI {
         call.enqueue(callback);
     }
 
-    public void getUserByUsername(String username, MutableLiveData<User> user) {
-        Call<User> call = webServiceAPI.getUserByUsername(username);
-        call.enqueue(new Callback<User>() {
+    public LiveData<User> getUserByUsername(String username) {
+        MutableLiveData<User> userLiveData = new MutableLiveData<>();
+        webServiceAPI.getUserByUsername(username).enqueue(new Callback<User>() {
             @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                if (response.isSuccessful()) {
-                    user.setValue(response.body());
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    userLiveData.postValue(response.body());
                 } else {
-                    // Handle the case where the video is not found or some other error occurred
-                    user.setValue(null);
+                    userLiveData.postValue(null); // Handle error case
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+            public void onFailure(Call<User> call, Throwable t) {
                 t.printStackTrace();
-                user.setValue(null);
+                userLiveData.postValue(null); // Handle failure case
             }
         });
+        return userLiveData;
     }
 
     public LiveData<User> getUserById(String id) {

@@ -1,7 +1,6 @@
 package com.example.myapplication.Activities;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,9 +10,9 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.API.Converters;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
@@ -37,13 +36,13 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
-        // Retrieve signed-in user from UserManager
-        // Retrieve signed-in user from UserManager
-        if (signedInUser != null) {
+
+        if (Helper.isSignedIn()) {
             // Display profile photo if available
-            Bitmap photo = Converters.base64ToBitmap(signedInUser.getProfilePicture());
-            if (photo != null) {
-                imageViewProfilePhoto.setImageBitmap(photo);
+            String photoPath = Helper.getSignedInUser().getProfilePicture();
+
+            if (photoPath != null) {
+                Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
             } else {
                 // Use default photo if photo is null
                 imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);

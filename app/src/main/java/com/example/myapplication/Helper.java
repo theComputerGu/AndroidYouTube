@@ -2,10 +2,13 @@ package com.example.myapplication;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.myapplication.Entities.User;
-import com.example.myapplication.Models.UserViewModel;
 
 public class Helper extends Application {
     public static Context context;
@@ -31,16 +34,17 @@ public class Helper extends Application {
     public static boolean isSignedIn() {
         return signedInUser != null;
     }
-    public static void setUserById(String id) {
-        UserViewModel userViewModel = UserViewModel.getInstance();
-        // Call your API or repository to fetch the user by ID
-        userViewModel.getUserById(id).observeForever(user -> {
-            if (user != null) {
-                setSignedInUser(user);
-            } else {
-                // Handle case where user with ID isn't found or other error
-                Log.e("Helper", "User with ID " + id + " not found.");
-            }
-        });
+    public static void loadPhotoIntoImageView(Context context, ImageView imageView, String photo) {
+        if (photo.startsWith("data:image")) {
+            // Base64-encoded image
+            String base64String = photo.split(",")[1];
+            byte[] decodedString = Base64.decode(base64String, Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            imageView.setImageBitmap(decodedByte);
+        } else {
+            // Image URL
+            String imageUrl = Helper.context.getString(R.string.baseServerURL) + photo;
+            Glide.with(context).load(imageUrl).into(imageView);
+        }
     }
 }
