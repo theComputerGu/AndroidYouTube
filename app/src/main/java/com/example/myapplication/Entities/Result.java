@@ -1,13 +1,12 @@
 package com.example.myapplication.Entities;
 
-public class Result<T> {
+public class Result {
     private boolean success;
-    private T data;
+
     private String errorMessage;
 
-    public Result(boolean success, T data, String errorMessage) {
+    public Result(boolean success, String errorMessage) {
         this.success = success;
-        this.data = data;
         this.errorMessage = errorMessage;
     }
 
@@ -15,9 +14,6 @@ public class Result<T> {
         return success;
     }
 
-    public T getData() {
-        return data;
-    }
 
     public String getErrorMessage() {
         return errorMessage;

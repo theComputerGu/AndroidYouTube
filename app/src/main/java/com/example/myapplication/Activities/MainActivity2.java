@@ -2,6 +2,7 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,16 +38,12 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
 
+
         if (Helper.isSignedIn()) {
             // Display profile photo if available
             String photoPath = Helper.getSignedInUser().getProfilePicture();
-
-            if (photoPath != null) {
-                Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
-            } else {
-                // Use default photo if photo is null
-                imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
-            }
+            Log.d("TAG", "onCreate: " + photoPath);
+            Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
         } else {
             // Handle case when user is not signed in
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
@@ -118,14 +115,14 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         startActivity(i);
     }
     public void onSignOutClicked(View view) {
-        if (signedInUser == null) {
-            Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
-        } else {
-            signedInUser = null;
+        if (Helper.isSignedIn()) {
+            Helper.setSignedInUser(null);
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
             Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this, LogInActivity.class);
             startActivity(i);
+        } else {
+            Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
         }
     }
     @Override

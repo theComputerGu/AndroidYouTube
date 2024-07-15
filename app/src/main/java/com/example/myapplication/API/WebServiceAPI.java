@@ -42,8 +42,8 @@ public interface WebServiceAPI {
     Call<ResponseBody> deleteComments(@Header("Authorization") String token, @Path("id") String videoId);
 
     // User-related API calls
-    @POST("users")
-    Call<ResponseBody> createUser(@Body User user);
+    @POST("users/")
+    Call<User> createUser(@Body User user);
 
     @POST("tokens")
     Call<ResponseBody> login(@Body UserCredentials credentials);

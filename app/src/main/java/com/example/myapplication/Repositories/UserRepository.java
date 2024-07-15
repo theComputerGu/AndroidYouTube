@@ -39,14 +39,12 @@ public class UserRepository {
     }
     public LiveData<List<User>> getAll() {return userListData; }
 
-    public LiveData<Result<String>> login(String username, String password) {
+    public LiveData<Result> login(String username, String password) {
         return userAPI.login(username, password);
     }
 
-    public MutableLiveData<Result> createUser(User user) {
-        MutableLiveData<Result> Result = new MutableLiveData<>();
-        userAPI.createUser(user, Result);
-        return Result;
+    public LiveData<Result> createUser(User user) {
+        return userAPI.createUser(user);
     }
 
     public LiveData<User> getUserByUsername(String username) {

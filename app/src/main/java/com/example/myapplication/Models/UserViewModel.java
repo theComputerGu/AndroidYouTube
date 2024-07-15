@@ -32,15 +32,12 @@ public class UserViewModel extends ViewModel {
         mRepository.setUsers(u);
     }
 
-    public LiveData<Result<String>> login(String username, String password) {
+    public LiveData<Result> login(String username, String password) {
         return mRepository.login(username, password);
     }
-
-    public LiveData<Result> getCreateUserResult(User user) {
+    public LiveData<Result> createUser(User user) {
         return mRepository.createUser(user);
     }
-
-
     public LiveData<User> getUserByUsername(String username){
         return mRepository.getUserByUsername(username);
     }

@@ -68,6 +68,7 @@ public class Converters {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return "data:image/png;base64," + base64String;
     }
 }

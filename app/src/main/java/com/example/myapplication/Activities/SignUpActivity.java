@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
 
 import com.example.myapplication.API.Converters;
 import com.example.myapplication.Entities.User;
-import com.example.myapplication.Models.UserViewModel;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.io.IOException;
@@ -37,19 +37,11 @@ public class SignUpActivity extends BaseActivity {
     private ImageView imageViewPhoto;
     private Button buttonUploadPhoto;
     private Bitmap selectedPhotoBitmap;
-    private UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up2);
-
-//        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-//        userViewModel.getAllUsers().observe(this, users -> {
-//            if (users != null) {
-//                userList = users;
-//            }
-//        });
 
         nicknameEditText = findViewById(R.id.editTextNickname);
         usernameEditText = findViewById(R.id.editTextUsername);
@@ -76,10 +68,13 @@ public class SignUpActivity extends BaseActivity {
                 Toast.makeText(this, validationMessage, Toast.LENGTH_SHORT).show();
             } else {
                 // Create User with selected photo Bitmap
-                User newUser =  new User(username, displayName, password, Converters.bitmapToBase64(selectedPhotoBitmap));
-                userViewModel.getCreateUserResult(newUser).observe(this, result -> {
+                User newUser =  new User(username, password, displayName, Converters.bitmapToBase64(selectedPhotoBitmap));
+                userViewModel.createUser(newUser).observe(this, result -> {
                     if (result.isSuccess()) {
                         Toast.makeText(SignUpActivity.this, "Created user successfully", Toast.LENGTH_SHORT).show();
+
+                        // Login the user after successful creation to get the token
+                        login(newUser);
                     } else {
                         Toast.makeText(SignUpActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -139,7 +134,21 @@ public class SignUpActivity extends BaseActivity {
             return "Password needs to be at least 8 characters";
         } else if (!password.matches(".*[a-zA-Z].*") || !password.matches(".*\\d.*")) {
             return "Password needs to have a mix of numbers and letters";
+        } else if (selectedPhotoBitmap == null) {
+            return "Please select a photo";
         }
         return null;
+    }
+    public void login(User newUser) {
+        userViewModel.login(newUser.getUsername(), newUser.getPassword()).observe(this, result -> {
+            if (result.isSuccess()) {
+                Helper.setSignedInUser(newUser);
+                Intent intent = new Intent(this, MainActivity2.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(SignUpActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
