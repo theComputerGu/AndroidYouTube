@@ -10,29 +10,24 @@ import java.util.List;
 
 public class VideoViewModel extends ViewModel {
     private VideoRepository mRepository;
-    private LiveData<List<Video>> videos;
     public VideoViewModel(){
         mRepository = new VideoRepository();
-        videos = mRepository.getAll();
     }
-    public LiveData<List<Video>> getVideoListData() {
-        return videos;
-    }
-    public void getAll() {
-        mRepository.getAll();
+    public LiveData<List<Video>> getAll() {
+        return mRepository.getAll();
     }
     public void setVideos(List<Video> v) {
         mRepository.setVideos(v);
     }
 
-    public void getVideoByPrefix(String prefix){
-        mRepository.getVideoByPrefix(prefix);
+    public LiveData<List<Video>> getVideoByPrefix(String prefix){
+        return mRepository.getVideoByPrefix(prefix);
     }
     public LiveData<Video> getVideoById(String videoId) {
         return mRepository.getVideoById(videoId);
     }
-    public void getVideosExcept(String videoId) {
-        mRepository.getVideosExcept(videoId);
+    public LiveData<List<Video>> getVideosExcept(String videoId) {
+        return mRepository.getVideosExcept(videoId);
     }
 
 }

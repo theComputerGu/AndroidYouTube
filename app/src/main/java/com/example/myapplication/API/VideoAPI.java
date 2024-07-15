@@ -1,8 +1,7 @@
 package com.example.myapplication.API;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
@@ -48,19 +47,20 @@ public class VideoAPI {
         call.enqueue(callback);
     }
 
-    public void getVideos(MutableLiveData<List<Video>> videos) {
-        Call<List<Video>> call = webServiceAPI.getVideos();
-        call.enqueue(new Callback<List<Video>>() {
+    public LiveData<List<Video>> getVideos() {
+        MutableLiveData<List<Video>> videos = new MutableLiveData<>();
+
+        webServiceAPI.getVideos().enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
-                Log.i("VideoAPI", "Videos:" + response.raw().toString());
                 videos.postValue(response.body());
             }
             @Override
             public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
-                Log.e("VideoAPI", "Error fetching videos", t);
+                t.printStackTrace();
             }
         });
+        return videos;
     }
 
     public void getVideoById(String videoId, MutableLiveData<Video> video) {
@@ -94,22 +94,25 @@ public class VideoAPI {
         call.enqueue(callback);
     }
 
-    public void getVideosByPrefix(String prefix, MutableLiveData<List<Video>> videos) {
-        Call<List<Video>> call = webServiceAPI.getVideosByPrefix(prefix);
-        call.enqueue(new Callback<List<Video>>() {
+    public LiveData<List<Video>> getVideosByPrefix(String prefix) {
+        MutableLiveData<List<Video>> videos = new MutableLiveData<>();
+
+        webServiceAPI.getVideosByPrefix(prefix).enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
-                videos.setValue(response.body());
+                videos.postValue(response.body());
             }
             @Override
             public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });
+        return videos;
     }
-    public void getVideosExcept(MutableLiveData<List<Video>> videos,String videoId) {
-        Call<List<Video>> call = webServiceAPI.getVideos();
-        call.enqueue(new Callback<List<Video>>() {
+    public LiveData<List<Video>> getVideosExcept(String videoId) {
+        MutableLiveData<List<Video>> videos = new MutableLiveData<>();
+
+        webServiceAPI.getVideos().enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
                 if (response.isSuccessful()) {
@@ -130,5 +133,6 @@ public class VideoAPI {
                 t.printStackTrace();
             }
         });
+        return videos;
     }
 }

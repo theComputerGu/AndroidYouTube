@@ -15,7 +15,6 @@ public class VideoRepository {
     public VideoRepository(){
         videoAPI = new VideoAPI();
         videoListData= new VideoListData();
-        videoAPI.getVideos(videoListData);
     }
 
     public void setVideos(List<Video> Videos) {
@@ -31,26 +30,22 @@ public class VideoRepository {
         @Override
         protected void onActive(){
             super.onActive();
-            new Thread(() -> {
-                VideoAPI videoAPI = new VideoAPI();
-                videoAPI.getVideos(this);
-            }).start();
         }
     }
     public LiveData<List<Video>> getAll() {
-        return videoListData;
+        return videoAPI.getVideos();
     }
 
-    public void getVideoByPrefix(String prefix) {
-        videoAPI.getVideosByPrefix(prefix, videoListData);
+    public LiveData<List<Video>> getVideoByPrefix(String prefix) {
+        return videoAPI.getVideosByPrefix(prefix);
     }
     public LiveData<Video> getVideoById(String videoId) {
         MutableLiveData<Video> videoData = new MutableLiveData<>();
         videoAPI.getVideoById(videoId, videoData);
         return videoData;
     }
-    public void getVideosExcept(String videoId) {
-        videoAPI.getVideosExcept(videoListData, videoId);
+    public LiveData<List<Video>> getVideosExcept(String videoId) {
+        return videoAPI.getVideosExcept(videoId);
     }
 
 }

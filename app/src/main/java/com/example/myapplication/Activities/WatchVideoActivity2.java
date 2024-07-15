@@ -17,6 +17,7 @@ import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
@@ -55,10 +56,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         videoAdapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_WATCH, this);
         recyclerView.setAdapter(videoAdapter);
 
-        videoViewModel.getVideosExcept(selectedVideoId);
-        videoViewModel.getVideoListData().observe(this, videos -> {
-            videoAdapter.updateVideos(videos);
-        });
 
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
@@ -116,14 +113,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
-        videoViewModel.getVideosExcept(currentVideo.getVideoId());
-        videoViewModel.getVideoListData().observe(this, videos -> {
+        videoViewModel.getVideosExcept(currentVideo.getVideoId()).observe(this, videos -> {
             videoAdapter.updateVideos(videos);
         });
     }
 
     private void addComment() {
-        if ( signedInUser != null ) {
+        if ( Helper.isSignedIn() ) {
             EditText commentEditText = findViewById(R.id.commentEditText);
             String commentContent = commentEditText.getText().toString().trim();
             videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
@@ -142,12 +138,12 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
 
     private void dislikeVideo() {
-        if ( signedInUser != null ) {
+        if ( Helper.isSignedIn()) {
             videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
-                if (currentVideo.getDislikedBy().contains(signedInUser.getUsername())) {
+                if (currentVideo.getDislikedBy().contains(Helper.getSignedInUser().getUsername())) {
                     Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
-                    currentVideo.incrementDislikes(signedInUser.getUsername());
+                    currentVideo.incrementDislikes(Helper.getSignedInUser().getUsername());
                     tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
                 }
             });
@@ -158,12 +154,12 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
 
     private void likeVideo() {
-        if ( signedInUser != null ) {
+        if ( Helper.isSignedIn() ) {
             videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
-                if (currentVideo.getLikedBy().contains(signedInUser.getUsername())) {
+                if (currentVideo.getLikedBy().contains(Helper.getSignedInUser().getUsername())) {
                     Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
-                    currentVideo.incrementLikes(signedInUser.getUsername());
+                    currentVideo.incrementLikes(Helper.getSignedInUser().getUsername());
                     tvLikes.setText(String.valueOf(currentVideo.getLikes()));
                 }
             });
@@ -189,9 +185,9 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     @Override
     public void onCommentDelete(Comment comment) {
 
-        if ( signedInUser != null ) {
+        if ( Helper.isSignedIn() ) {
             commentViewModel.getComments(comment).observe(this, user -> {
-                if (signedInUser.getUsername().equals (comment.getUsername())) {
+                if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
                     commentViewModel.deleteComment(comment);
                     Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
                 } else {

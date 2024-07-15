@@ -1,5 +1,6 @@
 package com.example.myapplication.API;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -243,27 +244,18 @@ public class UserAPI {
 
         return resultLiveData;
     }
-    public MutableLiveData<List<Video>> getUserVideos(String userId) {
+    public LiveData<List<Video>> getUserVideos(String userId) {
         MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
-        Call<List<Video>> call = webServiceAPI.getUserVideos(userId);
-
-        call.enqueue(new Callback<List<Video>>() {
+        webServiceAPI.getUserVideos(userId).enqueue(new Callback<List<Video>>() {
             @Override
-            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
-                if (response.isSuccessful()) {
-                    userVideos.setValue(response.body());
-                } else {
-                    userVideos.setValue(null);
-                }
+            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
+                userVideos.postValue(response.body());
             }
-
             @Override
-            public void onFailure(Call<List<Video>> call, Throwable t) {
+            public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
-                userVideos.setValue(null);
             }
         });
-
         return userVideos;
     }
 }

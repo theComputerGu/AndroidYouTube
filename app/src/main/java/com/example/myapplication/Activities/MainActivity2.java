@@ -2,7 +2,6 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,7 +16,6 @@ import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
@@ -26,7 +24,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private RecyclerView recyclerView;
     private VideoAdapter adapter;
     ImageButton imageViewProfilePhoto;
-    private List<Video> videoList;
 
 
     @Override
@@ -42,20 +39,18 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         if (Helper.isSignedIn()) {
             // Display profile photo if available
             String photoPath = Helper.getSignedInUser().getProfilePicture();
-            Log.d("TAG", "onCreate: " + photoPath);
             Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
         } else {
             // Handle case when user is not signed in
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
         }
 
-
         adapter = new VideoAdapter(new ArrayList<>(), VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
 
-        videoViewModel.getAll();
-        videoViewModel.getVideoListData().observe(this, videos -> {
+        videoViewModel.getAll().observe(this, videos -> {
             adapter.updateVideos(videos);
         });
+
         recyclerView = findViewById(R.id.lstPosts);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
@@ -80,8 +75,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             public void onClick(View v) {
                 String query = searchEditText.getText().toString().trim();
                 if (!query.isEmpty()) {
-                    videoViewModel.getVideoByPrefix(query);
-                    videoViewModel.getVideoListData().observe(MainActivity2.this, videos -> {
+                    videoViewModel.getVideoByPrefix(query).observe(MainActivity2.this, videos -> {
                         if (videos == null) {
                             Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
                         } else {
@@ -95,7 +89,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     private void startAddVideoActivity() {
 
         // Check if user is signed in
-        if (signedInUser == null) {
+        if (!Helper.isSignedIn()) {
             Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -128,8 +122,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     @Override
     protected void onResume() {
         super.onResume();
-        videoViewModel.getAll();
-        videoViewModel.getVideoListData().observe(this, videos -> {
+        videoViewModel.getAll().observe(this, videos -> {
             adapter.updateVideos(videos);
         });
     }

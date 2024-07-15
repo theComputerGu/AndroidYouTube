@@ -10,7 +10,6 @@ import com.example.myapplication.API.AppDB;
 import com.example.myapplication.API.CommentDao;
 import com.example.myapplication.API.UserDao;
 import com.example.myapplication.API.VideoDao;
-import com.example.myapplication.Entities.User;
 import com.example.myapplication.Models.CommentViewModel;
 import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.Models.VideoViewModel;
@@ -23,7 +22,6 @@ public class BaseActivity extends AppCompatActivity {
     protected UserDao userDao;
     protected VideoDao videoDao;
     protected CommentDao commentDao;
-    protected User signedInUser;
     protected VideoViewModel videoViewModel;
     protected UserViewModel userViewModel;
     protected CommentViewModel commentViewModel;
