@@ -56,4 +56,10 @@ public class UserViewModel extends ViewModel {
     public LiveData<Result> updateUserVideo(String userId, String videoId, String title) {
         return mRepository.updateUserVideo(userId, videoId,title);
     }
+    public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
+        return mRepository.updateDisplayName(userId, newDisplayName);
+    }
+    public LiveData<Result> deleteUser(String userId) {
+        return mRepository.deleteUser(userId);
+    }
 }

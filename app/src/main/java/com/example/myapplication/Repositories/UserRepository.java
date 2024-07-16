@@ -66,4 +66,10 @@ public class UserRepository {
     public LiveData<List<Video>> getUserVideos(String userId) {
         return userAPI.getUserVideos(userId);
     }
+    public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
+        return userAPI.updateDisplayName(userId, newDisplayName);
+    }
+    public LiveData<Result> deleteUser(String userId) {
+        return userAPI.deleteUser(userId);
+    }
 }

@@ -2,12 +2,6 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -92,7 +86,7 @@ public class SignUpActivity extends BaseActivity {
                 // Convert selected Uri to Bitmap
                 selectedPhotoBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedPhotoUri);
                 // Crop the bitmap into a circle
-                selectedPhotoBitmap = cropBitmapToCircle(selectedPhotoBitmap);
+//                selectedPhotoBitmap = cropBitmapToCircle(selectedPhotoBitmap);
                 imageViewPhoto.setImageBitmap(selectedPhotoBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -101,30 +95,30 @@ public class SignUpActivity extends BaseActivity {
     }
 
     // Method to crop a bitmap into a circular shape
-    private Bitmap cropBitmapToCircle(Bitmap bitmap) {
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = Color.RED;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-        float centerX = bitmap.getWidth() / 2f;
-        float centerY = bitmap.getHeight() / 2f;
-        float radius = Math.min(centerX, centerY);
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawCircle(centerX, centerY, radius, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        bitmap.recycle();
-
-        return output;
-    }
+//    private Bitmap cropBitmapToCircle(Bitmap bitmap) {
+//        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(output);
+//
+//        final int color = Color.RED;
+//        final Paint paint = new Paint();
+//        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+//
+//        float centerX = bitmap.getWidth() / 2f;
+//        float centerY = bitmap.getHeight() / 2f;
+//        float radius = Math.min(centerX, centerY);
+//
+//        paint.setAntiAlias(true);
+//        canvas.drawARGB(0, 0, 0, 0);
+//        paint.setColor(color);
+//        canvas.drawCircle(centerX, centerY, radius, paint);
+//
+//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+//        canvas.drawBitmap(bitmap, rect, rect, paint);
+//
+//        bitmap.recycle();
+//
+//        return output;
+//    }
 
 
     private String checkPassword(String password, String confirmPassword) {

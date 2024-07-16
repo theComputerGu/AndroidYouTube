@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Result;
-import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
@@ -217,14 +216,44 @@ public class UserAPI {
         call.enqueue(callback);
     }
 
-    public void updateUser(String token, String id, UpdateUser update, Callback<User> callback) {
-        Call<User> call = webServiceAPI.updateUser(token, id, update);
-        call.enqueue(callback);
+    public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
+        MutableLiveData<Result> result = new MutableLiveData<>();
+        webServiceAPI.updateUser(userId, newDisplayName).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.postValue(new Result(true, null));
+                } else {
+                    result.postValue(new Result(false, "Update failed"));
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                result.postValue(new Result(false, t.getMessage()));
+            }
+        });
+
+        return result;
     }
 
-    public void deleteUser(String token, String id, Callback<ResponseBody> callback) {
-        Call<ResponseBody> call = webServiceAPI.deleteUser(token, id);
-        call.enqueue(callback);
+    public LiveData<Result> deleteUser(String userId) {
+        MutableLiveData<Result> result = new MutableLiveData<>();
+        webServiceAPI.deleteUser(userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    result.postValue(new Result(true, null));
+                } else {
+                    result.postValue(new Result(false, "Failed to delete user"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                result.postValue(new Result(false, t.getMessage()));
+            }
+        });
+        return result;
     }
 
     public LiveData<Result> updateUserVideo(String userId, String videoId, String title) {

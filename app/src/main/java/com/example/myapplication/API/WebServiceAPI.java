@@ -3,7 +3,6 @@ package com.example.myapplication.API;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateComment;
-import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
@@ -63,12 +62,12 @@ public interface WebServiceAPI {
 
     @GET("users/id/{id}/password")
     Call<User> getUserByIdWithPassword(@Path("id") String id);
+    @FormUrlEncoded
+    @PATCH("users/{id}")
+    Call<User> updateUser(@Path("id") String userId, @Field("displayName") String displayName);
 
-    @PUT("users/{id}")
-    Call<User> updateUser(@Header("Authorization") String token, @Path("id") String id, @Body UpdateUser update);
-
-    @DELETE("users/{id}")
-    Call<ResponseBody> deleteUser(@Header("Authorization") String token, @Path("id") String id);
+    @DELETE("user/{id}")
+    Call<Void> deleteUser(@Path("id") String userId);
 
     @GET("videos/{pid}")
     Call<Video> getUserVideo(@Header("Authorization") String token, @Path("pid") String videoId);

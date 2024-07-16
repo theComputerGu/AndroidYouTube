@@ -20,8 +20,6 @@ import java.util.ArrayList;
 public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
 
     private EditText searchEditText;
-    private ImageButton searchButton;
-    private RecyclerView recyclerView;
     private VideoAdapter adapter;
     ImageButton imageViewProfilePhoto;
 
@@ -34,8 +32,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         // Initialize the profile photo
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
-
-
         if (Helper.isSignedIn()) {
             // Display profile photo if available
             String photoPath = Helper.getSignedInUser().getProfilePicture();
@@ -47,11 +43,9 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         adapter = new VideoAdapter(new ArrayList<>(), MainActivity2.this); // Pass null initially
 
-        videoViewModel.getAll().observe(this, videos -> {
-            adapter.updateVideos(videos);
-        });
+        videoViewModel.getAll().observe(this, videos -> adapter.updateVideos(videos));
 
-        recyclerView = findViewById(R.id.lstPosts);
+        RecyclerView recyclerView = findViewById(R.id.lstPosts);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
 
@@ -62,27 +56,21 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         });
 
         ImageButton buttonToAddVideoPage = findViewById(R.id.buttonToAddVideoPage);
-        buttonToAddVideoPage.setOnClickListener(v -> {
-            startAddVideoActivity();
-        });
+        buttonToAddVideoPage.setOnClickListener(v -> startAddVideoActivity());
 
         // Initialize search EditText and Button
         searchEditText = findViewById(R.id.searchEditText);
-        searchButton = findViewById(R.id.buttonSearch);
-
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String query = searchEditText.getText().toString().trim();
-                if (!query.isEmpty()) {
-                    videoViewModel.getVideoByPrefix(query).observe(MainActivity2.this, videos -> {
-                        if (videos == null) {
-                            Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
-                        } else {
-                            adapter.updateVideos(videos);
-                        }
-                    });
-                }
+        ImageButton searchButton = findViewById(R.id.buttonSearch);
+        searchButton.setOnClickListener(v -> {
+            String query = searchEditText.getText().toString().trim();
+            if (!query.isEmpty()) {
+                videoViewModel.getVideoByPrefix(query).observe(MainActivity2.this, videos -> {
+                    if (videos == null) {
+                        Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
+                    } else {
+                        adapter.updateVideos(videos);
+                    }
+                });
             }
         });
     }
@@ -105,26 +93,18 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     }
 
     public void onProfilePhotoClicked(View view) {
-        Intent i = new Intent(this, LogInActivity.class);
-        startActivity(i);
-    }
-    public void onSignOutClicked(View view) {
+        Intent i;
         if (Helper.isSignedIn()) {
-            Helper.setSignedInUser(null);
-            imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
-            Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(this, LogInActivity.class);
-            startActivity(i);
+            i = new Intent(this, ProfileActivity.class);
         } else {
-            Toast.makeText(this, "you are already signed out", Toast.LENGTH_SHORT).show();
+            i = new Intent(this, LogInActivity.class);
         }
+        startActivity(i);
     }
     @Override
     protected void onResume() {
         super.onResume();
-        videoViewModel.getAll().observe(this, videos -> {
-            adapter.updateVideos(videos);
-        });
+        videoViewModel.getAll().observe(this, videos -> adapter.updateVideos(videos));
     }
     public void onDarkModeClicked(View view) {
         toggleDarkMode();
