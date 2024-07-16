@@ -4,10 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.User;
 
 public class Helper extends Application {
@@ -46,5 +49,21 @@ public class Helper extends Application {
             String imageUrl = Helper.context.getString(R.string.baseServerURL) + photo;
             Glide.with(context).load(imageUrl).into(imageView);
         }
+    }
+
+    public static void loadVideoIntoVideoView(Context context, VideoView videoView, String videoPath) {
+        String videoUrl;
+        String baseServerURL = context.getString(R.string.baseServerURL);
+        videoUrl = baseServerURL + videoPath;
+
+
+        videoView.setVideoURI(Uri.parse(videoUrl));
+        videoView.setOnPreparedListener(mp -> {
+            videoView.start();
+        });
+
+        // Optional: Set a media controller for video controls
+        CustomMediaController mediaController = new CustomMediaController(context, videoView);
+        videoView.setMediaController(mediaController);
     }
 }

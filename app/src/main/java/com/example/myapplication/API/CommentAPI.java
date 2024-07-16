@@ -24,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class CommentAPI {
     private Retrofit retrofit;
     private static WebServiceAPI webServiceAPI;
-
+//
     public CommentAPI() {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor()).build();
         retrofit = new Retrofit.Builder()

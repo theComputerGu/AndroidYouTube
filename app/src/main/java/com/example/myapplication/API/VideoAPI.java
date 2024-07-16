@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
+import com.example.myapplication.Entities.Result;
+import com.example.myapplication.Entities.User;
 import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.R;
@@ -68,17 +70,20 @@ public class VideoAPI {
         call.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
+
                 if (response.isSuccessful()) {
-                    video.setValue(response.body());
+                    // Ensure postValue() is called on the main thread
+                    video.postValue(response.body());
                 } else {
                     // Handle the case where the video is not found or some other error occurred
-                    video.setValue(null);
+                    video.postValue(null);
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
                 t.printStackTrace();
-                video.setValue(null);
+                video.postValue(null);
             }
         });
     }

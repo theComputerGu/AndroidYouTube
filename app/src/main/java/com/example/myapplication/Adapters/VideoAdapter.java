@@ -16,6 +16,7 @@ import com.example.myapplication.R;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
     private List<Video> videos;
 
     public interface OnVideoClickListener {
@@ -50,14 +51,20 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
     @Override
     public int getItemCount() {
+        if (videos == null) {
+            return 0; // Return 0 if videos list is null
+        }
         return videos.size();
     }
 
 
     // Update the dataset and notify the adapter
     public void updateVideos(List<Video> newVideos) {
-        this.videos = newVideos;
-        notifyDataSetChanged();
+        videos.clear(); // Clear existing data
+        if (newVideos != null) {
+            videos.addAll(newVideos);
+        }
+        notifyDataSetChanged(); // Notify adapter that data set has changed
     }
 
     // ViewHolder for MainActivity
@@ -84,6 +91,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             videoView.setVideoPath(video.getPath());
 
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
+            //Helper.loadVideoIntoVideoView(itemView.getContext(), videoView,video.getVideoId());
+            Helper.loadVideoIntoVideoView(itemView.getContext(), videoView, video.getPath());
         }
     }
 }
