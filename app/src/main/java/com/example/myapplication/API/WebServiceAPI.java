@@ -18,6 +18,7 @@ import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
@@ -66,9 +67,11 @@ public interface WebServiceAPI {
     @PATCH("users/{id}")
     Call<User> updateUser(@Path("id") String userId, @Field("displayName") String displayName);
 
-    @DELETE("user/{id}")
-    Call<Void> deleteUser(@Path("id") String userId);
-
+    @HTTP(method = "DELETE", path = "users/{id}", hasBody = true)
+    Call<ResponseBody> deleteUser(
+            @Path("id") String userId,
+            @Body RequestBody body
+    );
     @GET("videos/{pid}")
     Call<Video> getUserVideo(@Header("Authorization") String token, @Path("pid") String videoId);
 

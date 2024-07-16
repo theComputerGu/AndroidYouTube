@@ -28,9 +28,6 @@ public class UserViewModel extends ViewModel {
         return instance;
     }
 
-    public void setUsers(List<User> u) {
-        mRepository.setUsers(u);
-    }
 
     public LiveData<Result> login(String username, String password) {
         return mRepository.login(username, password);
@@ -59,7 +56,7 @@ public class UserViewModel extends ViewModel {
     public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
         return mRepository.updateDisplayName(userId, newDisplayName);
     }
-    public LiveData<Result> deleteUser(String userId) {
-        return mRepository.deleteUser(userId);
+    public LiveData<Result> deleteUser(String userId, String username) {
+        return mRepository.deleteUser(userId, username);
     }
 }
