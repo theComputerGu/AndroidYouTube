@@ -3,19 +3,28 @@ package com.example.myapplication.Repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.myapplication.API.AppDB;
 import com.example.myapplication.API.VideoAPI;
-import com.example.myapplication.Entities.Result;
+import com.example.myapplication.API.VideoDao;
 import com.example.myapplication.Entities.Video;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class VideoRepository {
     private VideoListData videoListData;
     private VideoAPI videoAPI;
+    private VideoDao videoDao;
+    private Executor executor;
+
     public VideoRepository(){
         videoAPI = new VideoAPI();
         videoListData= new VideoListData();
+        AppDB db = AppDB.getInstance();
+        videoDao = db.videoDao();
+        executor = Executors.newSingleThreadExecutor();
     }
 
     public void setVideos(List<Video> Videos) {
@@ -34,7 +43,23 @@ public class VideoRepository {
         }
     }
     public LiveData<List<Video>> getAll() {
-        return videoAPI.getVideos();
+        // Fetch videos from the API
+        LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
+
+        videosFromAPI.observeForever(videos -> {
+            if (videos != null) {
+                executor.execute(() -> {
+                    videoDao.deleteAll();
+                    videoDao.insertAll(videos);
+                });
+            }
+        });
+
+        // Return videos from the DAO
+        return videoDao.getAll();
+    }
+    public LiveData<List<Video>> getVideosExcept(String videoId) {
+        return videoDao.getAllExcept(videoId);
     }
 
     public LiveData<List<Video>> getVideoByPrefix(String prefix) {
@@ -45,9 +70,7 @@ public class VideoRepository {
         videoAPI.getVideoById(videoId, videoData);
         return videoData;
     }
-    public LiveData<List<Video>> getVideosExcept(String videoId) {
-        return videoAPI.getVideosExcept(videoId);
-    }
+
 
 
 }

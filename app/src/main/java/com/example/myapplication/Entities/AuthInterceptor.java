@@ -1,5 +1,7 @@
 package com.example.myapplication.Entities;
 
+import android.util.Log;
+
 import com.example.myapplication.Helper;
 
 import java.io.IOException;
@@ -15,7 +17,8 @@ public class AuthInterceptor implements Interceptor {
         Request originalRequest = chain.request();
 
         // Retrieve the token from the Helper class
-        String authToken = Helper.token;
+        String authToken = Helper.getToken();
+        Log.d("AuthInterceptor", "Token: " + authToken);
 
         // Add the token to the request headers if it's not empty
         if (authToken != null && !authToken.isEmpty()) {

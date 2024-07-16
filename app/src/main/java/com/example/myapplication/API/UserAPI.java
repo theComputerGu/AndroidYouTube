@@ -1,5 +1,7 @@
 package com.example.myapplication.API;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -147,7 +149,7 @@ public class UserAPI {
                 if (response.isSuccessful() && response.body() != null) {
                     resultLiveData.postValue(new Result(true, "Video created successfully"));
                 } else {
-                    resultLiveData.postValue(new Result(false, "Failed to create video: " + response.message()));
+                    resultLiveData.postValue(new Result(false, "Failed to create User: Username is already taken"));
                 }
             }
 
@@ -238,6 +240,8 @@ public class UserAPI {
 
     public LiveData<Result> deleteUser(String userId) {
         MutableLiveData<Result> result = new MutableLiveData<>();
+        Log.d("UserAPI", "Deleting user with ID: " + userId);
+        Log.d("UserAPI", "Token: " + Helper.getToken());
         webServiceAPI.deleteUser(userId).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

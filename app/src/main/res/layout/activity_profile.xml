@@ -29,7 +29,7 @@
         android:textColor="@color/red"
         android:background="@android:color/transparent"
         android:textSize="18sp"
-        android:onClick="onSignOutClicked"
+        android:onClick="onDeleteUserClicked"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

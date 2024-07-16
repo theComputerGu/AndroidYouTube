@@ -5,13 +5,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
-import com.example.myapplication.Entities.Result;
-import com.example.myapplication.Entities.User;
-import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -109,32 +106,6 @@ public class VideoAPI {
             }
             @Override
             public void onFailure(@NonNull retrofit2.Call<List<Video>> call, @NonNull Throwable t) {
-                t.printStackTrace();
-            }
-        });
-        return videos;
-    }
-    public LiveData<List<Video>> getVideosExcept(String videoId) {
-        MutableLiveData<List<Video>> videos = new MutableLiveData<>();
-
-        webServiceAPI.getVideos().enqueue(new Callback<List<Video>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
-                if (response.isSuccessful()) {
-                    List<Video> allVideos = response.body();
-                    List<Video> filteredList = new ArrayList<>();
-
-                    // Filter out the video with the specified videoId
-                    for (Video video : allVideos) {
-                        if (!video.getVideoId().equals(videoId)) {
-                            filteredList.add(video);
-                        }
-                    }
-                    videos.setValue(filteredList);
-                }
-            }
-            @Override
-            public void onFailure(@NonNull Call<List<Video>> call, @NonNull Throwable t) {
                 t.printStackTrace();
             }
         });

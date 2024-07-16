@@ -61,7 +61,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
 
     public void onSignOutClicked(View view) {
         Helper.setSignedInUser(null);
-        Toast.makeText(this, "singed out successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "signed out successfully", Toast.LENGTH_SHORT).show();
         Intent i = new Intent(this, MainActivity2.class);
         startActivity(i);
     }
@@ -100,9 +100,9 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         builder.setPositiveButton("Delete", (dialog, which) -> {
             userViewModel.deleteUser(Helper.getSignedInUser().getUserId()).observe(this, result -> {
                 if (result.isSuccess()) {
-                    // Handle successful deletion, navigate to login screen or perform cleanup
+                    Helper.setSignedInUser(null);
+                    Helper.setToken(null);
                     Toast.makeText(ProfileActivity.this, "User deleted successfully", Toast.LENGTH_SHORT).show();
-                    // Example: Navigate back to login screen
                     startActivity(new Intent(ProfileActivity.this, MainActivity2.class));
                     finish();
                 } else {

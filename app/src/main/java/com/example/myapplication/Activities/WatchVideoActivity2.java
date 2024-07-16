@@ -9,18 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Adapters.CommentAdapter;
 import com.example.myapplication.Adapters.VideoAdapter;
 import com.example.myapplication.Entities.Comment;
-import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
-import com.example.myapplication.Models.CommentViewModel;
-import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
@@ -55,7 +51,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             }
         });
 
-
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -66,7 +61,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentAdapter = new CommentAdapter(null, this);
+        commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
 
         // Setup comment button click listener

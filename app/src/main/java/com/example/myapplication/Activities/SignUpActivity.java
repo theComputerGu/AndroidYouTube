@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,9 +28,7 @@ public class SignUpActivity extends BaseActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
-    private Button signUpButton;
     private ImageView imageViewPhoto;
-    private Button buttonUploadPhoto;
     private Bitmap selectedPhotoBitmap;
 
     @Override
@@ -41,9 +40,9 @@ public class SignUpActivity extends BaseActivity {
         usernameEditText = findViewById(R.id.editTextUsername);
         passwordEditText = findViewById(R.id.editTextPassword);
         confirmPasswordEditText = findViewById(R.id.editTextConfirmPassword);
-        signUpButton = findViewById(R.id.buttonSignUp);
+        Button signUpButton = findViewById(R.id.buttonSignUp);
         imageViewPhoto = findViewById(R.id.imageViewPhoto);
-        buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
+        Button buttonUploadPhoto = findViewById(R.id.buttonUploadPhoto);
 
 
         buttonUploadPhoto.setOnClickListener(v -> {
@@ -68,7 +67,7 @@ public class SignUpActivity extends BaseActivity {
                         Toast.makeText(SignUpActivity.this, "Created user successfully", Toast.LENGTH_SHORT).show();
 
                         // Login the user after successful creation to get the token
-                        login(newUser);
+                        login(username, password);
                     } else {
                         Toast.makeText(SignUpActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -133,13 +132,19 @@ public class SignUpActivity extends BaseActivity {
         }
         return null;
     }
-    public void login(User newUser) {
-        userViewModel.login(newUser.getUsername(), newUser.getPassword()).observe(this, result -> {
+    public void login(String username, String password) {
+        userViewModel.login(username, password).observe(this, result -> {
             if (result.isSuccess()) {
-                Helper.setSignedInUser(newUser);
-                Intent intent = new Intent(this, MainActivity2.class);
-                startActivity(intent);
-                finish();
+                userViewModel.getUserByUsername(username).observe(this, user -> {
+                    if (user != null) {
+                        Helper.setSignedInUser(user);
+                        Intent intent = new Intent(this, MainActivity2.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Log.d("Login successful! Username", "null");
+                    }
+                });
             } else {
                 Toast.makeText(SignUpActivity.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
