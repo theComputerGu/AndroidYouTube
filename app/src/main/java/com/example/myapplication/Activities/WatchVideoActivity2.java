@@ -21,6 +21,7 @@ import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -53,7 +54,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(null, VideoAdapter.VIEW_TYPE_WATCH, this);
+        videoAdapter = new VideoAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(videoAdapter);
 
 
@@ -109,7 +110,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             commentAdapter.updateData(comments);
         });
     }
-    //
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video

@@ -1,6 +1,7 @@
 package com.example.myapplication.API;
 
 import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
@@ -15,9 +16,12 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -78,24 +82,26 @@ public interface WebServiceAPI {
             @Path("id") String userId,
             @Part("title") RequestBody title,
             @Part("author") RequestBody author,
-            @Part MultipartBody.Part videoFile,
+            @Part MultipartBody.Part video,
             @Part("photo") RequestBody photo
     );
 
-    @PUT("videos/{id}/{pid}")
-    Call<Video> updateUserVideo(
-            @Header("Authorization") String token,
-            @Path("pid") String videoId,
+
+    @PATCH("users/{id}/videos/{pid}")
+    @FormUrlEncoded
+    Call<Result> updateUserVideo(
             @Path("id") String userId,
-            @Path("title") String title
+            @Path("pid") String videoId,
+            @Field("title") String title
     );
 
+
     @DELETE("users/{id}/videos/{pid}")
-    Call<ResponseBody> deleteUserVideo(
+    Call<List<Video>> deleteUserVideo(
             @Path("id") String userId,
-            @Path("pid") String videoId,
-            @Header("Authorization") String token
+            @Path("pid") String videoId
     );
+
 
     @POST("videos")
     Call<ResponseBody> createVideo(@Body Video video);

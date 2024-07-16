@@ -12,6 +12,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 @Entity(tableName = "videos")
 public class Video {
     @PrimaryKey
@@ -193,5 +195,31 @@ public class Video {
     public void incrementLikes(String username) {
         likedBy.add(username);
         this.likes++;
+    }
+    public String calculateTimeElapsed() {
+        Date now = new Date();
+        long durationMillis = now.getTime() - this.timeAgo.getTime();
+
+        // Convert milliseconds to appropriate units
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(durationMillis);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis);
+        long hours = TimeUnit.MILLISECONDS.toHours(durationMillis);
+        long days = TimeUnit.MILLISECONDS.toDays(durationMillis);
+        long weeks = days / 7;
+        long years = days / 365;
+
+        if (seconds < 60) {
+            return seconds + (seconds == 1 ? " second ago" : " seconds ago");
+        } else if (minutes < 60) {
+            return minutes + (minutes == 1 ? " minute ago" : " minutes ago");
+        } else if (hours < 24) {
+            return hours + (hours == 1 ? " hour ago" : " hours ago");
+        } else if (days < 7) {
+            return days + (days == 1 ? " day ago" : " days ago");
+        } else if (weeks < 52) {
+            return weeks + (weeks == 1 ? " week ago" : " weeks ago");
+        } else {
+            return years + (years == 1 ? " year ago" : " years ago");
+        }
     }
 }

@@ -47,10 +47,13 @@ public class UserViewModel extends ViewModel {
     public LiveData<List<Video>> getUserVideos(String userId) {
         return mRepository.getUserVideos(userId);
     }
-    public LiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
-        return mRepository.createUserVideo(userId, title, author, videoFile, photo);
+    public LiveData<Result> createUserVideo(String userId, String title, String author, String photo, File videoFile) {
+        return mRepository.createUserVideo(userId, title, author, photo, videoFile);
     }
-    public LiveData<Result> deleteUserVideo(String userId, String videoId, String token) {
-        return mRepository.deleteUserVideo(userId, videoId, token);
+    public LiveData<Result> deleteUserVideo(String userId, String videoId) {
+        return mRepository.deleteUserVideo(userId, videoId);
+    }
+    public LiveData<Result> updateUserVideo(String userId, String videoId, String title) {
+        return mRepository.updateUserVideo(userId, videoId,title);
     }
 }

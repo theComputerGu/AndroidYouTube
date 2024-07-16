@@ -45,7 +45,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
             imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
         }
 
-        adapter = new VideoAdapter(new ArrayList<>(), VideoAdapter.VIEW_TYPE_MAIN, MainActivity2.this); // Pass null initially
+        adapter = new VideoAdapter(new ArrayList<>(), MainActivity2.this); // Pass null initially
 
         videoViewModel.getAll().observe(this, videos -> {
             adapter.updateVideos(videos);

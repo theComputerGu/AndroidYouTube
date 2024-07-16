@@ -3,9 +3,10 @@ package com.example.myapplication.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,15 +16,15 @@ import com.example.myapplication.R;
 
 import java.util.List;
 
-public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Video> videos;
-
     public interface OnVideoClickListener {
-        void onVideoClick(Video video);
+        void onVideoDelete(Video video);
+        void onVideoUpdate(Video video);
     }
     private OnVideoClickListener onVideoClickListener;
 
-    public VideoAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener) {
+    public UserVideosAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener) {
         this.videos = videos;
         this.onVideoClickListener = onVideoClickListener;
     }
@@ -32,21 +33,14 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.post_layout, parent, false);
-        return new MainViewHolder(view);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_post, parent, false);
+        return new AddViewHolder(view);
     }
 
     // Bind data to the ViewHolder based on view type
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Video video = videos.get(position);
-        ((MainViewHolder) holder).bind(video);
-        holder.itemView.setOnClickListener(v -> {
-            if (onVideoClickListener != null) {
-                onVideoClickListener.onVideoClick(video);
-            }
-        });
-
+        ((AddViewHolder) holder).bind(videos.get(position), onVideoClickListener);
     }
     @Override
     public int getItemCount() {
@@ -60,30 +54,45 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    // ViewHolder for MainActivity
-    class MainViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvAuthor;
+
+    // ViewHolder for AddVideoActivity
+    public class AddViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvViews;
         private final TextView tvContent;
         private final ImageView ivPic;
         private final TextView tvDate;
-        private final VideoView videoView;
+        private final Button btnDelete;
+        private final ImageButton btnUpdate;
 
-        private MainViewHolder(View itemView) {
+        private AddViewHolder(View itemView) {
             super(itemView);
-            tvAuthor = itemView.findViewById(R.id.tvAuthor);
+            tvViews = itemView.findViewById(R.id.tvViews);
             tvContent = itemView.findViewById(R.id.tvContent);
             ivPic = itemView.findViewById(R.id.ivPic);
             tvDate = itemView.findViewById(R.id.tvDate);
-            videoView = itemView.findViewById(R.id.videoView);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+            btnUpdate = itemView.findViewById(R.id.btnUpdate);
         }
 
-        public void bind(Video video) {
-            tvAuthor.setText(video.getAuthorDisplayName());
+
+        public void bind(Video video, OnVideoClickListener onVideoDelete) {
+            tvViews.setText("Views: " + video.getViews());
             tvContent.setText(video.getTitle());
             tvDate.setText(video.calculateTimeElapsed());
-            videoView.setVideoPath(video.getPath());
 
-            Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
+            String photoPath = video.getPhoto();
+            Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, photoPath);
+
+            btnDelete.setOnClickListener(v -> {
+                if (onVideoDelete != null) {
+                    onVideoDelete.onVideoDelete(video);
+                }
+            });
+            btnUpdate.setOnClickListener(v -> {
+                if (onVideoClickListener != null) {
+                    onVideoClickListener.onVideoUpdate(video);
+                }
+            });
         }
     }
 }

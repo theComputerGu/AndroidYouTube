@@ -27,7 +27,7 @@ public class VideoAPI {
 
 
     public VideoAPI() {
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor()).build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
                 .client(client)

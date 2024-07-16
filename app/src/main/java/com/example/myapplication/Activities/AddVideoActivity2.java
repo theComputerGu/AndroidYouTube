@@ -1,7 +1,6 @@
 package com.example.myapplication.Activities;
 
-import static com.example.myapplication.API.Converters.bitmapToBase64;
-
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -18,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.API.Converters;
-import com.example.myapplication.Adapters.VideoAdapter;
+import com.example.myapplication.Adapters.UserVideosAdapter;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
@@ -30,9 +29,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
+public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter.OnVideoClickListener {
     private static final int REQUEST_CODE_PHOTO = 1;
     private static final int REQUEST_CODE_VIDEO = 2;
     private RecyclerView recyclerView;
@@ -41,8 +39,7 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
     private Bitmap thumbnailBitmap;
     private ImageView imageViewPhoto;
     private ImageView videoViewPhoto;
-    private VideoAdapter videoAdapter;
-    private List<Video> userVideos;
+    private UserVideosAdapter adapter;
 
 
     @Override
@@ -66,24 +63,14 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        videoAdapter = new VideoAdapter(new ArrayList<>(), VideoAdapter.VIEW_TYPE_ADD, this);
-        recyclerView.setAdapter(videoAdapter);
+        adapter = new UserVideosAdapter(new ArrayList<>(), this);
+        recyclerView.setAdapter(adapter);
 
-        // Get signed-in user's videos
         userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
-            userVideos = videos;
-            videoAdapter.updateVideos(videos);
+            adapter.updateVideos(videos);
         });
     }
-    private void uploadPhoto() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE_PHOTO);
-    }
 
-    private void uploadVideo() {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_CODE_VIDEO);
-    }
     private static Date getCurrentDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTime();
@@ -96,10 +83,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             Toast.makeText(this, "Please fill all fields and select a video.", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (!isTitleAvailable(title)) {
-            Toast.makeText(this, "Video title already exists for this user.", Toast.LENGTH_SHORT).show();
-            return;
-        }
         // Save video file to internal storage
         String videoFileName = "video_" + System.currentTimeMillis() + ".mp4";
         File videoFile = saveVideoToFile(videoUri, videoFileName);
@@ -108,11 +91,13 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             Toast.makeText(this, "Failed to save video file.", Toast.LENGTH_SHORT).show();
             return;
         }
+        String photoPath = Converters.bitmapToBase64(thumbnailBitmap);
 
-        userViewModel.createUserVideo(Helper.getSignedInUser().getUserId(),title, Helper.getSignedInUser().getUsername(), videoFile, bitmapToBase64(thumbnailBitmap )).observe(this, result ->{
+        userViewModel.createUserVideo(Helper.getSignedInUser().getUserId(),title, Helper.getSignedInUser().getUsername(), photoPath, videoFile).observe(this, result ->{
             if (result.isSuccess()) {
-                userVideos.add(new Video(title, Helper.getSignedInUser().getUsername(),Helper.getSignedInUser().getDisplayName(), getCurrentDate(), Converters.bitmapToBase64(thumbnailBitmap), videoFile.getAbsolutePath()));
-                videoAdapter.updateVideos(userVideos);
+                userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
+                    adapter.updateVideos(videos);
+                });
                 Toast.makeText(this, "Video added successfully!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(AddVideoActivity2.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
@@ -125,14 +110,6 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         videoViewPhoto.setImageResource(0); // Clear video thumbnail
         videoUri = null;
         thumbnailBitmap = null;
-    }
-    public boolean isTitleAvailable(String title) {
-        for (Video video : userVideos) {
-            if (video.getTitle().equalsIgnoreCase(title)) {
-                return false;
-            }
-        }
-        return true;
     }
 
 
@@ -171,16 +148,47 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
         return thumbnail;
     }
     @Override
-    public void onVideoClick(Video video) {
-        userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId(), Helper.getToken()).observe(this, result -> {
+    public void onVideoDelete(Video video) {
+        userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId()).observe(this, result -> {
             if (result.isSuccess()) {
-                userVideos.remove(video);
-                videoAdapter.updateVideos(userVideos);
+                // Get signed-in user's videos
+                userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
+                    adapter.updateVideos(videos);
+                });
                 Toast.makeText(this, "Video deleted", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(AddVideoActivity2.this, result.getErrorMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onVideoUpdate(Video video) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update Video Title");
+
+        final EditText input = new EditText(this);
+        input.setText(video.getTitle());
+        builder.setView(input);
+
+        builder.setPositiveButton("Update", (dialog, which) -> {
+            String newTitle = input.getText().toString();
+            userViewModel.updateUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId(), newTitle)
+                    .observe(this, result -> {
+                        if (result.isSuccess()) {
+                            userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
+                                adapter.updateVideos(videos);
+                            });
+                            Toast.makeText(this, "Video updated successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Failed to update video: " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
     private File saveVideoToFile(Uri videoUri, String fileName) {
         try {
@@ -199,5 +207,14 @@ public class AddVideoActivity2 extends BaseActivity implements VideoAdapter.OnVi
             e.printStackTrace();
         }
         return null;
+    }
+    private void uploadPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_CODE_PHOTO);
+    }
+
+    private void uploadVideo() {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, REQUEST_CODE_VIDEO);
     }
 }
