@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Result;
-import com.example.myapplication.Entities.UpdateUser;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
@@ -31,11 +30,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class UserAPI {
-    private Retrofit retrofit;
-    private WebServiceAPI webServiceAPI;
+    private final Retrofit retrofit;
+    private final WebServiceAPI webServiceAPI;
 
     public UserAPI() {
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor(Helper.context)).build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new AuthInterceptor()).build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(Helper.context.getString(R.string.baseServerURL)+"/api/")
                 .client(client)
@@ -53,7 +52,6 @@ public class UserAPI {
 
     public LiveData<Result> createUser(User user) {
         MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
-
         webServiceAPI.createUser(user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -113,43 +111,56 @@ public class UserAPI {
 
 
 
-    public MutableLiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
+    public LiveData<Result> createUserVideo(String userId, String title, String author, String photo, File videoFile) {
         MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
 
         // Create request parts
         RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
         RequestBody authorBody = RequestBody.create(MediaType.parse("text/plain"), author);
         RequestBody photoBody = RequestBody.create(MediaType.parse("text/plain"), photo);
-        RequestBody userIdBody = RequestBody.create(MediaType.parse("text/plain"), userId);
 
-        // Create MultipartBody.Part for video file
+        String mimeType;
+        String fileExtension = videoFile.getName().substring(videoFile.getName().lastIndexOf(".") + 1).toLowerCase();
+        switch (fileExtension) {
+            case "mp4":
+                mimeType = "video/mp4";
+                break;
+            case "avi":
+                mimeType = "video/x-msvideo";
+                break;
+            case "mkv":
+                mimeType = "video/x-matroska";
+                break;
+            default:
+                mimeType = "video/*"; // Fallback to a generic video MIME type
+        }
+
+        // Create MultipartBody.Part for video file with the correct MIME type
         MultipartBody.Part videoPart = MultipartBody.Part.createFormData(
-                "videoFile",
+                "video", // Ensure the form data name matches what the server expects
                 videoFile.getName(),
-                RequestBody.create(MediaType.parse("video/*"), videoFile)
+                RequestBody.create(MediaType.parse(mimeType), videoFile)
         );
+        webServiceAPI.createUserVideo(userId, titleBody, authorBody, videoPart, photoBody).enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(Call<Video> call, Response<Video> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    resultLiveData.postValue(new Result(true, "Video created successfully"));
+                } else {
+                    resultLiveData.postValue(new Result(false, "Failed to create video: " + response.message()));
+                }
+            }
 
-        webServiceAPI.createUserVideo(userId, titleBody, authorBody, videoPart, photoBody)
-                .enqueue(new Callback<Video>() {
-                    @Override
-                    public void onResponse(Call<Video> call, Response<Video> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            resultLiveData.setValue(new Result(true, null));
-                        } else {
-                            String errorMessage = "Failed to create video: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Video> call, Throwable t) {
-                        String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
-                    }
-                });
+            @Override
+            public void onFailure(Call<Video> call, Throwable t) {
+                resultLiveData.postValue(new Result(false, "Network error: " + t.getMessage()));
+            }
+        });
 
         return resultLiveData;
     }
+
+
 
 
     public void getUser(String token, String username, Callback<User> callback) {
@@ -205,45 +216,90 @@ public class UserAPI {
         call.enqueue(callback);
     }
 
-    public void updateUser(String token, String id, UpdateUser update, Callback<User> callback) {
-        Call<User> call = webServiceAPI.updateUser(token, id, update);
-        call.enqueue(callback);
+    public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
+        MutableLiveData<Result> result = new MutableLiveData<>();
+        webServiceAPI.updateUser(userId, newDisplayName).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.postValue(new Result(true, null));
+                } else {
+                    result.postValue(new Result(false, "Update failed"));
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                result.postValue(new Result(false, t.getMessage()));
+            }
+        });
+
+        return result;
     }
 
-    public void deleteUser(String token, String id, Callback<ResponseBody> callback) {
-        Call<ResponseBody> call = webServiceAPI.deleteUser(token, id);
-        call.enqueue(callback);
+    public LiveData<Result> deleteUser(String userId) {
+        MutableLiveData<Result> result = new MutableLiveData<>();
+        webServiceAPI.deleteUser(userId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    result.postValue(new Result(true, null));
+                } else {
+                    result.postValue(new Result(false, "Failed to delete user"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                result.postValue(new Result(false, t.getMessage()));
+            }
+        });
+        return result;
     }
 
-    public void updateUserVideo(String token, String videoId, String userId, String title, Callback<Video> callback) {
-        Call<Video> call = webServiceAPI.updateUserVideo(token, videoId, userId, title);
-        call.enqueue(callback);
+    public LiveData<Result> updateUserVideo(String userId, String videoId, String title) {
+        MutableLiveData<Result> result = new MutableLiveData<>();
+        webServiceAPI.updateUserVideo(userId, videoId, title).enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.postValue(new Result(true, null));
+                } else {
+                    result.postValue(new Result(false, "Update failed"));
+                }
+            }
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+                result.postValue(new Result(false, t.getMessage()));
+            }
+        });
+        return result;
     }
 
-    public LiveData<Result> deleteUserVideo(String userId, String videoId, String token) {
+
+    public LiveData<Result> deleteUserVideo(String userId, String videoId) {
         MutableLiveData<Result> resultLiveData = new MutableLiveData<>();
 
-        webServiceAPI.deleteUserVideo(userId, videoId, token)
-                .enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful() && response.body() != null) {
-                            resultLiveData.setValue(new Result(true, null));
-                        } else {
-                            String errorMessage = "Failed to delete video: " + response.message();
-                            resultLiveData.setValue(new Result(false, errorMessage));
-                        }
-                    }
+        webServiceAPI.deleteUserVideo(userId, videoId).enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(Call<List<Video>> call, Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Assuming Result class can handle List<Video> in some way
+                    resultLiveData.postValue(new Result(true, "Video deleted successfully"));
+                } else {
+                    resultLiveData.postValue(new Result(false, "Failed to delete video: " + response.message()));
+                }
+            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        String errorMessage = "Network error: " + t.getMessage();
-                        resultLiveData.setValue(new Result(false, errorMessage));
-                    }
-                });
+            @Override
+            public void onFailure(Call<List<Video>> call, Throwable t) {
+                resultLiveData.postValue(new Result(false, "Network error: " + t.getMessage()));
+            }
+        });
 
         return resultLiveData;
     }
+
+
     public LiveData<List<Video>> getUserVideos(String userId) {
         MutableLiveData<List<Video>> userVideos = new MutableLiveData<>();
         webServiceAPI.getUserVideos(userId).enqueue(new Callback<List<Video>>() {

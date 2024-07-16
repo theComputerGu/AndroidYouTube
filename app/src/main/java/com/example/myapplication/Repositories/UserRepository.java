@@ -53,14 +53,23 @@ public class UserRepository {
     public LiveData<User> getUserById(String userId) {
         return userAPI.getUserById(userId);
     }
-    public LiveData<Result> createUserVideo(String userId, String title, String author, File videoFile, String photo) {
-        return userAPI.createUserVideo(userId, title, author, videoFile, photo);
+    public LiveData<Result> createUserVideo(String userId, String title, String author, String photo, File videoFile) {
+        return userAPI.createUserVideo(userId, title, author, photo, videoFile);
     }
-    public LiveData<Result> deleteUserVideo(String userId, String videoId, String token) {
-        return userAPI.deleteUserVideo(userId, videoId, token);
+    public LiveData<Result> deleteUserVideo(String userId, String videoId) {
+        return userAPI.deleteUserVideo(userId, videoId);
+    }
+    public LiveData<Result> updateUserVideo(String userId, String videoId, String title) {
+        return userAPI.updateUserVideo(userId, videoId,title);
     }
 
     public LiveData<List<Video>> getUserVideos(String userId) {
         return userAPI.getUserVideos(userId);
+    }
+    public LiveData<Result> updateDisplayName(String userId, String newDisplayName) {
+        return userAPI.updateDisplayName(userId, newDisplayName);
+    }
+    public LiveData<Result> deleteUser(String userId) {
+        return userAPI.deleteUser(userId);
     }
 }
