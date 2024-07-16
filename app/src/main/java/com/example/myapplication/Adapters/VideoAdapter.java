@@ -16,6 +16,7 @@ import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +25,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public static final int VIEW_TYPE_MAIN = 1;
     public static final int VIEW_TYPE_WATCH = 2;
     public static final int VIEW_TYPE_ADD = 3;
-    private List<Video> videos;
+    private List<Video> videos = new ArrayList<>(); // Initialize with empty list
     private final int viewType;
     public interface OnVideoClickListener {
         void onVideoClick(Video video);
@@ -32,7 +33,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnVideoClickListener onVideoClickListener;
 
     public VideoAdapter(List<Video> videos, int viewType,  OnVideoClickListener onVideoClickListener) {
-        this.videos = videos;
+        this.videos = videos != null ? videos : new ArrayList<>();
         this.viewType = viewType;
         this.onVideoClickListener = onVideoClickListener;
     }
@@ -69,6 +70,9 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
     @Override
     public int getItemCount() {
+        if (videos == null) {
+            return 0; // Return 0 if videos list is null
+        }
         return videos.size();
     }
 
@@ -80,8 +84,11 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // Update the dataset and notify the adapter
     public void updateVideos(List<Video> newVideos) {
-        this.videos = newVideos;
-        notifyDataSetChanged();
+        videos.clear(); // Clear existing data
+        if (newVideos != null) {
+            videos.addAll(newVideos);
+        }
+        notifyDataSetChanged(); // Notify adapter that data set has changed
     }
 
     // ViewHolder for MainActivity
@@ -114,6 +121,8 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             videoView.setVideoPath(video.getPath());
 
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
+            //Helper.loadVideoIntoVideoView(itemView.getContext(), videoView,video.getVideoId());
+            Helper.loadVideoIntoVideoView(itemView.getContext(), videoView, video.getPath());
         }
     }
 

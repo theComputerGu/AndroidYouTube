@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,6 +19,8 @@ import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
+import com.example.myapplication.Models.CommentViewModel;
+import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
 
 import java.text.SimpleDateFormat;
@@ -36,8 +39,10 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_video);
 
+
         // Retrieve selected video ID from Intent
         String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
+
 
         // Observe the current video
         videoViewModel.getVideoById(selectedVideoId).observe(this, video -> {
@@ -67,8 +72,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         Button commentButton = findViewById(R.id.commentButton);
         commentButton.setOnClickListener(v -> addComment());
 
-
-
         // Setup the dislike button click listener
         ImageButton btnDislike = findViewById(R.id.btnDislike);
         btnDislike.setOnClickListener(v -> dislikeVideo());
@@ -96,12 +99,16 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvLikes.setText(String.valueOf(currentVideo.getLikes()));
         tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
 
-        // Setup the VideoView
+
         VideoView videoView = findViewById(R.id.videoView);
-        CustomMediaController mediaController = new CustomMediaController(this, videoView);
-        videoView.setMediaController(mediaController);
-        videoView.setVideoPath(currentVideo.getPath());
-        videoView.start();
+        Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
+        // Setup the VideoView
+        //VideoView videoView = findViewById(R.id.videoView);
+        //CustomMediaController mediaController = new CustomMediaController(this, videoView);
+        //videoView.setMediaController(mediaController);
+        //Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
+        //videoView.setVideoPath(Helper.context.getString(R.string.baseServerURL)+currentVideo.getPath());
+        //videoView.start();
     }
 
     private void setupCommentSection() {
