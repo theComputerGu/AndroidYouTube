@@ -31,6 +31,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         isDarkMode = sharedPreferences.getBoolean(PREF_DARK_MODE, false);
         if (isDarkMode) {
             setTheme(R.style.AppTheme_Dark);
