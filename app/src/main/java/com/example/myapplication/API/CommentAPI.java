@@ -1,10 +1,15 @@
 package com.example.myapplication.API;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Helper;
 import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.R;
@@ -47,11 +52,13 @@ public class CommentAPI {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
                 if (response.isSuccessful()) {
-                    commentLiveData.setValue(response.body());
+                    Log.d(TAG, "getComments onResponse: Successful");
+                    commentLiveData.postValue(response.body());
                 } else {
                     try {
                         String errorBody = response.errorBody().string();
-                        // Parse errorBody to get detailed error message
+                        Log.e(TAG, "getComments onResponse: Error body: " + errorBody);
+                        // Handle error body for detailed error message
                         // Update UI or notify user based on error message
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -61,29 +68,45 @@ public class CommentAPI {
 
             @Override
             public void onFailure(Call<List<Comment>> call, Throwable t) {
+                Log.e(TAG, "getComments onFailure: " + t.getMessage());
                 t.printStackTrace();
+                // Handle failure
             }
         });
     }
 
-    public  static void createComment(Comment comment, String videoId, MutableLiveData<Comment> commentLiveData) {
-        Call<Comment> call = webServiceAPI.createComment(comment, videoId);
+
+    public static void createComment(String videoId, String username, String text, MutableLiveData<Comment> commentLiveData) {
+        // Assuming you have the user details available synchronously or asynchronously
+        String displayName = "User Display Name"; // Replace with actual display name
+        String profilePicture = "base64_encoded_profile_picture"; // Replace with actual profile picture
+
+        // Create a Comment object with the available details
+        Comment comment = new Comment(username, displayName, profilePicture, videoId, text);
+
+        // Make the Retrofit API call to create the comment
+        Call<Comment> call = webServiceAPI.createComment(videoId, comment);
         call.enqueue(new Callback<Comment>() {
             @Override
-            public void onResponse(@NonNull Call<Comment> call, @NonNull Response<Comment> response) {
+            public void onResponse(Call<Comment> call, Response<Comment> response) {
                 if (response.isSuccessful()) {
-                    commentLiveData.setValue(response.body());
+                    commentLiveData.postValue(response.body());
                 } else {
-                    // Handle the case where the response is not successful
-                    commentLiveData.setValue(null);
+                    // Handle unsuccessful response
+                    // Parse errorBody to get detailed error message
+                    try {
+                        String errorBody = response.errorBody().string();
+                        // Update UI or notify user based on error message
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<Comment> call, @NonNull Throwable t) {
+            public void onFailure(Call<Comment> call, Throwable t) {
+                // Handle failure
                 t.printStackTrace();
-                // Handle the failure
-                commentLiveData.setValue(null);
             }
         });
     }
@@ -102,15 +125,15 @@ public class CommentAPI {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful() && response.body()!=null)
                 {
-                    commentLiveData.setValue(true);
+                    commentLiveData.postValue(true);
                 } else {
-                    commentLiveData.setValue(false);
+                    commentLiveData.postValue(false);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                commentLiveData.setValue(false);
+                commentLiveData.postValue(false);
             }
         });
     }

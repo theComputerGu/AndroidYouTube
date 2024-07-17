@@ -13,6 +13,7 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -25,7 +26,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnVideoClickListener onVideoClickListener;
 
     public VideoAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener) {
-        this.videos = videos;
+        this.videos = videos != null ? videos : new ArrayList<>();
         this.onVideoClickListener = onVideoClickListener;
     }
 
@@ -91,8 +92,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             videoView.setVideoPath(video.getPath());
 
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
-            //Helper.loadVideoIntoVideoView(itemView.getContext(), videoView,video.getVideoId());
-            Helper.loadVideoIntoVideoView(itemView.getContext(), videoView, video.getPath());
+            //Helper.loadVideoIntoVideoView(itemView.getContext(), videoView, video.getPath());
         }
     }
 }
