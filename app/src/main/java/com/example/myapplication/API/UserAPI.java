@@ -14,9 +14,11 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -238,25 +240,50 @@ public class UserAPI {
         return result;
     }
 
-    public LiveData<Result> deleteUser(String userId) {
+    public LiveData<Result> deleteUser(String userId, String username) {
         MutableLiveData<Result> result = new MutableLiveData<>();
-        Log.d("UserAPI", "Deleting user with ID: " + userId);
-        Log.d("UserAPI", "Token: " + Helper.getToken());
-        webServiceAPI.deleteUser(userId).enqueue(new Callback<Void>() {
+        Log.d("UserAPI", "Attempting to delete user with ID: " + userId);
+
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("username", username);
+        } catch (JSONException e) {
+            Log.e("UserAPI", "Error creating JSON body", e);
+            result.postValue(new Result(false, "Error creating request body"));
+            return result;
+        }
+
+        String bodyString = jsonBody.toString();
+        Log.d("UserAPI", "Request body: " + bodyString);
+
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), bodyString);
+
+        webServiceAPI.deleteUser(userId, body).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d("UserAPI", "Delete user response code: " + response.code());
                 if (response.isSuccessful()) {
                     result.postValue(new Result(true, null));
                 } else {
-                    result.postValue(new Result(false, "Failed to delete user"));
+                    String errorBody = "";
+                    try {
+                        errorBody = response.errorBody().string();
+                    } catch (IOException e) {
+                        Log.e("UserAPI", "Error reading error body", e);
+                    }
+                    String errorMessage = "Failed to delete user: " + response.code() + " - " + errorBody;
+                    Log.e("UserAPI", errorMessage);
+                    result.postValue(new Result(false, errorMessage));
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("UserAPI", "Delete user request failed", t);
                 result.postValue(new Result(false, t.getMessage()));
             }
         });
+
         return result;
     }
 

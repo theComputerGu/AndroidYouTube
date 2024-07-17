@@ -98,7 +98,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         builder.setMessage("Are you sure you want to delete your account? This action cannot be undone.");
 
         builder.setPositiveButton("Delete", (dialog, which) -> {
-            userViewModel.deleteUser(Helper.getSignedInUser().getUserId()).observe(this, result -> {
+            userViewModel.deleteUser(Helper.getSignedInUser().getUserId(), Helper.getSignedInUser().getUsername()).observe(this, result -> {
                 if (result.isSuccess()) {
                     Helper.setSignedInUser(null);
                     Helper.setToken(null);

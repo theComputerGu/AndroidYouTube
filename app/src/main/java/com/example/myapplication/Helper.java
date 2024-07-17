@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -12,27 +13,49 @@ import android.widget.VideoView;
 import com.bumptech.glide.Glide;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.User;
+import com.google.gson.Gson;
 
 public class Helper extends Application {
+    private static final String PREF_NAME = "MyAppPrefs";
+    private static SharedPreferences prefs;
+    private static SharedPreferences.Editor editor;
+
+    private static String token;
+    private static User signedInUser;
+
     public static Context context;
-    public static String token;
-    public static User signedInUser;
+
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        prefs = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        editor = prefs.edit();
+        // Retrieve token and signed-in user if previously saved
+        token = prefs.getString("token", null);
+        String userJson = prefs.getString("signedInUser", null);
+        signedInUser = userJson != null ? new Gson().fromJson(userJson, User.class) : null;
     }
+
     public static String getToken() {
         return token;
     }
+
     public static void setToken(String token) {
         Helper.token = token;
+        editor.putString("token", token);
+        editor.apply();
     }
+
     public static User getSignedInUser() {
         return signedInUser;
     }
+
     public static void setSignedInUser(User signedInUser) {
         Helper.signedInUser = signedInUser;
+        String userJson = new Gson().toJson(signedInUser);
+        editor.putString("signedInUser", userJson);
+        editor.apply();
     }
     public static boolean isSignedIn() {
         return signedInUser != null;
