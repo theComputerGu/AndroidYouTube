@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.Adapters.VideoAdapter;
+import com.example.myapplication.DB.AppDB;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
@@ -106,6 +107,12 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     protected void onResume() {
         super.onResume();
         videoViewModel.getAll().observe(this, videos -> adapter.updateVideos(videos));
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppDB appDB = AppDB.getInstance();
+        appDB.clearDatabase();
     }
     public void onDarkModeClicked(View view) {
         toggleDarkMode();

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,14 +21,15 @@ import java.util.List;
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private List<Comment> comments;
 
-    public interface onCommentDelete{
+    public interface OnCommentClickListener{
         void onCommentDelete(Comment comment);
+        void onCommentUpdate(Comment comment);
     }
-    private onCommentDelete ontDelete;
+    private OnCommentClickListener onCommentClick;
 
-    public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete) {
+    public CommentAdapter(List<Comment> comments, OnCommentClickListener onCommentClick) {
         this.comments = comments != null ? comments : new ArrayList<>();
-        this.ontDelete = onCommentDelete;
+        this.onCommentClick = onCommentClick;
     }
     public void updateData(List<Comment> comments) {
         this.comments = comments;
@@ -44,7 +46,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = comments.get(position);
-        holder.bind(comment,ontDelete);
+        holder.bind(comment,onCommentClick);
     }
 
     @Override
@@ -56,7 +58,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         private final ImageView ivUserPic;
         private final TextView tvUserName;
         private final TextView tvCommentText;
-        private Button tvDelete;
+        private Button btnDelete;
+        private ImageButton btnUpdate;
 
 
         CommentViewHolder(@NonNull View itemView) {
@@ -64,19 +67,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             ivUserPic = itemView.findViewById(R.id.ivUserPic);
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvCommentText = itemView.findViewById(R.id.tvCommentText);
-            tvDelete = itemView.findViewById(R.id.btnDelete);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
+            btnUpdate = itemView.findViewById(R.id.btnUpdate);
         }
 
-        void bind(Comment comment, onCommentDelete onCommentDelete) {
+        void bind(Comment comment, OnCommentClickListener onCommentClick) {
             tvUserName.setText(comment.getDisplayName());
             tvCommentText.setText(comment.getText());
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivUserPic,comment.getPhoto());
 
-            tvDelete.setOnClickListener(v -> {
-                if (onCommentDelete != null) {
-                    onCommentDelete.onCommentDelete(comment);
+            btnDelete.setOnClickListener(v -> {
+                if (onCommentClick != null) {
+                    onCommentClick.onCommentDelete(comment);
                 }
             });
+            btnUpdate.setOnClickListener(v -> {
+                if (onCommentClick != null) {
+                    onCommentClick.onCommentUpdate(comment);
+                }
+            });
+
         }
     }
 }
