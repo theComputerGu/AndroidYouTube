@@ -65,7 +65,6 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
             recyclerView.setAdapter(adapter);
 
             userViewModel.getUserVideos(userProfile.getUserId()).observe(this, videos -> {
-                videoDao.insertAll(videos);
                 adapter.updateVideos(videos);
             });
         });
@@ -117,7 +116,6 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
 
     @Override
     public void onVideoUpdate(Video video) {
-        videoDao.update(video);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update Video Title");
 
@@ -146,7 +144,6 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
     }
     @Override
     public void onVideoDelete(Video video) {
-        videoDao.delete(video);
         userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId()).observe(this, result -> {
             if (result.isSuccess()) {
                 // Get signed-in user's videos

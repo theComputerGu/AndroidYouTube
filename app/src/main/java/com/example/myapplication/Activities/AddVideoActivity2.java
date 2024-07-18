@@ -67,7 +67,6 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
         recyclerView.setAdapter(adapter);
 
         userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
-            videoDao.insertAll(videos);
             adapter.updateVideos(videos);
         });
     }
@@ -94,7 +93,6 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
         }
         String photoPath = Converters.bitmapToBase64(thumbnailBitmap);
 
-        videoDao.insert(new Video(title,Helper.getSignedInUser().getUsername(), Helper.getSignedInUser().getDisplayName(), getCurrentDate(), photoPath, videoFile.getPath()));
 
         userViewModel.createUserVideo(Helper.getSignedInUser().getUserId(),title, Helper.getSignedInUser().getUsername(), photoPath, videoFile).observe(this, result ->{
             if (result.isSuccess()) {
@@ -152,7 +150,6 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
     }
     @Override
     public void onVideoDelete(Video video) {
-        videoDao.delete(video);
         userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId()).observe(this, result -> {
             if (result.isSuccess()) {
                 // Get signed-in user's videos
@@ -168,7 +165,6 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
 
     @Override
     public void onVideoUpdate(Video video) {
-        videoDao.update(video);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update Video Title");
 

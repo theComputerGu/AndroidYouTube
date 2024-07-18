@@ -62,7 +62,8 @@ public class VideoAPI {
         return videos;
     }
 
-    public void getVideoById(String videoId, MutableLiveData<Video> video) {
+    public LiveData<Video> getVideoById(String videoId) {
+        MutableLiveData<Video> video = new MutableLiveData<>();
         Call<Video> call = webServiceAPI.getVideoById(videoId);
         call.enqueue(new Callback<Video>() {
             @Override
@@ -81,6 +82,7 @@ public class VideoAPI {
                 video.postValue(null);
             }
         });
+        return video;
     }
 
 
