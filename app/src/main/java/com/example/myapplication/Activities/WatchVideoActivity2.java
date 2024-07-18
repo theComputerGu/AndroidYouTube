@@ -2,6 +2,7 @@ package com.example.myapplication.Activities;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,7 @@ import com.example.myapplication.R;
 
 import java.util.ArrayList;
 
-public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
+public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.OnCommentClickListener {
     private Video currentVideo;
     private TextView tvLikes;
     private TextView tvDislikes;
@@ -143,13 +144,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             String commentContent = commentEditText.getText().toString().trim();
 
             if (!commentContent.isEmpty()) {
-                Comment comment = new Comment(
-                        Helper.getSignedInUser().getUsername(),
-                        Helper.getSignedInUser().getDisplayName(),
-                        Helper.getSignedInUser().getProfilePicture(),
-                        currentVideo.getVideoId(),
-                        commentContent
-                );
 
                 Log.d(TAG, "addComment: Creating comment with content: " + commentContent);
                 commentViewModel.createComment(currentVideo.getVideoId(),Helper.getSignedInUser().getUsername(),commentContent).observe(this, createdComment -> {
@@ -217,19 +211,48 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     @Override
     public void onCommentDelete(Comment comment) {
-
-        if ( Helper.isSignedIn() ) {
-            commentViewModel.getComments(currentVideo.getVideoId()).observe(this, user -> {
-                if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
-                    commentViewModel.deleteComment(comment);
+        if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
+            commentViewModel.deleteComment(comment.getCommentId(), currentVideo.getVideoId()).observe(this, result -> {
+                if (result) {
                     Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+                    setupCommentSection();
+                }
+                else {
+                    Toast.makeText(this, "Failed to delete comment", Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
         }
-        else {
-            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onCommentUpdate(Comment comment) {
+        if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Update Video Title");
+
+            final EditText input = new EditText(this);
+            input.setText(comment.getText());
+            builder.setView(input);
+
+            builder.setPositiveButton("Update", (dialog, which) -> {
+                String newText = input.getText().toString();
+                commentViewModel.updateComment(comment.getCommentId(), comment.getVideoId(), newText)
+                        .observe(this, result -> {
+                            if (result) {
+                                setupCommentSection();
+                                Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, "Failed to update comment: ", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            });
+
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+        } else {
+            Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
         }
     }
     public void onProfilePhotoClicked(View view) {
