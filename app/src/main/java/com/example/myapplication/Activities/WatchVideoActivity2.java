@@ -5,13 +5,14 @@ import static android.content.ContentValues.TAG;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import androidx.lifecycle.Observer;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,11 +24,7 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
     private Video currentVideo;
@@ -35,6 +32,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private TextView tvDislikes;
     private CommentAdapter commentAdapter;
     private VideoAdapter videoAdapter;
+    private ImageButton imageButtonProfilePhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +67,24 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
 
+        Button commentsButton = findViewById(R.id.commentsButton);
+        RelativeLayout commentsSection = findViewById(R.id.commentsSection);
+
+        commentsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentsSection.getVisibility() == View.GONE) {
+                    commentsSection.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    commentsSection.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         // Setup comment button click listener
-        Button commentButton = findViewById(R.id.commentButton);
+        Button commentButton = findViewById(R.id.addCommentButton);
         commentButton.setOnClickListener(v -> addComment());
 
         // Setup the dislike button click listener
@@ -87,11 +101,22 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvLikes = findViewById(R.id.tvLikes);
         tvDislikes = findViewById(R.id.tvDislikes);
 
+        // Initialize the profile photo ImageView
+        userViewModel.getUserByUsername(currentVideo.getAuthor()).observe(this, user -> {
+            if (user != null) {
+                imageButtonProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
+                Helper.loadPhotoIntoImageView(this, imageButtonProfilePhoto, user.getProfilePicture());
+            }
+        });
+
         // Initialize the video details TextViews
+        TextView tvViews = findViewById(R.id.tvViews);
         TextView tvAuthor = findViewById(R.id.tvAuthor);
         TextView tvContent = findViewById(R.id.tvContent);
         TextView tvDate = findViewById(R.id.tvDate);
 
+        currentVideo.incrementViews();
+        tvViews.setText(currentVideo.getViewsString());
         tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.calculateTimeElapsed());
@@ -103,32 +128,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         VideoView videoView = findViewById(R.id.videoView);
         Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
-        // Setup the VideoView
-        //VideoView videoView = findViewById(R.id.videoView);
-        //CustomMediaController mediaController = new CustomMediaController(this, videoView);
-        //videoView.setMediaController(mediaController);
-        //Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
-        //videoView.setVideoPath(Helper.context.getString(R.string.baseServerURL)+currentVideo.getPath());
-        //videoView.start();
-    }
-
-    private void setupRecyclerView() {
-        RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
-        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentAdapter = new CommentAdapter(new ArrayList<>(), comment -> {
-            // Handle delete comment action if needed
-            // commentViewModel.deleteComment(comment);
-        });
-        commentsRecyclerView.setAdapter(commentAdapter);
-    }
-
-    private void loadCommentsToRecyclerView() {
-        String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
-        commentViewModel.getComments(selectedVideoId).observe(this, comments -> {
-            if (comments != null) {
-                commentAdapter.updateData(comments);
-            }
-        });
     }
 
     private void setupCommentSection() {
@@ -214,11 +213,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         }
     }
 
-    private String getCurrentDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return sdf.format(new Date());
-    }
-
     @Override
     public void onVideoClick(Video video) {
         Intent intent = new Intent(this, WatchVideoActivity2.class);
@@ -243,5 +237,10 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
         }
+    }
+    public void onProfilePhotoClicked(View view) {
+        Intent i = new Intent(this, ProfileActivity.class);
+        i.putExtra("username", currentVideo.getAuthor());
+        startActivity(i);
     }
 }

@@ -63,7 +63,7 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new UserVideosAdapter(new ArrayList<>(), this);
+        adapter = new UserVideosAdapter(new ArrayList<>(), this, true);
         recyclerView.setAdapter(adapter);
 
         userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
@@ -216,5 +216,11 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
     private void uploadVideo() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_VIDEO);
+    }
+    @Override
+    public void onVideoClick(Video video) {
+        Intent intent = new Intent(this, WatchVideoActivity2.class);
+        intent.putExtra("selectedVideoId", video.getVideoId());
+        startActivity(intent);
     }
 }

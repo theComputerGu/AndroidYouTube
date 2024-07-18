@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,29 +69,25 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     // ViewHolder for MainActivity
     class MainViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvAuthor;
+        private TextView tvViews;
         private final TextView tvContent;
         private final ImageView ivPic;
         private final TextView tvDate;
-        private final VideoView videoView;
 
         private MainViewHolder(View itemView) {
             super(itemView);
-            tvAuthor = itemView.findViewById(R.id.tvAuthor);
             tvContent = itemView.findViewById(R.id.tvContent);
             ivPic = itemView.findViewById(R.id.ivPic);
             tvDate = itemView.findViewById(R.id.tvDate);
-            videoView = itemView.findViewById(R.id.videoView);
+            tvViews = itemView.findViewById(R.id.tvViews);
         }
 
         public void bind(Video video) {
-            tvAuthor.setText(video.getAuthorDisplayName());
             tvContent.setText(video.getTitle());
             tvDate.setText(video.calculateTimeElapsed());
-            videoView.setVideoPath(video.getPath());
+            tvViews.setText(String.valueOf(video.getViewsString()));
 
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, video.getPhoto());
-            //Helper.loadVideoIntoVideoView(itemView.getContext(), videoView, video.getPath());
         }
     }
 }

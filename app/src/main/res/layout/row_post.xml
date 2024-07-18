@@ -22,6 +22,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
+            android:onClick="onVideoClick"
             android:src="@drawable/ic_launcher_background" />
 
         <LinearLayout
@@ -29,7 +30,8 @@
             android:layout_height="98dp"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:paddingStart="6dp">
+            android:paddingStart="6dp"
+            android:onClick="onVideoClick">
 
             <TextView
                 android:id="@+id/tvContent"
