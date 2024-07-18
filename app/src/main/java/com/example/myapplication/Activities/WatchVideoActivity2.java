@@ -2,7 +2,9 @@ package com.example.myapplication.Activities;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +26,10 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
@@ -52,6 +58,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             }
         });
 
+
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -62,7 +69,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        commentAdapter = new CommentAdapter(new ArrayList<>(), this);
+        commentAdapter = new CommentAdapter(new ArrayList<>(),this,true,this::CommentUpdate);
         commentsRecyclerView.setAdapter(commentAdapter);
 
         Button commentsButton = findViewById(R.id.commentsButton);
@@ -218,15 +225,14 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     @Override
     public void onCommentDelete(Comment comment) {
 
-        if ( Helper.isSignedIn() ) {
-            commentViewModel.getComments(currentVideo.getVideoId()).observe(this, user -> {
-                if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
-                    commentViewModel.deleteComment(comment);
-                    Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
-                }
-            });
+        if (Helper.isSignedIn()) {
+            if (Helper.getSignedInUser().getUsername().equals(comment.getUsername())) {
+                commentViewModel.deleteComment(comment.getVideoId(), comment.getText());
+                Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
+                setupCommentSection();
+            } else {
+                Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+            }
         }
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
@@ -236,5 +242,42 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         Intent i = new Intent(this, ProfileActivity.class);
         i.putExtra("username", currentVideo.getAuthor());
         startActivity(i);
+    }
+
+    public void CommentUpdate(Comment comment) {
+        if (Helper.isSignedIn()) {
+            if (Helper.getSignedInUser().getUsername().equals(comment.getUsername())) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Update comment");
+
+                final EditText input = new EditText(this);
+                input.setText(comment.getText());
+                builder.setView(input);
+
+                builder.setPositiveButton("Update", (dialog, which) -> {
+                    String newText = input.getText().toString();
+                    Comment updatedComment = new Comment(Helper.getSignedInUser().getUsername(),currentVideo.getTitle(), Helper.getSignedInUser().getProfilePicture(), currentVideo.getVideoId(), newText);
+                    updatedComment.setText(newText);
+                    commentViewModel.updateComment(comment,currentVideo.getVideoId()).observe(this, result -> {
+                        Log.d(TAG, "addComment: Comment added successfully.");
+                        if (result != null) {
+                            Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show();
+                            setupCommentSection();
+                        } else {
+                             Toast.makeText(this, "Failed to update comment", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                });
+
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+                builder.show();
+            } else {
+                Toast.makeText(this, "You are not authorized to update this comment", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
     }
 }

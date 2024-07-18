@@ -36,11 +36,11 @@ public interface WebServiceAPI {
     @POST("comments/videos/{id}")
     Call<Comment> createComment(@Path("id") String videoId, @Body Comment comment);
 
-    @PUT("videos/{id}/comments/{cid}")
-    Call<Comment> updateComment(@Header("Authorization") String token, @Path("cid") String commentId, @Body UpdateComment comment);
+    @POST("comments/{commentId}/videos/{videoId}")
+    Call<Comment> updateComment(@Path("commentId") String commentId, @Path("videoId") String videoId, @Body Comment newComment);
 
-    @DELETE("videos/{id}/comments/{cid}")
-    Call<ResponseBody> deleteComment(@Path("id") String videoId, @Path("cid") String commentId);
+    @DELETE("comments/{videoId}/videos/{commentId}")
+    Call<ResponseBody> deleteComment(@Path("videoId") String videoId, @Path("commentId") String commentId);
 
     @DELETE("videos/{id}/comments")
     Call<ResponseBody> deleteComments(@Header("Authorization") String token, @Path("id") String videoId);

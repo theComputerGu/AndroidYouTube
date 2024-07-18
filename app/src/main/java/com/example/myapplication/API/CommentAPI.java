@@ -3,6 +3,7 @@ package com.example.myapplication.API;
 import static android.content.ContentValues.TAG;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
@@ -113,21 +114,52 @@ public class CommentAPI {
 
 
 
-    public void updateComment(String token, String commentId, UpdateComment comment, Callback<Comment> callback) {
-        Call<Comment> call = webServiceAPI.updateComment(token, commentId, comment);
-        call.enqueue(callback);
+    public static void updateComment(Comment comment, String videoId, MutableLiveData<Comment> commentLiveData) {
+        // Log the comment details before making the call
+        Log.d(TAG, "Updating comment with ID: " + comment.getCommentId() + " for video ID: " + comment.getVideoId());
+
+        try {
+            Call<Comment> call = webServiceAPI.updateComment(comment.getCommentId(), videoId, comment);
+            call.enqueue(new Callback<Comment>() {
+                @Override
+                public void onResponse(Call<Comment> call, Response<Comment> response) {
+                    if (response.isSuccessful()) {
+                        commentLiveData.postValue(response.body());
+                        Log.d(TAG, "Update successful: " + response.body());
+                    } else {
+                        Log.d(TAG, "Update failed: " + response.errorBody());
+                        try {
+                            String errorBody = response.errorBody().string();
+                            Log.e(TAG, "Error body: " + errorBody);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Comment> call, Throwable t) {
+                    Log.e(TAG, "Network call failed", t);
+                    t.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Exception occurred before making network call", e);
+        }
     }
+
 
     public static void deleteComment(String videoId, String commentId, MutableLiveData<Boolean> commentLiveData) {
         Call<ResponseBody> call = webServiceAPI.deleteComment(videoId, commentId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if(response.isSuccessful() && response.body()!=null)
-                {
+                if (response.isSuccessful()) {
                     commentLiveData.postValue(true);
+                    Log.d(TAG, "hhhhhh: ggggggg");
                 } else {
                     commentLiveData.postValue(false);
+                    Log.d(TAG, "hhhhhh: hhhhhhhh");
                 }
             }
 

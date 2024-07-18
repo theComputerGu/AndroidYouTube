@@ -39,16 +39,22 @@ public class CommentRepository {
         return data;
     }
 
+    public LiveData<Comment> updateComment(Comment comment, String videoId) {
+        MutableLiveData<Comment> data = new MutableLiveData<>();
+        CommentAPI.updateComment(comment,videoId, data);
+        return data;
+    }
+
     public MutableLiveData<List<Comment>> getComments(String videoId) {
         MutableLiveData<List<Comment>> data = new MutableLiveData<>();
         CommentAPI.getComments(videoId, data);
         return data;
     }
 
-    public MutableLiveData<Boolean> deleteComment(Comment comment) {
-        MutableLiveData<Boolean> result = new MutableLiveData<>();
-        CommentAPI.deleteComment(comment.getVideoId(),comment.getCommentId(), result);
-        return result;
+    public LiveData<Boolean> deleteComment(String videoId, String commentId) {
+        MutableLiveData<Boolean> deleteResult = new MutableLiveData<>();
+        CommentAPI.deleteComment(videoId, commentId, deleteResult);
+        return deleteResult;
     }
 
 }

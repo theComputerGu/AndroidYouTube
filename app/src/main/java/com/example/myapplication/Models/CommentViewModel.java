@@ -30,8 +30,12 @@ public class CommentViewModel extends ViewModel {
         return mRepository.getComments(videoId);
     }
 
-    public void deleteComment(Comment comment) {
-        mRepository.deleteComment(comment);
+    public  LiveData<Boolean> deleteComment(String videoId, String commentId) {
+        return mRepository.deleteComment(videoId, commentId);
+    }
+
+    public LiveData<Comment> updateComment(Comment comment,String videoId) {
+        return mRepository.updateComment(comment,videoId);
     }
 
 }

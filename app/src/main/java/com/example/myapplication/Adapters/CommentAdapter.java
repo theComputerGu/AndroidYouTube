@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,21 +22,32 @@ import java.util.List;
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
     private List<Comment> comments;
 
+    private boolean buttonsEnabled;
+
     public interface onCommentDelete{
         void onCommentDelete(Comment comment);
     }
 
+    public interface CommentUpdate{
+        void CommentUpdate(Comment comment);
+    }
+
+
     private onCommentDelete ontDelete;
 
-    public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete) {
+    private CommentUpdate ontDelete2;
+
+    public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete,boolean buttonsEnabled,CommentUpdate commentUpdateListener) {
         this.comments = comments != null ? comments : new ArrayList<>();
         this.ontDelete = onCommentDelete;
+        this.buttonsEnabled = buttonsEnabled;
+        this.ontDelete2 = commentUpdateListener;
     }
 
     // Method to update the dataset and refresh the RecyclerView
     public void updateData(List<Comment> comments) {
         //this.comments.clear();
-        this.comments.addAll(comments);
+        this.comments = comments;
         notifyDataSetChanged();
     }
 
@@ -49,7 +61,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     @Override
     public void onBindViewHolder(@NonNull CommentViewHolder holder, int position) {
         Comment comment = comments.get(position);
-        holder.bind(comment,ontDelete);
+        holder.bind(comment,ontDelete,ontDelete2,buttonsEnabled);
     }
 
     @Override
@@ -61,6 +73,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         private final ImageView ivUserPic;
         private final TextView tvUserName;
         private final TextView tvCommentText;
+
+        private final TextView btnEdit;
         private Button tvDelete;
 
 
@@ -70,17 +84,27 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             tvUserName = itemView.findViewById(R.id.tvUserName);
             tvCommentText = itemView.findViewById(R.id.tvCommentText);
             tvDelete = itemView.findViewById(R.id.btnDelete);
+            btnEdit = itemView.findViewById(R.id.btnEdit);
         }
 
-        void bind(Comment comment, onCommentDelete onCommentDelete) {
+        void bind(Comment comment, onCommentDelete onCommentDelete,CommentUpdate CommentUpdate,boolean buttonsEnabled) {
             tvUserName.setText(comment.getDisplayName());
 //            ivUserPic.setImageBitmap(Converters.base64ToBitmap(comment.getPhoto()));
             tvCommentText.setText(comment.getText());
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivUserPic,comment.getPhoto());
 
+            btnEdit.setVisibility(buttonsEnabled ? View.VISIBLE : View.GONE);
+            btnEdit.setEnabled(buttonsEnabled);
+
             tvDelete.setOnClickListener(v -> {
                 if (onCommentDelete != null) {
                     onCommentDelete.onCommentDelete(comment);
+                }
+            });
+
+            btnEdit.setOnClickListener(v -> {
+                if (CommentUpdate != null) {
+                    CommentUpdate.CommentUpdate(comment);
                 }
             });
         }

@@ -45,6 +45,18 @@
             android:textSize="14sp"
             android:text="This is a sample comment text." />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        android:layout_gravity="center"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:text="X" />
+
     <Button
         android:id="@+id/btnDelete"
         android:layout_width="wrap_content"
