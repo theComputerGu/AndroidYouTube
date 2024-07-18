@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.Entities.Comment;
-import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Repositories.CommentRepository;
 
 import java.util.List;
@@ -13,9 +12,16 @@ import java.util.List;
 public class CommentViewModel extends ViewModel {
     private CommentRepository mRepository;
     private LiveData<List<Comment>> comments;
-    public CommentViewModel(){
+    private static CommentViewModel instance;
+    private CommentViewModel(){
         mRepository = new CommentRepository();
         comments = mRepository.getAll();
+    }
+    public static synchronized CommentViewModel getInstance() {
+        if (instance == null) {
+            instance = new CommentViewModel();
+        }
+        return instance;
     }
     public LiveData<List<Comment>> get() {return comments; }
     public void setComments(List<Comment> c) {

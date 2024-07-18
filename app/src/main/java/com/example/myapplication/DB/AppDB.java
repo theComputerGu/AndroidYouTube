@@ -1,4 +1,4 @@
-package com.example.myapplication.API;
+package com.example.myapplication.DB;
 
 import androidx.room.Database;
 import androidx.room.Room;

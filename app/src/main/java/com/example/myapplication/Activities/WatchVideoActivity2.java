@@ -2,9 +2,11 @@ package com.example.myapplication.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -64,8 +66,24 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
 
+        // view the comments
+        Button comments = findViewById(R.id.commentsButton);
+        RelativeLayout commentsSection = findViewById(R.id.commentsSection);
+        comments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (commentsSection.getVisibility() == View.GONE) {
+                    commentsSection.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    commentsSection.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         // Setup comment button click listener
-        Button commentButton = findViewById(R.id.commentButton);
+        Button commentButton = findViewById(R.id.addCommentButton);
         commentButton.setOnClickListener(v -> addComment());
 
         // Setup the dislike button click listener
@@ -98,13 +116,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         VideoView videoView = findViewById(R.id.videoView);
         Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
-        // Setup the VideoView
-        //VideoView videoView = findViewById(R.id.videoView);
-        //CustomMediaController mediaController = new CustomMediaController(this, videoView);
-        //videoView.setMediaController(mediaController);
-        //Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
-        //videoView.setVideoPath(Helper.context.getString(R.string.baseServerURL)+currentVideo.getPath());
-        //videoView.start();
     }
 
     private void setupCommentSection() {

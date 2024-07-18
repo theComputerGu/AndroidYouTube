@@ -3,7 +3,6 @@ package com.example.myapplication.Activities;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +24,6 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
     private ImageView imageViewProfilePhoto;
     private TextView tvUsername;
     private TextView tvDisplayName;
-    private Button btnSignOut;
     private RecyclerView recyclerView;
     private UserVideosAdapter adapter;
 
@@ -38,7 +36,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
         tvUsername = findViewById(R.id.tvUsername);
         tvDisplayName = findViewById(R.id.tvDisplayName);
-        btnSignOut = findViewById(R.id.btnSignOut);
+        Button btnSignOut = findViewById(R.id.btnSignOut);
 
         String photoPath = Helper.getSignedInUser().getProfilePicture();
         Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
@@ -76,7 +74,6 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         builder.setPositiveButton("Update", (dialog, which) -> {
             String newDisplayName = input.getText().toString();
             String userId = Helper.getSignedInUser().getUserId();
-            Log.d("ProfileActivity", "User ID: " + userId);
 
             userViewModel.updateDisplayName(userId, newDisplayName).observe(this, result -> {
                 if (result.isSuccess()) {

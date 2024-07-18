@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.myapplication.API.Converters;
+import com.example.myapplication.DB.Converters;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;

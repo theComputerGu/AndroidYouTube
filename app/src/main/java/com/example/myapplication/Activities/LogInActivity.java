@@ -45,7 +45,6 @@ public class LogInActivity extends BaseActivity {
                     userViewModel.getUserByUsername(username).observe(this, user -> {
                         if (user != null) {
                             Helper.setSignedInUser(user);
-                            Log.d("Login successful! Username", Helper.getSignedInUser().getUsername());
                             Toast.makeText(LogInActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(this, MainActivity2.class);
                             startActivity(intent);

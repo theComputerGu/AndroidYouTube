@@ -3,9 +3,9 @@ package com.example.myapplication.Repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.API.AppDB;
+import com.example.myapplication.DB.AppDB;
 import com.example.myapplication.API.VideoAPI;
-import com.example.myapplication.API.VideoDao;
+import com.example.myapplication.DB.VideoDao;
 import com.example.myapplication.Entities.Video;
 
 import java.util.ArrayList;

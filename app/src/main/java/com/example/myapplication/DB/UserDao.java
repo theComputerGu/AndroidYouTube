@@ -1,4 +1,4 @@
-package com.example.myapplication.API;
+package com.example.myapplication.DB;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
