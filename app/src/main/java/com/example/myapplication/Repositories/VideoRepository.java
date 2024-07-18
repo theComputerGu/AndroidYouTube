@@ -1,7 +1,6 @@
 package com.example.myapplication.Repositories;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.API.VideoAPI;
 import com.example.myapplication.DB.AppDB;
@@ -25,9 +24,7 @@ public class VideoRepository {
     }
 
     public LiveData<List<Video>> getAll() {
-        // Fetch videos from the API
         LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
-
         videosFromAPI.observeForever(videos -> {
             if (videos != null) {
                 executor.execute(() -> {
@@ -36,8 +33,6 @@ public class VideoRepository {
                 });
             }
         });
-
-        // Return videos from the DAO
         return videoDao.getAll();
     }
     public LiveData<List<Video>> getVideosExcept(String videoId) {
@@ -48,8 +43,6 @@ public class VideoRepository {
         return videoAPI.getVideosByPrefix(prefix);
     }
     public LiveData<Video> getVideoById(String videoId) {
-        MutableLiveData<Video> videoData = new MutableLiveData<>();
-        videoAPI.getVideoById(videoId, videoData);
-        return videoData;
+        return videoAPI.getVideoById(videoId);
     }
 }

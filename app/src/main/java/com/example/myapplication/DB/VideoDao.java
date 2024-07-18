@@ -30,6 +30,11 @@ public interface VideoDao {
     void insert(Video video);
     @Delete
     void delete(Video video);
+    @Query("SELECT * FROM videos WHERE title LIKE :prefix || '%'")
+    LiveData<List<Video>> getVideosByPrefix(String prefix);
+
+    @Query("SELECT * FROM videos WHERE video_id = :videoId")
+    LiveData<Video> getVideoById(String videoId);
 
     @Query("UPDATE videos SET likes = likes + 1 WHERE video_id = :videoId")
     void incrementLikes(String videoId);

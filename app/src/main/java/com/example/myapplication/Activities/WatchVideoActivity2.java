@@ -39,7 +39,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_video);
 
-
         // Retrieve selected video ID from Intent
         String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
 
@@ -69,16 +68,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         Button commentsButton = findViewById(R.id.commentsButton);
         RelativeLayout commentsSection = findViewById(R.id.commentsSection);
 
-        commentsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (commentsSection.getVisibility() == View.GONE) {
-                    commentsSection.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    commentsSection.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
+        commentsButton.setOnClickListener(v -> {
+            if (commentsSection.getVisibility() == View.GONE) {
+                commentsSection.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            } else {
+                commentsSection.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
             }
         });
 
