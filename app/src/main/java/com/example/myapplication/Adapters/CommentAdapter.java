@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
@@ -24,18 +23,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     public interface onCommentDelete{
         void onCommentDelete(Comment comment);
     }
-
     private onCommentDelete ontDelete;
 
     public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete) {
         this.comments = comments != null ? comments : new ArrayList<>();
         this.ontDelete = onCommentDelete;
     }
-
-    // Method to update the dataset and refresh the RecyclerView
     public void updateData(List<Comment> comments) {
-        //this.comments.clear();
-        this.comments.addAll(comments);
+        this.comments = comments;
         notifyDataSetChanged();
     }
 
@@ -74,7 +69,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
             tvUserName.setText(comment.getDisplayName());
-//            ivUserPic.setImageBitmap(Converters.base64ToBitmap(comment.getPhoto()));
             tvCommentText.setText(comment.getText());
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivUserPic,comment.getPhoto());
 
