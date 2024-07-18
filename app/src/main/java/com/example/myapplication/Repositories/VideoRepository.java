@@ -3,45 +3,27 @@ package com.example.myapplication.Repositories;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.myapplication.DB.AppDB;
 import com.example.myapplication.API.VideoAPI;
+import com.example.myapplication.DB.AppDB;
 import com.example.myapplication.DB.VideoDao;
 import com.example.myapplication.Entities.Video;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class VideoRepository {
-    private VideoListData videoListData;
-    private VideoAPI videoAPI;
-    private VideoDao videoDao;
-    private Executor executor;
+    private final VideoAPI videoAPI;
+    private final VideoDao videoDao;
+    private final Executor executor;
 
     public VideoRepository(){
         videoAPI = new VideoAPI();
-        videoListData= new VideoListData();
         AppDB db = AppDB.getInstance();
         videoDao = db.videoDao();
         executor = Executors.newSingleThreadExecutor();
     }
 
-    public void setVideos(List<Video> Videos) {
-        videoListData.setValue(Videos);
-    }
-
-
-    public static class VideoListData extends MutableLiveData<List<Video>> {
-        public VideoListData(){
-            super();
-            setValue(new ArrayList<>());
-        }
-        @Override
-        protected void onActive(){
-            super.onActive();
-        }
-    }
     public LiveData<List<Video>> getAll() {
         // Fetch videos from the API
         LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
@@ -70,7 +52,4 @@ public class VideoRepository {
         videoAPI.getVideoById(videoId, videoData);
         return videoData;
     }
-
-
-
 }

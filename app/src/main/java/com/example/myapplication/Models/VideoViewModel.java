@@ -25,9 +25,6 @@ public class VideoViewModel extends ViewModel {
     public LiveData<List<Video>> getAll() {
         return mRepository.getAll();
     }
-    public void setVideos(List<Video> v) {
-        mRepository.setVideos(v);
-    }
 
     public LiveData<List<Video>> getVideoByPrefix(String prefix){
         return mRepository.getVideoByPrefix(prefix);

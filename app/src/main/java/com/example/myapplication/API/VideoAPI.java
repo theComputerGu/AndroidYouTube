@@ -69,10 +69,8 @@ public class VideoAPI {
             public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
 
                 if (response.isSuccessful()) {
-                    // Ensure postValue() is called on the main thread
                     video.postValue(response.body());
                 } else {
-                    // Handle the case where the video is not found or some other error occurred
                     video.postValue(null);
                 }
             }

@@ -43,7 +43,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         // Retrieve selected video ID from Intent
         String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
 
-
         // Observe the current video
         videoViewModel.getVideoById(selectedVideoId).observe(this, video -> {
             if (video != null) {
@@ -115,7 +114,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         TextView tvContent = findViewById(R.id.tvContent);
         TextView tvDate = findViewById(R.id.tvDate);
 
-        currentVideo.incrementViews();
         tvViews.setText(currentVideo.getViewsString());
         tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());

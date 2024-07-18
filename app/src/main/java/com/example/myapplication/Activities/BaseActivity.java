@@ -6,10 +6,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.DB.AppDB;
 import com.example.myapplication.Models.CommentViewModel;
 import com.example.myapplication.Models.UserViewModel;
 import com.example.myapplication.Models.VideoViewModel;
 import com.example.myapplication.R;
+import com.example.myapplication.DB.VideoDao;
 
 public class BaseActivity extends AppCompatActivity {
     protected SharedPreferences sharedPreferences;
@@ -19,7 +21,7 @@ public class BaseActivity extends AppCompatActivity {
     protected VideoViewModel videoViewModel;
     protected UserViewModel userViewModel;
     protected CommentViewModel commentViewModel;
-
+    protected VideoDao videoDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -31,6 +33,11 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         super.onCreate(savedInstanceState);
+
+        AppDB appDB = AppDB.getInstance();
+        appDB.clearDatabase();
+
+
 
         // Initialize ViewModelProvider with this activity
         videoViewModel = new ViewModelProvider(this).get(VideoViewModel.class);

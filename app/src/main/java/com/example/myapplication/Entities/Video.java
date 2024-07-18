@@ -197,9 +197,6 @@ public class Video {
         likedBy.add(username);
         this.likes++;
     }
-    public void incrementViews() {
-        this.views++;
-    }
     public String getViewsString() {
         return (this.views + " views");
     }

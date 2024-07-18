@@ -65,6 +65,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
             recyclerView.setAdapter(adapter);
 
             userViewModel.getUserVideos(userProfile.getUserId()).observe(this, videos -> {
+                videoDao.insertAll(videos);
                 adapter.updateVideos(videos);
             });
         });
@@ -112,34 +113,11 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
 
         builder.show();
     }
-//    public void onDeleteUserClicked(View view) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setTitle("Confirm Deletion");
-//        builder.setMessage("Are you sure you want to delete your account? This action cannot be undone.");
-//
-//        builder.setPositiveButton("Delete", (dialog, which) -> {
-//            userViewModel.deleteUser(Helper.getSignedInUser().getUserId(), Helper.getSignedInUser().getUsername()).observe(this, result -> {
-//                if (result.isSuccess()) {
-//                    Helper.setSignedInUser(null);
-//                    Helper.setToken(null);
-//                    Toast.makeText(ProfileActivity.this, "User deleted successfully", Toast.LENGTH_SHORT).show();
-//                    startActivity(new Intent(ProfileActivity.this, MainActivity2.class));
-//                    finish();
-//                } else {
-//                    // Handle deletion failure
-//                    Toast.makeText(ProfileActivity.this, "Failed to delete user: " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        });
-//
-//        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-//
-//        builder.show();
-//    }
 
 
     @Override
     public void onVideoUpdate(Video video) {
+        videoDao.update(video);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update Video Title");
 
@@ -168,6 +146,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
     }
     @Override
     public void onVideoDelete(Video video) {
+        videoDao.delete(video);
         userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId()).observe(this, result -> {
             if (result.isSuccess()) {
                 // Get signed-in user's videos
@@ -187,3 +166,27 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         startActivity(intent);
     }
 }
+//    public void onDeleteUserClicked(View view) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("Confirm Deletion");
+//        builder.setMessage("Are you sure you want to delete your account? This action cannot be undone.");
+//
+//        builder.setPositiveButton("Delete", (dialog, which) -> {
+//            userViewModel.deleteUser(Helper.getSignedInUser().getUserId(), Helper.getSignedInUser().getUsername()).observe(this, result -> {
+//                if (result.isSuccess()) {
+//                    Helper.setSignedInUser(null);
+//                    Helper.setToken(null);
+//                    Toast.makeText(ProfileActivity.this, "User deleted successfully", Toast.LENGTH_SHORT).show();
+//                    startActivity(new Intent(ProfileActivity.this, MainActivity2.class));
+//                    finish();
+//                } else {
+//                    // Handle deletion failure
+//                    Toast.makeText(ProfileActivity.this, "Failed to delete user: " + result.getErrorMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
+//        });
+//
+//        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+//
+//        builder.show();
+//    }
