@@ -10,10 +10,21 @@ import android.util.Base64;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.example.myapplication.Adapters.CommentAdapter;
+import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.CustomMediaController;
 import com.example.myapplication.Entities.User;
+import com.example.myapplication.Models.CommentViewModel;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Helper extends Application {
     private static final String PREF_NAME = "MyAppPrefs";
@@ -89,4 +100,6 @@ public class Helper extends Application {
         CustomMediaController mediaController = new CustomMediaController(context, videoView);
         videoView.setMediaController(mediaController);
     }
+
+
 }

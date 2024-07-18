@@ -30,11 +30,11 @@ import retrofit2.http.Path;
 public interface WebServiceAPI {
 
     // Comment-related API calls
-    @GET("videos/{id}/comments")
+    @GET("comments/videos/{id}")
     Call<List<Comment>> getComments(@Path("id") String videoId);
 
-    @POST("videos/{id}/comments")
-    Call<Comment> createComment(@Header("Authorization") Comment comment, @Path("id") String videoId);
+    @POST("comments/videos/{id}")
+    Call<Comment> createComment(@Path("id") String videoId, @Body Comment comment);
 
     @PUT("videos/{id}/comments/{cid}")
     Call<Comment> updateComment(@Header("Authorization") String token, @Path("cid") String commentId, @Body UpdateComment comment);
