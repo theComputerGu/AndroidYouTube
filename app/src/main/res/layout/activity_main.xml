@@ -208,19 +208,6 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/black" />
 
-            <ImageButton
-                android:id="@+id/btnSignOut"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_log_in" />
-
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@android:color/black" />
 
             <ImageButton
                 android:id="@+id/buttonToAddVideoPage"

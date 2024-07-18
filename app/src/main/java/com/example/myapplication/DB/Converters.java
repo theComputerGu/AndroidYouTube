@@ -1,4 +1,4 @@
-package com.example.myapplication.API;
+package com.example.myapplication.DB;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

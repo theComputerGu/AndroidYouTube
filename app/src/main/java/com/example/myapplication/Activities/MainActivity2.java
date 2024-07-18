@@ -96,6 +96,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
         Intent i;
         if (Helper.isSignedIn()) {
             i = new Intent(this, ProfileActivity.class);
+            i.putExtra("username", Helper.getSignedInUser().getUsername());
         } else {
             i = new Intent(this, LogInActivity.class);
         }

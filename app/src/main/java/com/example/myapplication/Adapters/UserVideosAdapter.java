@@ -18,15 +18,18 @@ import java.util.List;
 
 public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Video> videos;
+    private boolean buttonsEnabled;
     public interface OnVideoClickListener {
         void onVideoDelete(Video video);
         void onVideoUpdate(Video video);
+        void onVideoClick(Video video);
     }
     private OnVideoClickListener onVideoClickListener;
 
-    public UserVideosAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener) {
+    public UserVideosAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener, boolean buttonsEnabled) {
         this.videos = videos;
         this.onVideoClickListener = onVideoClickListener;
+        this.buttonsEnabled = buttonsEnabled;
     }
 
     // Return appropriate ViewHolder based on view type
@@ -40,7 +43,12 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // Bind data to the ViewHolder based on view type
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ((AddViewHolder) holder).bind(videos.get(position), onVideoClickListener);
+        ((AddViewHolder) holder).bind(videos.get(position), onVideoClickListener, buttonsEnabled);
+    }
+    // Method to enable or disable the buttons
+    public void setButtonsEnabled(boolean enabled) {
+        this.buttonsEnabled = enabled;
+        notifyDataSetChanged(); // Notify adapter of data change
     }
     @Override
     public int getItemCount() {
@@ -75,19 +83,27 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
 
-        public void bind(Video video, OnVideoClickListener onVideoDelete) {
-            tvViews.setText("Views: " + video.getViews());
+        public void bind(Video video, OnVideoClickListener onVideoClickListener, boolean buttonsEnabled) {
+            tvViews.setText(video.getViewsString());
             tvContent.setText(video.getTitle());
             tvDate.setText(video.calculateTimeElapsed());
 
             String photoPath = video.getPhoto();
             Helper.loadPhotoIntoImageView(itemView.getContext(), ivPic, photoPath);
 
+            btnDelete.setVisibility(buttonsEnabled ? View.VISIBLE : View.GONE);
+            btnDelete.setEnabled(buttonsEnabled);
+
+            btnUpdate.setVisibility(buttonsEnabled ? View.VISIBLE : View.GONE);
+            btnUpdate.setEnabled(buttonsEnabled);
+
             btnDelete.setOnClickListener(v -> {
-                if (onVideoDelete != null) {
-                    onVideoDelete.onVideoDelete(video);
+                if (onVideoClickListener != null) {
+                    onVideoClickListener.onVideoDelete(video);
                 }
             });
+
+
             btnUpdate.setOnClickListener(v -> {
                 if (onVideoClickListener != null) {
                     onVideoClickListener.onVideoUpdate(video);

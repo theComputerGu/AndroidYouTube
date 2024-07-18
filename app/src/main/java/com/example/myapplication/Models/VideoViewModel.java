@@ -10,14 +10,20 @@ import java.util.List;
 
 public class VideoViewModel extends ViewModel {
     private VideoRepository mRepository;
-    public VideoViewModel(){
+    private static VideoViewModel instance;
+
+    private VideoViewModel(){
         mRepository = new VideoRepository();
+    }
+    // Public static method to access the singleton instance
+    public static synchronized VideoViewModel getInstance() {
+        if (instance == null) {
+            instance = new VideoViewModel();
+        }
+        return instance;
     }
     public LiveData<List<Video>> getAll() {
         return mRepository.getAll();
-    }
-    public void setVideos(List<Video> v) {
-        mRepository.setVideos(v);
     }
 
     public LiveData<List<Video>> getVideoByPrefix(String prefix){

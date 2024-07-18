@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.API.Converters;
+import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;

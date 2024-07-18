@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.API.Converters;
+import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Adapters.UserVideosAdapter;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
@@ -63,10 +63,11 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
         // Initialize RecyclerView and set adapter
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new UserVideosAdapter(new ArrayList<>(), this);
+        adapter = new UserVideosAdapter(new ArrayList<>(), this, true);
         recyclerView.setAdapter(adapter);
 
         userViewModel.getUserVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> {
+            videoDao.insertAll(videos);
             adapter.updateVideos(videos);
         });
     }
@@ -92,6 +93,8 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
             return;
         }
         String photoPath = Converters.bitmapToBase64(thumbnailBitmap);
+
+        videoDao.insert(new Video(title,Helper.getSignedInUser().getUsername(), Helper.getSignedInUser().getDisplayName(), getCurrentDate(), photoPath, videoFile.getPath()));
 
         userViewModel.createUserVideo(Helper.getSignedInUser().getUserId(),title, Helper.getSignedInUser().getUsername(), photoPath, videoFile).observe(this, result ->{
             if (result.isSuccess()) {
@@ -149,6 +152,7 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
     }
     @Override
     public void onVideoDelete(Video video) {
+        videoDao.delete(video);
         userViewModel.deleteUserVideo(Helper.getSignedInUser().getUserId(), video.getVideoId()).observe(this, result -> {
             if (result.isSuccess()) {
                 // Get signed-in user's videos
@@ -164,6 +168,7 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
 
     @Override
     public void onVideoUpdate(Video video) {
+        videoDao.update(video);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Update Video Title");
 
@@ -216,5 +221,11 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
     private void uploadVideo() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, REQUEST_CODE_VIDEO);
+    }
+    @Override
+    public void onVideoClick(Video video) {
+        Intent intent = new Intent(this, WatchVideoActivity2.class);
+        intent.putExtra("selectedVideoId", video.getVideoId());
+        startActivity(intent);
     }
 }

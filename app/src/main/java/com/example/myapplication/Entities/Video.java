@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.example.myapplication.API.Converters;
+import com.example.myapplication.DB.Converters;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -70,6 +70,7 @@ public class Video {
         this.timeAgo = timeAgo;
         this.photo = photo;
         this.path = path;
+        this.views = 0;
         this.likes = 0;
         this.dislikes = 0;
         this.dislikedBy = new ArrayList<>();
@@ -195,6 +196,9 @@ public class Video {
     public void incrementLikes(String username) {
         likedBy.add(username);
         this.likes++;
+    }
+    public String getViewsString() {
+        return (this.views + " views");
     }
     public String calculateTimeElapsed() {
         Date now = new Date();
