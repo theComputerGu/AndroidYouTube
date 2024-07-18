@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.Entities.Comment;
-import com.example.myapplication.Entities.Result;
-import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Repositories.CommentRepository;
 
 import java.util.List;
@@ -30,12 +28,10 @@ public class CommentViewModel extends ViewModel {
         return mRepository.getComments(videoId);
     }
 
-    public  LiveData<Boolean> deleteComment(String videoId, String commentId) {
-        return mRepository.deleteComment(videoId, commentId);
+    public LiveData<Boolean> deleteComment(String commentId, String videoId) {
+        return mRepository.deleteComment(commentId, videoId);
     }
-
-    public LiveData<Comment> updateComment(Comment comment,String videoId) {
-        return mRepository.updateComment(comment,videoId);
+    public LiveData<Boolean> updateComment(String commentId, String videoId, String text) {
+        return mRepository.updateComment(commentId, videoId, text);
     }
-
 }

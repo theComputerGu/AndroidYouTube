@@ -3,20 +3,19 @@ package com.example.myapplication.API;
 import static android.content.ContentValues.TAG;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.Entities.AuthInterceptor;
 import com.example.myapplication.Entities.Comment;
-import com.example.myapplication.Entities.Result;
 import com.example.myapplication.Helper;
-import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.R;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import okhttp3.OkHttpClient;
@@ -114,60 +113,60 @@ public class CommentAPI {
 
 
 
-    public static void updateComment(Comment comment, String videoId, MutableLiveData<Comment> commentLiveData) {
-        // Log the comment details before making the call
-        Log.d(TAG, "Updating comment with ID: " + comment.getCommentId() + " for video ID: " + comment.getVideoId());
+    public LiveData<Boolean> updateComment(String commentId, String videoId, String newText) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("text", newText);
 
-        try {
-            Call<Comment> call = webServiceAPI.updateComment(comment.getCommentId(), videoId, comment);
-            call.enqueue(new Callback<Comment>() {
-                @Override
-                public void onResponse(Call<Comment> call, Response<Comment> response) {
-                    if (response.isSuccessful()) {
-                        commentLiveData.postValue(response.body());
-                        Log.d(TAG, "Update successful: " + response.body());
-                    } else {
-                        Log.d(TAG, "Update failed: " + response.errorBody());
-                        try {
-                            String errorBody = response.errorBody().string();
-                            Log.e(TAG, "Error body: " + errorBody);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Comment> call, Throwable t) {
-                    Log.e(TAG, "Network call failed", t);
-                    t.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            Log.e(TAG, "Exception occurred before making network call", e);
-        }
-    }
-
-
-    public static void deleteComment(String videoId, String commentId, MutableLiveData<Boolean> commentLiveData) {
-        Call<ResponseBody> call = webServiceAPI.deleteComment(videoId, commentId);
+        Call<ResponseBody> call = webServiceAPI.updateComment(commentId, videoId, requestBody);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    commentLiveData.postValue(true);
-                    Log.d(TAG, "hhhhhh: ggggggg");
+                    // Comment updated successfully
+                    result.postValue(true);
+                    Log.d("CommentRepository", "Comment updated successfully");
                 } else {
-                    commentLiveData.postValue(false);
-                    Log.d(TAG, "hhhhhh: hhhhhhhh");
+                    // Handle unsuccessful response
+                    result.postValue(false);
+                    Log.e("CommentRepository", "Failed to update comment: " + response.message());
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                commentLiveData.postValue(false);
+                // Handle failure
+                result.postValue(false);
+                Log.e("CommentRepository", "Error updating comment", t);
             }
         });
+        return result;
+    }
+
+    public LiveData<Boolean> deleteComment(String commentId, String videoId) {
+        MutableLiveData<Boolean> result = new MutableLiveData<>();
+        Call<Void> call = webServiceAPI.deleteComment(commentId, videoId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Comment deleted successfully
+                    result.postValue(true);
+                    Log.d("CommentRepository", "Comment deleted successfully");
+                } else {
+                    // Handle unsuccessful response
+                    result.postValue(false);
+                    Log.e("CommentRepository", "Failed to delete comment: " + response.message());
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Handle failure
+                result.postValue(false);
+                Log.e("CommentRepository", "Error deleting comment", t);
+            }
+        });
+        return result;
     }
 
     public void deleteComments(String token, String videoId, Callback<ResponseBody> callback) {

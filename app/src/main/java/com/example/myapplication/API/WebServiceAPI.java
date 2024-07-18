@@ -2,12 +2,12 @@ package com.example.myapplication.API;
 
 import com.example.myapplication.Entities.Comment;
 import com.example.myapplication.Entities.Result;
-import com.example.myapplication.Entities.UpdateComment;
 import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.UserCredentials;
 import com.example.myapplication.Entities.Video;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -36,11 +36,15 @@ public interface WebServiceAPI {
     @POST("comments/videos/{id}")
     Call<Comment> createComment(@Path("id") String videoId, @Body Comment comment);
 
-    @POST("comments/{commentId}/videos/{videoId}")
-    Call<Comment> updateComment(@Path("commentId") String commentId, @Path("videoId") String videoId, @Body Comment newComment);
+    @PATCH("comments/{id}/videos/{pid}")
+    Call<ResponseBody> updateComment(
+            @Path("id") String commentId,
+            @Path("pid") String videoId,
+            @Body Map<String, String> requestBody
+    );
 
-    @DELETE("comments/{videoId}/videos/{commentId}")
-    Call<ResponseBody> deleteComment(@Path("videoId") String videoId, @Path("commentId") String commentId);
+    @DELETE("comments/{id}/videos/{pid}")
+    Call<Void> deleteComment(@Path("id") String commentId, @Path("pid") String videoId);
 
     @DELETE("videos/{id}/comments")
     Call<ResponseBody> deleteComments(@Header("Authorization") String token, @Path("id") String videoId);
