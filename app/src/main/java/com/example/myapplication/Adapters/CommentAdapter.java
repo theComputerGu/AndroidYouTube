@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
@@ -26,13 +28,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private onCommentDelete ontDelete;
 
     public CommentAdapter(List<Comment> comments, onCommentDelete onCommentDelete) {
-        this.comments = comments;
+        this.comments = comments != null ? comments : new ArrayList<>();
         this.ontDelete = onCommentDelete;
     }
 
     // Method to update the dataset and refresh the RecyclerView
     public void updateData(List<Comment> comments) {
-        this.comments = comments;
+        //this.comments.clear();
+        this.comments.addAll(comments);
         notifyDataSetChanged();
     }
 
@@ -51,7 +54,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
     @Override
     public int getItemCount() {
-        return comments.size();
+        return comments != null ? comments.size() : 0;
     }
 
     class CommentViewHolder extends RecyclerView.ViewHolder {
@@ -71,8 +74,9 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
 
         void bind(Comment comment, onCommentDelete onCommentDelete) {
             tvUserName.setText(comment.getDisplayName());
-            ivUserPic.setImageBitmap(Converters.base64ToBitmap(comment.getPhoto()));
+//            ivUserPic.setImageBitmap(Converters.base64ToBitmap(comment.getPhoto()));
             tvCommentText.setText(comment.getText());
+            Helper.loadPhotoIntoImageView(itemView.getContext(), ivUserPic,comment.getPhoto());
 
             tvDelete.setOnClickListener(v -> {
                 if (onCommentDelete != null) {

@@ -1,15 +1,17 @@
 package com.example.myapplication.Activities;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+import androidx.lifecycle.Observer;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.example.myapplication.R;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener, CommentAdapter.onCommentDelete {
@@ -66,24 +69,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
 
-        // view the comments
-        Button comments = findViewById(R.id.commentsButton);
-        RelativeLayout commentsSection = findViewById(R.id.commentsSection);
-        comments.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (commentsSection.getVisibility() == View.GONE) {
-                    commentsSection.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    commentsSection.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
         // Setup comment button click listener
-        Button commentButton = findViewById(R.id.addCommentButton);
+        Button commentButton = findViewById(R.id.commentButton);
         commentButton.setOnClickListener(v -> addComment());
 
         // Setup the dislike button click listener
@@ -107,7 +94,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());
-        tvDate.setText(currentVideo.getTimeAgo().toString());
+        tvDate.setText(currentVideo.calculateTimeElapsed());
 
         // Initialize the like, dislike, and share counts
         tvLikes.setText(String.valueOf(currentVideo.getLikes()));
@@ -116,10 +103,36 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         VideoView videoView = findViewById(R.id.videoView);
         Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
+        // Setup the VideoView
+        //VideoView videoView = findViewById(R.id.videoView);
+        //CustomMediaController mediaController = new CustomMediaController(this, videoView);
+        //videoView.setMediaController(mediaController);
+        //Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
+        //videoView.setVideoPath(Helper.context.getString(R.string.baseServerURL)+currentVideo.getPath());
+        //videoView.start();
+    }
+
+    private void setupRecyclerView() {
+        RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        commentAdapter = new CommentAdapter(new ArrayList<>(), comment -> {
+            // Handle delete comment action if needed
+            // commentViewModel.deleteComment(comment);
+        });
+        commentsRecyclerView.setAdapter(commentAdapter);
+    }
+
+    private void loadCommentsToRecyclerView() {
+        String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
+        commentViewModel.getComments(selectedVideoId).observe(this, comments -> {
+            if (comments != null) {
+                commentAdapter.updateData(comments);
+            }
+        });
     }
 
     private void setupCommentSection() {
-        commentViewModel.get().observe(this, comments -> {
+        commentViewModel.getComments(currentVideo.getVideoId()).observe(this, comments -> {
             commentAdapter.updateData(comments);
         });
     }
@@ -132,22 +145,41 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     }
 
     private void addComment() {
-        if ( Helper.isSignedIn() ) {
+        if (Helper.isSignedIn()) {
             EditText commentEditText = findViewById(R.id.commentEditText);
             String commentContent = commentEditText.getText().toString().trim();
-            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
-                if (!commentContent.isEmpty()) {
-                    Comment comment = new Comment(user.getAuthor(), currentVideo.getTitle(),user.getPhoto() ,currentVideo.getVideoId(),commentContent);
-                    commentViewModel.createComment(comment);
-                    commentEditText.setText("");
-                } else {
-                    Toast.makeText(this, "Please enter a comment.", Toast.LENGTH_SHORT).show();
-                }
-            });
+
+            if (!commentContent.isEmpty()) {
+                Comment comment = new Comment(
+                        Helper.getSignedInUser().getUsername(),
+                        Helper.getSignedInUser().getDisplayName(),
+                        Helper.getSignedInUser().getProfilePicture(),
+                        currentVideo.getVideoId(),
+                        commentContent
+                );
+
+                Log.d(TAG, "addComment: Creating comment with content: " + commentContent);
+                commentViewModel.createComment(currentVideo.getVideoId(),Helper.getSignedInUser().getUsername(),commentContent).observe(this, createdComment -> {
+                    if (createdComment != null) {
+                        Toast.makeText(this, "Comment added successfully.", Toast.LENGTH_SHORT).show();
+                        commentEditText.setText("");
+                        Log.d(TAG, "addComment: Comment added successfully.");
+                        setupCommentSection();
+                    } else {
+                        Toast.makeText(this, "Failed to add comment.", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "addComment: Failed to add comment.");
+                    }
+                });
+
+            } else {
+                Toast.makeText(this, "Please enter a comment.", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
 
     private void dislikeVideo() {
@@ -199,7 +231,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     public void onCommentDelete(Comment comment) {
 
         if ( Helper.isSignedIn() ) {
-            commentViewModel.getComments(comment).observe(this, user -> {
+            commentViewModel.getComments(currentVideo.getVideoId()).observe(this, user -> {
                 if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
                     commentViewModel.deleteComment(comment);
                     Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();

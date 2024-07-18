@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.myapplication.API.CommentAPI;
 import com.example.myapplication.Entities.Comment;
+import com.example.myapplication.Entities.Result;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +33,21 @@ public class CommentRepository {
     }
     public LiveData<List<Comment>> getAll() {return commentListData; }
 
-    public void createComment(Comment comment) {
-        MutableLiveData<Comment> commentLiveData = new MutableLiveData<>(comment);
-        commentAPI.createComment(comment,  comment.getVideoId(), commentLiveData);
+    public LiveData<Comment> createComment(String videoId, String username,String text) {
+        MutableLiveData<Comment> data = new MutableLiveData<>();
+        CommentAPI.createComment(videoId, username,text, data);
+        return data;
     }
 
-    public MutableLiveData<List<Comment>> getComments(Comment comment) {
-        MutableLiveData<List<Comment>> CommentData = new MutableLiveData<List<Comment>>();
-        commentAPI.getComments(comment.getVideoId(), CommentData);
-        return CommentData;
+    public MutableLiveData<List<Comment>> getComments(String videoId) {
+        MutableLiveData<List<Comment>> data = new MutableLiveData<>();
+        CommentAPI.getComments(videoId, data);
+        return data;
     }
 
     public MutableLiveData<Boolean> deleteComment(Comment comment) {
         MutableLiveData<Boolean> result = new MutableLiveData<>();
-        commentAPI.deleteComment(comment.getVideoId(),comment.getCommentId(), result);
+        CommentAPI.deleteComment(comment.getVideoId(),comment.getCommentId(), result);
         return result;
     }
 
