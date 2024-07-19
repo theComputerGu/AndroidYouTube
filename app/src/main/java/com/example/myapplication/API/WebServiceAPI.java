@@ -130,4 +130,7 @@ public interface WebServiceAPI {
     @GET("users/{id}/videos")
     Call<List<Video>> getUserVideos(@Path("id") String userId);
 
+    @PATCH("videos/{id}")
+    Call<Video> updateVideo(@Path("id") String videoId, @Body Map<String, Object> updates);
+
 }

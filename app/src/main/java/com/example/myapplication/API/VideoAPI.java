@@ -9,9 +9,12 @@ import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
+import kotlin.Result;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -110,5 +113,34 @@ public class VideoAPI {
             }
         });
         return videos;
+    }
+
+    public LiveData<Video> updateVideo(String videoId,int views, List<String> likedBy, List<String> disLikedBy) {
+        MutableLiveData<Video> liveData = new MutableLiveData<>();
+
+        // Prepare the update payload
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("views", views);
+        updates.put("likedBy", likedBy);
+        updates.put("dislikedBy", disLikedBy);
+
+        Call<Video> call = webServiceAPI.updateVideo(videoId, updates);
+        call.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(Call<Video> call, Response<Video> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    liveData.postValue(response.body());
+                } else {
+                    liveData.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Video> call, Throwable t) {
+                liveData.postValue(null);
+            }
+        });
+
+        return liveData;
     }
 }

@@ -226,4 +226,18 @@ public class Video {
             return years + (years == 1 ? " year ago" : " years ago");
         }
     }
+
+    public int getLikesCount(List<String> likedBy) {
+        if (likedBy == null) {
+            return 0;
+        }
+        return likedBy.size();
+    }
+
+    public int getDisLikesCount(List<String> DisLikedBy) {
+        if (DisLikedBy == null) {
+            return 0;
+        }
+        return DisLikedBy.size();
+    }
 }
