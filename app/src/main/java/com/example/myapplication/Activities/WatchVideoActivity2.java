@@ -59,6 +59,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         videoAdapter = new VideoAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(videoAdapter);
@@ -66,6 +67,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
+        commentsRecyclerView.setHasFixedSize(true);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
