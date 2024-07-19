@@ -45,4 +45,8 @@ public class VideoRepository {
     public LiveData<Video> getVideoById(String videoId) {
         return videoAPI.getVideoById(videoId);
     }
+
+    public LiveData<Video> updateVideo(Video video) {
+        return videoAPI.updateVideo(video.getVideoId(),video.getViews(), video.getLikedBy(),video.getDislikedBy());
+    }
 }

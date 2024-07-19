@@ -36,4 +36,9 @@ public class VideoViewModel extends ViewModel {
         return mRepository.getVideosExcept(videoId);
     }
 
+    public LiveData<Video> updateVideo(Video video) {
+        return mRepository.updateVideo(video);
+    }
+
+
 }

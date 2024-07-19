@@ -50,6 +50,10 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                 setupVideoDetails();
                 setupCommentSection();
                 observeOtherVideos();
+                if (Helper.isSignedIn())
+                {
+                    updateVideoOnServer3(currentVideo);
+                }
             }
         });
 
@@ -117,8 +121,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvDate.setText(currentVideo.calculateTimeElapsed());
 
         // Initialize the like, dislike, and share counts
-        tvLikes.setText(String.valueOf(currentVideo.getLikes()));
-        tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
+        tvLikes.setText(String.valueOf(currentVideo.getLikesCount(currentVideo.getLikedBy())));
+        tvDislikes.setText(String.valueOf(currentVideo.getDisLikesCount(currentVideo.getDislikedBy())));
 
 
         VideoView videoView = findViewById(R.id.videoView);
@@ -170,13 +174,15 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
 
     private void dislikeVideo() {
-        if ( Helper.isSignedIn()) {
+        if ( Helper.isSignedIn() ) {
             videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
                 if (currentVideo.getDislikedBy().contains(Helper.getSignedInUser().getUsername())) {
                     Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
                     currentVideo.incrementDislikes(Helper.getSignedInUser().getUsername());
-                    tvDislikes.setText(String.valueOf(currentVideo.getDislikes()));
+                    //tvLikes.setText(String.valueOf(currentVideo.getLikes()));
+                    updateVideoOnServer2(currentVideo);
+                    setupVideoDetails();
                 }
             });
         }
@@ -192,13 +198,33 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                     Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
                 } else {
                     currentVideo.incrementLikes(Helper.getSignedInUser().getUsername());
-                    tvLikes.setText(String.valueOf(currentVideo.getLikes()));
+                    //tvLikes.setText(String.valueOf(currentVideo.getLikes()));
+                    updateVideoOnServer(currentVideo);
+                    setupVideoDetails();
                 }
             });
         }
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateVideoOnServer(Video video) {
+        videoViewModel.updateVideo(video).observe(this, result -> {
+            Toast.makeText(this, "The User liked the video successfully", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void updateVideoOnServer2(Video video) {
+        videoViewModel.updateVideo(video).observe(this, result -> {
+            Toast.makeText(this, "The User disliked the video successfully", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void updateVideoOnServer3(Video video) {
+        videoViewModel.updateVideo(video).observe(this, result -> {
+
+        });
     }
 
     @Override
@@ -211,49 +237,60 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     @Override
     public void onCommentDelete(Comment comment) {
-        if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
-            commentViewModel.deleteComment(comment.getCommentId(), currentVideo.getVideoId()).observe(this, result -> {
-                if (result) {
-                    Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
-                    setupCommentSection();
-                }
-                else {
-                    Toast.makeText(this, "Failed to delete comment", Toast.LENGTH_SHORT).show();
-                }
-            });
-        } else {
-            Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+        if (Helper.isSignedIn()) {
+            if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
+                commentViewModel.deleteComment(comment.getCommentId(), currentVideo.getVideoId()).observe(this, result -> {
+                    if (result) {
+                        Toast.makeText(this, "Comment deleted", Toast.LENGTH_SHORT).show();
+                        setupCommentSection();
+                    }
+                    else {
+                        Toast.makeText(this, "Failed to delete comment", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
         }
     }
     @Override
     public void onCommentUpdate(Comment comment) {
-        if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Update Video Title");
+        if (Helper.isSignedIn()) {
+            if (Helper.getSignedInUser().getUsername().equals (comment.getUsername())) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Update Video Title");
 
-            final EditText input = new EditText(this);
-            input.setText(comment.getText());
-            builder.setView(input);
+                final EditText input = new EditText(this);
+                input.setText(comment.getText());
+                builder.setView(input);
 
-            builder.setPositiveButton("Update", (dialog, which) -> {
-                String newText = input.getText().toString();
-                commentViewModel.updateComment(comment.getCommentId(), comment.getVideoId(), newText)
-                        .observe(this, result -> {
-                            if (result) {
-                                setupCommentSection();
-                                Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this, "Failed to update comment: ", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            });
+                builder.setPositiveButton("Update", (dialog, which) -> {
+                    String newText = input.getText().toString();
+                    commentViewModel.updateComment(comment.getCommentId(), comment.getVideoId(), newText)
+                            .observe(this, result -> {
+                                if (result) {
+                                    setupCommentSection();
+                                    Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(this, "Failed to update comment: ", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
 
-            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+                builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
-            builder.show();
-        } else {
-            Toast.makeText(this, "You are not authorized to delete this comment", Toast.LENGTH_SHORT).show();
+                builder.show();
+            } else {
+                Toast.makeText(this, "You are not authorized to update this comment", Toast.LENGTH_SHORT).show();
+            }
         }
+        else {
+            Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
+
     }
     public void onProfilePhotoClicked(View view) {
         Intent i = new Intent(this, ProfileActivity.class);
