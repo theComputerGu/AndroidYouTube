@@ -61,7 +61,7 @@ public class VideoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     // Update the dataset and notify the adapter
     public void updateVideos(List<Video> newVideos) {
         if (newVideos != null) {
-            videos.addAll(newVideos);
+            this.videos = newVideos;
         }
         notifyDataSetChanged(); // Notify adapter that data set has changed
     }
