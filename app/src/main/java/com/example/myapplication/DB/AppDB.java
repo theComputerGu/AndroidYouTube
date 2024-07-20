@@ -10,8 +10,6 @@ import com.example.myapplication.Entities.User;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 
-import java.util.concurrent.Executors;
-
 @Database(entities = {Video.class, User.class, Comment.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDB extends RoomDatabase {
@@ -32,8 +30,6 @@ public abstract class AppDB extends RoomDatabase {
         return instance;
     }
     public void clearDatabase() {
-        Executors.newSingleThreadExecutor().execute(() -> {
-            videoDao().deleteAll();
-        });
+        videoDao().deleteAll();
     }
 }

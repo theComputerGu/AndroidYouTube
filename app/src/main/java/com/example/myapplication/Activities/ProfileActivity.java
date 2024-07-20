@@ -161,6 +161,7 @@ public class ProfileActivity extends BaseActivity implements UserVideosAdapter.O
         Intent intent = new Intent(this, WatchVideoActivity2.class);
         intent.putExtra("selectedVideoId", video.getVideoId());
         startActivity(intent);
+        finish();
     }
 }
 //    public void onDeleteUserClicked(View view) {

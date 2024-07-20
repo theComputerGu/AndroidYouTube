@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,7 +25,7 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         void onVideoUpdate(Video video);
         void onVideoClick(Video video);
     }
-    private OnVideoClickListener onVideoClickListener;
+    private final OnVideoClickListener onVideoClickListener;
 
     public UserVideosAdapter(List<Video> videos,  OnVideoClickListener onVideoClickListener, boolean buttonsEnabled) {
         this.videos = videos;
@@ -64,13 +65,12 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
     // ViewHolder for AddVideoActivity
-    public class AddViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvViews;
-        private final TextView tvContent;
+    public static class AddViewHolder extends RecyclerView.ViewHolder {
+        private final TextView tvViews, tvContent, tvDate;
         private final ImageView ivPic;
-        private final TextView tvDate;
         private final Button btnDelete;
         private final ImageButton btnUpdate;
+        private final LinearLayout llContent;
 
         private AddViewHolder(View itemView) {
             super(itemView);
@@ -80,6 +80,7 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             tvDate = itemView.findViewById(R.id.tvDate);
             btnDelete = itemView.findViewById(R.id.btnDelete);
             btnUpdate = itemView.findViewById(R.id.btnUpdate);
+            llContent = itemView.findViewById(R.id.llContent);
         }
 
 
@@ -107,6 +108,18 @@ public class UserVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             btnUpdate.setOnClickListener(v -> {
                 if (onVideoClickListener != null) {
                     onVideoClickListener.onVideoUpdate(video);
+                }
+            });
+
+            ivPic.setOnClickListener(v -> {
+                if (onVideoClickListener != null) {
+                    onVideoClickListener.onVideoClick(video);
+                }
+            });
+
+            llContent.setOnClickListener(v -> {
+                if (onVideoClickListener != null) {
+                    onVideoClickListener.onVideoClick(video);
                 }
             });
         }

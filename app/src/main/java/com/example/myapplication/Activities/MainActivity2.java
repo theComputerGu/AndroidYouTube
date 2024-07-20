@@ -44,7 +44,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         adapter = new VideoAdapter(new ArrayList<>(), MainActivity2.this); // Pass null initially
 
-        videoViewModel.getAll().observe(this, videos -> adapter.updateVideos(videos));
 
         RecyclerView recyclerView = findViewById(R.id.lstPosts);
         recyclerView.setAdapter(adapter);
@@ -72,6 +71,9 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
                         adapter.updateVideos(videos);
                     }
                 });
+            }
+            else {
+                videoViewModel.getAll().observe(MainActivity2.this, videos -> adapter.updateVideos(videos));
             }
         });
     }
