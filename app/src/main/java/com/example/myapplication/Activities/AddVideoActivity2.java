@@ -16,8 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Adapters.UserVideosAdapter;
+import com.example.myapplication.DB.Converters;
 import com.example.myapplication.Entities.Video;
 import com.example.myapplication.Helper;
 import com.example.myapplication.R;
@@ -223,5 +223,6 @@ public class AddVideoActivity2 extends BaseActivity implements UserVideosAdapter
         Intent intent = new Intent(this, WatchVideoActivity2.class);
         intent.putExtra("selectedVideoId", video.getVideoId());
         startActivity(intent);
+
     }
 }

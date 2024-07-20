@@ -48,18 +48,17 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
             if (video != null) {
                 currentVideo = video;
                 setupVideoDetails();
+                updateLikesAndDislikes();
                 setupCommentSection();
                 observeOtherVideos();
-                if (Helper.isSignedIn())
-                {
-                    updateVideoOnServer3(currentVideo);
-                }
             }
         });
+        // Setup the like button click listener
+        ImageButton btnLike = findViewById(R.id.btnLike);
+        btnLike.setOnClickListener(v -> likeVideo());
 
         // Setup the RecyclerView for other videos
         RecyclerView recyclerView = findViewById(R.id.otherPostsRecyclerView);
-        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         videoAdapter = new VideoAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(videoAdapter);
@@ -67,7 +66,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
         // Setup the comments RecyclerView
         RecyclerView commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
-        commentsRecyclerView.setHasFixedSize(true);
         commentsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         commentAdapter = new CommentAdapter(new ArrayList<>(), this);
         commentsRecyclerView.setAdapter(commentAdapter);
@@ -93,15 +91,9 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         ImageButton btnDislike = findViewById(R.id.btnDislike);
         btnDislike.setOnClickListener(v -> dislikeVideo());
 
-        // Setup the like button click listener
-        ImageButton btnLike = findViewById(R.id.btnLike);
-        btnLike.setOnClickListener(v -> likeVideo());
     }
 
     private void setupVideoDetails() {
-        // Initialize the TextViews
-        tvLikes = findViewById(R.id.tvLikes);
-        tvDislikes = findViewById(R.id.tvDislikes);
 
         // Initialize the profile photo ImageView
         userViewModel.getUserByUsername(currentVideo.getAuthor()).observe(this, user -> {
@@ -110,7 +102,8 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                 Helper.loadPhotoIntoImageView(this, imageButtonProfilePhoto, user.getProfilePicture());
             }
         });
-
+        // update the views
+        videoViewModel.updateVideo(currentVideo);
         // Initialize the video details TextViews
         TextView tvViews = findViewById(R.id.tvViews);
         TextView tvAuthor = findViewById(R.id.tvAuthor);
@@ -122,11 +115,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.calculateTimeElapsed());
 
-        // Initialize the like, dislike, and share counts
-        tvLikes.setText(String.valueOf(currentVideo.getLikesCount(currentVideo.getLikedBy())));
-        tvDislikes.setText(String.valueOf(currentVideo.getDisLikesCount(currentVideo.getDislikedBy())));
-
-
         VideoView videoView = findViewById(R.id.videoView);
         Helper.loadVideoIntoVideoView(this, videoView, currentVideo.getPath());
     }
@@ -135,6 +123,13 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         commentViewModel.getComments(currentVideo.getVideoId()).observe(this, comments -> {
             commentAdapter.updateData(comments);
         });
+    }
+    private void updateLikesAndDislikes() {
+        // Initialize the TextViews
+        tvLikes = findViewById(R.id.tvLikes);
+        tvDislikes = findViewById(R.id.tvDislikes);
+        tvLikes.setText(String.valueOf(currentVideo.getLikesCount()));
+        tvDislikes.setText(String.valueOf(currentVideo.getDisLikesCount()));
     }
 
     private void observeOtherVideos() {
@@ -172,21 +167,32 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         }
     }
 
-
-
-
     private void dislikeVideo() {
         if ( Helper.isSignedIn() ) {
-            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
-                if (currentVideo.getDislikedBy().contains(Helper.getSignedInUser().getUsername())) {
-                    Toast.makeText(this, "The User disliked the video once already", Toast.LENGTH_SHORT).show();
-                } else {
-                    currentVideo.incrementDislikes(Helper.getSignedInUser().getUsername());
-                    //tvLikes.setText(String.valueOf(currentVideo.getLikes()));
-                    updateVideoOnServer2(currentVideo);
-                    setupVideoDetails();
-                }
-            });
+            if(currentVideo.getDislikedBy().contains(Helper.getSignedInUser().getUsername())) {
+                currentVideo.decrementDislikes(Helper.getSignedInUser().getUsername());
+                videoViewModel.updateVideo(currentVideo)
+                        .observe(this, updatedVideo -> {
+                            if (updatedVideo != null) {
+                                currentVideo = updatedVideo;
+                                updateLikesAndDislikes();
+                            } else {
+                                Toast.makeText(this, "Failed to update video", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+            else {
+                currentVideo.incrementDislikes(Helper.getSignedInUser().getUsername());
+                videoViewModel.updateVideo(currentVideo)
+                        .observe(this, updatedVideo -> {
+                            if (updatedVideo != null) {
+                                currentVideo = updatedVideo;
+                                updateLikesAndDislikes();
+                            } else {
+                                Toast.makeText(this, "Failed to update video", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
         }
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
@@ -195,38 +201,36 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void likeVideo() {
         if ( Helper.isSignedIn() ) {
-            videoViewModel.getVideoById(currentVideo.getVideoId()).observe(this, user -> {
-                if (currentVideo.getLikedBy().contains(Helper.getSignedInUser().getUsername())) {
-                    Toast.makeText(this, "The User liked the video once already", Toast.LENGTH_SHORT).show();
-                } else {
-                    currentVideo.incrementLikes(Helper.getSignedInUser().getUsername());
-                    //tvLikes.setText(String.valueOf(currentVideo.getLikes()));
-                    updateVideoOnServer(currentVideo);
-                    setupVideoDetails();
-                }
-            });
+            if(currentVideo.getLikedBy().contains(Helper.getSignedInUser().getUsername())) {
+                currentVideo.decrementLikes(Helper.getSignedInUser().getUsername());
+                videoViewModel.updateVideo(currentVideo)
+                        .observe(this, updatedVideo -> {
+                            if (updatedVideo != null) {
+                                currentVideo = updatedVideo;
+                                updateLikesAndDislikes();
+                            } else {
+                                Toast.makeText(this, "Failed to update video", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+            else {
+                currentVideo.incrementLikes(Helper.getSignedInUser().getUsername());
+                videoViewModel.updateVideo(currentVideo)
+                        .observe(this, updatedVideo -> {
+                            if (updatedVideo != null) {
+                                currentVideo = updatedVideo;
+                                Toast.makeText(this, "The User liked the video successfully", Toast.LENGTH_SHORT).show();
+                                updateLikesAndDislikes();
+                            } else {
+                                Toast.makeText(this, "Failed to update video", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+            }
         }
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void updateVideoOnServer(Video video) {
-        videoViewModel.updateVideo(video).observe(this, result -> {
-            Toast.makeText(this, "The User liked the video successfully", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void updateVideoOnServer2(Video video) {
-        videoViewModel.updateVideo(video).observe(this, result -> {
-            Toast.makeText(this, "The User disliked the video successfully", Toast.LENGTH_SHORT).show();
-        });
-    }
-
-    private void updateVideoOnServer3(Video video) {
-        videoViewModel.updateVideo(video).observe(this, result -> {
-
-        });
     }
 
     @Override

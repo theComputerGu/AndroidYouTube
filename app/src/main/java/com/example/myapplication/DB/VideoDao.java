@@ -14,7 +14,7 @@ import java.util.List;
 
 @Dao
 public interface VideoDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAll(List<Video> videos);
 
     @Query("DELETE FROM videos")
@@ -26,24 +26,10 @@ public interface VideoDao {
     @Query("SELECT * FROM videos WHERE video_id != :videoId")
     LiveData<List<Video>> getAllExcept(String videoId);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Video video);
+
     @Delete
     void delete(Video video);
-    @Query("SELECT * FROM videos WHERE title LIKE :prefix || '%'")
-    LiveData<List<Video>> getVideosByPrefix(String prefix);
 
-    @Query("SELECT * FROM videos WHERE video_id = :videoId")
-    LiveData<Video> getVideoById(String videoId);
-
-    @Query("UPDATE videos SET likes = likes + 1 WHERE video_id = :videoId")
-    void incrementLikes(String videoId);
-
-    @Query("UPDATE videos SET dislikes = dislikes + 1 WHERE video_id = :videoId")
-    void incrementDislikes(String videoId);
-
-    @Query("UPDATE videos SET views = views + 1 WHERE video_id = :videoId")
-    void incrementViews(String videoId);
 
     @Update
     void update(Video video);

@@ -62,7 +62,7 @@ public class UserAPI {
                 if (response.isSuccessful() && response.body() != null) {
                     resultLiveData.postValue(new Result(true, null));
                 } else {
-                    String errorMessage = "Failed to create user: " + response.message();
+                    String errorMessage = "Failed to create User: Username is already taken";
                     resultLiveData.postValue(new Result(false, errorMessage));
                 }
             }
@@ -151,7 +151,17 @@ public class UserAPI {
                 if (response.isSuccessful() && response.body() != null) {
                     resultLiveData.postValue(new Result(true, "Video created successfully"));
                 } else {
-                    resultLiveData.postValue(new Result(false, "Failed to create User: Username is already taken"));
+                    String errorMessage = "Unknown error";
+                    if (response.code() == 403) {
+                        errorMessage = "Invalid token";
+                    } else if (response.code() == 400) {
+                        errorMessage = "No video uploaded";
+                    } else if (response.code() == 404) {
+                        errorMessage = "Video not created";
+                    } else if (response.code() == 500) {
+                        errorMessage = "Server error";
+                    }
+                    resultLiveData.postValue(new Result(false, errorMessage));
                 }
             }
 

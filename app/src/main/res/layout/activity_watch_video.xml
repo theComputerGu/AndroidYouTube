@@ -23,6 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="left"
+        android:layout_marginStart="8dp"
         android:paddingBottom="4dp"
         android:text="Content"
         android:textSize="20sp"
@@ -55,7 +56,6 @@
                 android:clipToOutline="true"
                 android:contentDescription="@string/photo_description"
                 android:onClick="onProfilePhotoClicked"
-                android:padding="8dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_default_avatar"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -68,6 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date"
+                android:layout_marginLeft="8dp"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/imageViewProfilePhoto"
                 app:layout_constraintTop_toBottomOf="@+id/tvAuthor" />
@@ -76,7 +77,7 @@
                 android:id="@+id/tvViews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="8dp"
+                android:layout_marginLeft="8dp"
                 android:text="Views"
                 android:textSize="14sp"
                 app:layout_constraintStart_toEndOf="@+id/tvDate"
@@ -87,6 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="4dp"
+                android:layout_marginLeft="8dp"
                 android:text="Author"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -116,7 +118,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onLikeButtonClick"
+            android:padding="10dp"
             android:src="@drawable/ic_likes"
+            android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -126,6 +130,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnLike"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -134,6 +139,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onDisLikeButtonClick"
+            android:padding="10dp"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_dislikes"
             app:layout_constraintStart_toEndOf="@+id/tvLikes"
             app:layout_constraintTop_toTopOf="parent" />
@@ -144,6 +151,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnDislike"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -173,7 +181,6 @@
             android:id="@+id/otherPostsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:layout_marginBottom="350dp" />
 
         <!-- Comments Section -->
@@ -181,7 +188,7 @@
             android:id="@+id/commentsSection"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <!-- Input Layout -->
             <LinearLayout

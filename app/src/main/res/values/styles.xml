@@ -1,10 +1,9 @@
 <resources>
     <!-- Light Mode Theme -->
-    <style name="AppTheme" parent="Theme.MyApplication">
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/lightColorPrimary</item>
         <item name="colorPrimaryDark">@color/lightColorPrimaryDark</item>
         <item name="colorAccent">@color/lightColorAccent</item>
-        <!-- Add other attributes as needed for light mode -->
     </style>
 
     <!-- Dark Mode Theme -->
@@ -12,8 +11,8 @@
         <item name="colorPrimary">@color/darkColorPrimary</item>
         <item name="colorPrimaryDark">@color/darkColorPrimaryDark</item>
         <item name="colorAccent">@color/darkColorAccent</item>
-        <item name="android:windowBackground">@color/darkBackgroundColor</item> <!-- Set dark background color -->
-        <item name="android:textColorPrimary">@color/darkTextColor</item> <!-- Set text color for primary text -->
-        <item name="android:textColorSecondary">@color/darkTextColor</item>
+        <item name="android:windowBackground">@color/darkBackgroundColor</item>
     </style>
+
+
 </resources>

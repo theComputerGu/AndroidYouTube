@@ -23,28 +23,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:background="@android:color/transparent"
             android:onClick="onSignOutClicked"
             android:text="Sign Out"
-            android:textColor="@color/red"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Delete User Button -->
-        <!--    <Button-->
-        <!--        android:id="@+id/btnDeleteUser"-->
-        <!--        android:layout_width="wrap_content"-->
-        <!--        android:layout_height="wrap_content"-->
-        <!--        android:layout_marginTop="10dp"-->
-        <!--        android:text="Delete User"-->
-        <!--        android:textColor="@color/red"-->
-        <!--        android:background="@android:color/transparent"-->
-        <!--        android:textSize="18sp"-->
-        <!--        android:onClick="onDeleteUserClicked"-->
-        <!--        android:layout_marginEnd="10dp"-->
-        <!--        app:layout_constraintEnd_toEndOf="parent"-->
-        <!--        app:layout_constraintTop_toTopOf="parent" />-->
 
     </LinearLayout>
 
