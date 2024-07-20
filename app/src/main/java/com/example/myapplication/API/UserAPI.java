@@ -154,7 +154,7 @@ public class UserAPI {
                     resultLiveData.postValue(new Result(false, "Failed to create User: Username is already taken"));
                 }
             }
-
+//
             @Override
             public void onFailure(Call<Video> call, Throwable t) {
                 resultLiveData.postValue(new Result(false, "Network error: " + t.getMessage()));
