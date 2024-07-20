@@ -166,7 +166,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                     if (createdComment != null) {
                         Toast.makeText(this, "Comment added successfully.", Toast.LENGTH_SHORT).show();
                         commentEditText.setText("");
-                        Log.d(TAG, "addComment: Comment added successfully.");
+                        //Log.d(TAG, "addComment: Comment added successfully.");
                         setupCommentSection();
                     } else {
                         Toast.makeText(this, "Failed to add comment.", Toast.LENGTH_SHORT).show();
