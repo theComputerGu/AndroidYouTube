@@ -110,7 +110,17 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         TextView tvContent = findViewById(R.id.tvContent);
         TextView tvDate = findViewById(R.id.tvDate);
 
-        tvViews.setText(currentVideo.getViewsString());
+        if (Helper.isSignedIn())
+        {
+            tvViews.setText(currentVideo.getViewsString());
+        }else {
+            int s1 = currentVideo.getViews() - 1;
+            String s1String = String.valueOf(s1);
+            tvViews.setText(" "+s1String);
+        }
+
+
+
         tvAuthor.setText(currentVideo.getAuthorDisplayName());
         tvContent.setText(currentVideo.getTitle());
         tvDate.setText(currentVideo.calculateTimeElapsed());
@@ -151,7 +161,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                     if (createdComment != null) {
                         Toast.makeText(this, "Comment added successfully.", Toast.LENGTH_SHORT).show();
                         commentEditText.setText("");
-                        Log.d(TAG, "addComment: Comment added successfully.");
+                        //Log.d(TAG, "addComment: Comment added successfully.");
                         setupCommentSection();
                     } else {
                         Toast.makeText(this, "Failed to add comment.", Toast.LENGTH_SHORT).show();
