@@ -11,7 +11,6 @@
     <color name="lightColorPrimaryDark">#FF0000</color>     <!-- color of the thing in the top of the phone -->
     <color name="lightColorAccent">#FF0000</color>          <!-- media player color -->
 
-
     <!-- Dark Mode Colors -->
     <color name="darkColorPrimary">#333333</color> <!-- buttons color -->
     <color name="darkColorPrimaryDark">#333333</color> <!-- color of the thing in the top of the phone -->

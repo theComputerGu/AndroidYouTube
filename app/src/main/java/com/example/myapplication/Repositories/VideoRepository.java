@@ -36,6 +36,15 @@ public class VideoRepository {
         return videoDao.getAll();
     }
     public LiveData<List<Video>> getVideosExcept(String videoId) {
+        LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
+        videosFromAPI.observeForever(videos -> {
+            if (videos != null) {
+                executor.execute(() -> {
+                    videoDao.deleteAll();
+                    videoDao.insertAll(videos);
+                });
+            }
+        });
         return videoDao.getAllExcept(videoId);
     }
 

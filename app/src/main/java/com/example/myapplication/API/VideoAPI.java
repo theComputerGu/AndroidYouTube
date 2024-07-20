@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-import kotlin.Result;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -89,15 +88,6 @@ public class VideoAPI {
     }
 
 
-    public void updateVideo(String videoId, Video video, Callback<Video> callback) {
-        Call<Video> call = webServiceAPI.updateVideo(videoId, video);
-        call.enqueue(callback);
-    }
-
-    public void deleteVideo(String videoId, Callback<ResponseBody> callback) {
-        Call<ResponseBody> call = webServiceAPI.deleteVideo(videoId);
-        call.enqueue(callback);
-    }
 
     public LiveData<List<Video>> getVideosByPrefix(String prefix) {
         MutableLiveData<List<Video>> videos = new MutableLiveData<>();

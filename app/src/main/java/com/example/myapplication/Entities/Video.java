@@ -191,11 +191,15 @@ public class Video {
     }
     public void incrementDislikes(String username) {
         dislikedBy.add(username);
-        this.dislikes++;
     }
     public void incrementLikes(String username) {
         likedBy.add(username);
-        this.likes++;
+    }
+    public void decrementDislikes(String username) {
+        dislikedBy.remove(username);
+    }
+    public void decrementLikes(String username) {
+        likedBy.remove(username);
     }
     public String getViewsString() {
         return (this.views + " views");
@@ -227,17 +231,17 @@ public class Video {
         }
     }
 
-    public int getLikesCount(List<String> likedBy) {
+    public int getLikesCount() {
         if (likedBy == null) {
             return 0;
         }
         return likedBy.size();
     }
 
-    public int getDisLikesCount(List<String> DisLikedBy) {
-        if (DisLikedBy == null) {
+    public int getDisLikesCount() {
+        if (dislikedBy == null) {
             return 0;
         }
-        return DisLikedBy.size();
+        return dislikedBy.size();
     }
 }
