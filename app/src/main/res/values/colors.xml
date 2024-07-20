@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FFFF0000</color>
@@ -7,14 +7,14 @@
     <color name="blue">#FF0000FF</color>
 
 
-    <color name="lightColorPrimary">#FF0000</color>         <!-- Red color for primary in light mode -->
-    <color name="lightColorPrimaryDark">#FF0000</color>     <!-- Darker blue variant for primary dark in light mode -->
-    <color name="lightColorAccent">#FF0000</color>
+    <color name="lightColorPrimary">#FF0000</color>         <!-- Buttons color -->
+    <color name="lightColorPrimaryDark">#FF0000</color>     <!-- color of the thing in the top of the phone -->
+    <color name="lightColorAccent">#FF0000</color>          <!-- media player color -->
 
 
-    <color name="darkColorPrimary">#372020</color>         <!-- Red color for primary in dark mode -->
-    <color name="darkColorPrimaryDark">#9C27B0</color>     <!-- Dark blue variant for primary dark in dark mode -->
-    <color name="darkColorAccent">#9C27B0</color>          <!-- Pink color for accent in dark mode -->
-    <color name="darkBackgroundColor">#9C27B0</color>      <!-- Dark background color for dark mode -->
-    <color name="darkTextColor">#ffff</color>
+    <!-- Dark Mode Colors -->
+    <color name="darkColorPrimary">#333333</color> <!-- buttons color -->
+    <color name="darkColorPrimaryDark">#333333</color> <!-- color of the thing in the top of the phone -->
+    <color name="darkColorAccent">#FFFF0000</color> <!-- media player color -->
+    <color name="darkBackgroundColor">#666666</color> <!-- background color for dark mode -->
 </resources>

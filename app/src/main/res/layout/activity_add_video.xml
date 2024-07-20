@@ -15,7 +15,6 @@
         android:textStyle="bold"
         android:layout_margin="16dp"
         android:layout_marginTop="100dp"
-        android:textColor="@color/red"
         app:layout_constraintBottom_toTopOf="@+id/etTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -52,7 +51,6 @@
             android:layout_weight="1"
             android:layout_marginRight="40dp"
             android:text="Upload Photo"
-            android:backgroundTint="@color/red"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -85,7 +83,6 @@
             android:layout_weight="1"
             android:layout_marginTop="12dp"
             android:padding="16dp"
-            android:backgroundTint="@color/red"
             android:layout_marginRight="40dp"
             android:text="Upload Video"
             app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +106,6 @@
         android:padding="20dp"
         android:layout_margin="16dp"
         android:text="Add"
-        android:backgroundTint="@color/red"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"

@@ -118,7 +118,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onLikeButtonClick"
+            android:padding="10dp"
             android:src="@drawable/ic_likes"
+            android:background="@android:color/transparent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -128,6 +130,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnLike"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -136,6 +139,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="onDisLikeButtonClick"
+            android:padding="10dp"
+            android:background="@android:color/transparent"
             android:src="@drawable/ic_dislikes"
             app:layout_constraintStart_toEndOf="@+id/tvLikes"
             app:layout_constraintTop_toTopOf="parent" />
@@ -146,6 +151,7 @@
             android:layout_height="wrap_content"
             android:text="0"
             android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/btnDislike"
             app:layout_constraintTop_toTopOf="parent" />
 
