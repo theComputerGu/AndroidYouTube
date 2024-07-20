@@ -44,7 +44,6 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
 
         adapter = new VideoAdapter(new ArrayList<>(), MainActivity2.this); // Pass null initially
 
-
         RecyclerView recyclerView = findViewById(R.id.lstPosts);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));

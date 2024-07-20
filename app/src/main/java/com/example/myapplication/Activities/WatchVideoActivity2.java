@@ -229,7 +229,6 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
                         .observe(this, updatedVideo -> {
                             if (updatedVideo != null) {
                                 currentVideo = updatedVideo;
-                                Toast.makeText(this, "The User liked the video successfully", Toast.LENGTH_SHORT).show();
                                 updateLikesAndDislikes();
                             } else {
                                 Toast.makeText(this, "Failed to update video", Toast.LENGTH_SHORT).show();
