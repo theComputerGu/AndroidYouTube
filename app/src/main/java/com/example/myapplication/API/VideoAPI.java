@@ -131,6 +131,7 @@ public class VideoAPI {
                 video.postValue(null);
             }
         });
+
         return video;
     }
 
