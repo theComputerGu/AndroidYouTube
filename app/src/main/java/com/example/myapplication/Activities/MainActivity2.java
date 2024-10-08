@@ -72,7 +72,7 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
                 });
             }
             else {
-                videoViewModel.getAll().observe(MainActivity2.this, videos -> adapter.updateVideos(videos));
+                getVideos();
             }
         });
     }
@@ -107,7 +107,14 @@ public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoC
     @Override
     protected void onResume() {
         super.onResume();
-        videoViewModel.getAll().observe(this, videos -> adapter.updateVideos(videos));
+        getVideos();
+    }
+    public void getVideos() {
+        if (Helper.isSignedIn()) {
+            videoViewModel.getTcpVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> adapter.updateVideos(videos));
+        } else {
+            videoViewModel.getTopVideos().observe(this, videos -> adapter.updateVideos(videos));
+        }
     }
     @Override
     protected void onDestroy() {

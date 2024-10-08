@@ -26,6 +26,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface WebServiceAPI {
 
@@ -112,11 +113,21 @@ public interface WebServiceAPI {
     @POST("videos")
     Call<ResponseBody> createVideo(@Body Video video);
 
-    @GET("videos")
-    Call<List<Video>> getVideos();
+    @GET("videos/top-videos") // Update the endpoint based on your server's actual path
+    Call<List<Video>> getTopVideos();
 
-    @GET("videos/{id}")
-    Call<Video> getVideoById(@Path("id") String videoId);
+    // API call for TCP videos
+    @GET("videos/tcp-videos")
+    Call<List<Video>> getTcpVideos(@Query("userId") String userId);
+
+
+    @GET("videos/guest/{id}")
+    Call<Video> guestWatchVideo(@Path("id") String videoId);
+
+    @POST("videos/user/{id}")
+    Call<Video> userWatchVideo(@Path("id") String videoId, @Body Map<String, String> requestBody);
+
+
 
     @PUT("videos/{id}")
     Call<Video> updateVideo(@Path("id") String videoId, @Body Video video);

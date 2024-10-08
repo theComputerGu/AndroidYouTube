@@ -34,6 +34,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
     private CommentAdapter commentAdapter;
     private VideoAdapter videoAdapter;
     private ImageButton imageButtonProfilePhoto;
+    private String selectedVideoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,18 +42,11 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         setContentView(R.layout.activity_watch_video);
 
         // Retrieve selected video ID from Intent
-        String selectedVideoId = getIntent().getStringExtra("selectedVideoId");
+        selectedVideoId = getIntent().getStringExtra("selectedVideoId");
 
         // Observe the current video
-        videoViewModel.getVideoById(selectedVideoId).observe(this, video -> {
-            if (video != null) {
-                currentVideo = video;
-                setupVideoDetails();
-                updateLikesAndDislikes();
-                setupCommentSection();
-                observeOtherVideos();
-            }
-        });
+        watchVideo();
+
         // Setup the like button click listener
         ImageButton btnLike = findViewById(R.id.btnLike);
         btnLike.setOnClickListener(v -> likeVideo());
@@ -144,9 +138,7 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
 
     private void observeOtherVideos() {
         // Observe other videos excluding the current video
-        videoViewModel.getVideosExcept(currentVideo.getVideoId()).observe(this, videos -> {
-            videoAdapter.updateVideos(videos);
-        });
+        getVideos();
     }
 
     private void addComment() {
@@ -239,6 +231,40 @@ public class WatchVideoActivity2 extends BaseActivity implements VideoAdapter.On
         }
         else {
             Toast.makeText(this, "Please sign in", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void watchVideo() {
+        if (Helper.isSignedIn()) {
+            videoViewModel.userWatchVideo(selectedVideoId, Helper.getSignedInUser().getUserId()).observe(this, video -> {
+                if (video != null) {
+                    currentVideo = video;
+                    setupVideoDetails();
+                    updateLikesAndDislikes();
+                    setupCommentSection();
+                    observeOtherVideos();
+                }
+            });
+        } else {
+            videoViewModel.guestWatchVideo(selectedVideoId).observe(this, video -> {
+                if (video != null) {
+                    currentVideo = video;
+                    setupVideoDetails();
+                    updateLikesAndDislikes();
+                    setupCommentSection();
+                    observeOtherVideos();
+                }
+            });
+        }
+    }
+    public void getVideos() {
+        if (Helper.isSignedIn()) {
+            videoViewModel.getTcpVideosExcept(currentVideo.getVideoId(), Helper.getSignedInUser().getUserId()).observe(this, videos -> {
+                videoAdapter.updateVideos(videos);
+            });
+        } else {
+            videoViewModel.getTopVideosExcept(currentVideo.getVideoId()).observe(this, videos -> {
+                videoAdapter.updateVideos(videos);
+            });
         }
     }
 

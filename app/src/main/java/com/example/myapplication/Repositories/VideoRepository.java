@@ -23,8 +23,8 @@ public class VideoRepository {
         executor = Executors.newSingleThreadExecutor();
     }
 
-    public LiveData<List<Video>> getAll() {
-        LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
+    public LiveData<List<Video>> getTopVideos() {
+        LiveData<List<Video>> videosFromAPI = videoAPI.getTopVideos();
         videosFromAPI.observeForever(videos -> {
             if (videos != null) {
                 executor.execute(() -> {
@@ -35,8 +35,32 @@ public class VideoRepository {
         });
         return videoDao.getAll();
     }
-    public LiveData<List<Video>> getVideosExcept(String videoId) {
-        LiveData<List<Video>> videosFromAPI = videoAPI.getVideos();
+    public LiveData<List<Video>> getTopVideosExcept(String videoId) {
+        LiveData<List<Video>> videosFromAPI = videoAPI.getTopVideos();
+        videosFromAPI.observeForever(videos -> {
+            if (videos != null) {
+                executor.execute(() -> {
+                    videoDao.deleteAll();
+                    videoDao.insertAll(videos);
+                });
+            }
+        });
+        return videoDao.getAllExcept(videoId);
+    }
+    public LiveData<List<Video>> getTcpVideos(String userId) {
+        LiveData<List<Video>> videosFromAPI = videoAPI.getTcpVideos(userId);
+        videosFromAPI.observeForever(videos -> {
+            if (videos != null) {
+                executor.execute(() -> {
+                    videoDao.deleteAll();
+                    videoDao.insertAll(videos);
+                });
+            }
+        });
+        return videoDao.getAll();
+    }
+    public LiveData<List<Video>> getTcpVideosExcept(String videoId, String userId) {
+        LiveData<List<Video>> videosFromAPI = videoAPI.getTcpVideos(userId);
         videosFromAPI.observeForever(videos -> {
             if (videos != null) {
                 executor.execute(() -> {
@@ -51,8 +75,11 @@ public class VideoRepository {
     public LiveData<List<Video>> getVideoByPrefix(String prefix) {
         return videoAPI.getVideosByPrefix(prefix);
     }
-    public LiveData<Video> getVideoById(String videoId) {
-        return videoAPI.getVideoById(videoId);
+    public LiveData<Video> guestWatchVideo(String videoId) {
+        return videoAPI.guestWatchVideo(videoId);
+    }
+    public LiveData<Video> userWatchVideo(String videoId, String userId) {
+        return videoAPI.userWatchVideo(videoId, userId);
     }
 
     public LiveData<Video> updateVideo(Video video) {

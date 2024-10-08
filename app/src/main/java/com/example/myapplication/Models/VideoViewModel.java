@@ -22,18 +22,27 @@ public class VideoViewModel extends ViewModel {
         }
         return instance;
     }
-    public LiveData<List<Video>> getAll() {
-        return mRepository.getAll();
+    public LiveData<List<Video>> getTopVideos() {
+        return mRepository.getTopVideos();
+    }
+    public LiveData<List<Video>> getTcpVideos(String userId) {
+        return mRepository.getTcpVideos(userId);
     }
 
     public LiveData<List<Video>> getVideoByPrefix(String prefix){
         return mRepository.getVideoByPrefix(prefix);
     }
-    public LiveData<Video> getVideoById(String videoId) {
-        return mRepository.getVideoById(videoId);
+    public LiveData<Video> guestWatchVideo(String videoId) {
+        return mRepository.guestWatchVideo(videoId);
     }
-    public LiveData<List<Video>> getVideosExcept(String videoId) {
-        return mRepository.getVideosExcept(videoId);
+    public LiveData<Video> userWatchVideo(String videoId, String userId) {
+        return mRepository.userWatchVideo(videoId, userId);
+    }
+    public LiveData<List<Video>> getTopVideosExcept(String videoId) {
+        return mRepository.getTopVideosExcept(videoId);
+    }
+    public LiveData<List<Video>> getTcpVideosExcept(String videoId, String userId) {
+        return mRepository.getTcpVideosExcept(videoId, userId);
     }
 
     public LiveData<Video> updateVideo(Video video) {

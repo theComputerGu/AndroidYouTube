@@ -1,5 +1,7 @@
 package com.example.myapplication.API;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -48,10 +50,10 @@ public class VideoAPI {
         call.enqueue(callback);
     }
 
-    public LiveData<List<Video>> getVideos() {
+    public LiveData<List<Video>> getTopVideos() {
         MutableLiveData<List<Video>> videos = new MutableLiveData<>();
 
-        webServiceAPI.getVideos().enqueue(new Callback<List<Video>>() {
+        webServiceAPI.getTopVideos().enqueue(new Callback<List<Video>>() {
             @Override
             public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
                 videos.postValue(response.body());
@@ -63,14 +65,35 @@ public class VideoAPI {
         });
         return videos;
     }
+    public LiveData<List<Video>> getTcpVideos(String userId) {
+        MutableLiveData<List<Video>> videos = new MutableLiveData<>();
+        webServiceAPI.getTcpVideos(userId).enqueue(new Callback<List<Video>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Video>> call, @NonNull Response<List<Video>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    videos.postValue(response.body());
+                } else {
+                    // Handle the case where the response is not successful
+                    Log.e("getTcpVideos", "Response failed: " + response.message());
+                }
+            }
 
-    public LiveData<Video> getVideoById(String videoId) {
+            @Override
+            public void onFailure(@NonNull Call<List<Video>> call, @NonNull Throwable t) {
+                t.printStackTrace();
+            }
+        });
+
+        return videos;
+    }
+
+
+    public LiveData<Video> guestWatchVideo(String videoId) {
         MutableLiveData<Video> video = new MutableLiveData<>();
-        Call<Video> call = webServiceAPI.getVideoById(videoId);
+        Call<Video> call = webServiceAPI.guestWatchVideo(videoId);
         call.enqueue(new Callback<Video>() {
             @Override
             public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
-
                 if (response.isSuccessful()) {
                     video.postValue(response.body());
                 } else {
@@ -86,6 +109,32 @@ public class VideoAPI {
         });
         return video;
     }
+    public LiveData<Video> userWatchVideo(String videoId, String userId) {
+        MutableLiveData<Video> video = new MutableLiveData<>();
+        Map<String, String> requestBody = new HashMap<>(); // Create a Map to hold the request body
+        requestBody.put("userId", userId); // Add userId to the Map
+
+        Call<Video> call = webServiceAPI.userWatchVideo(videoId, requestBody); // Pass the Map as the request body
+        call.enqueue(new Callback<Video>() {
+            @Override
+            public void onResponse(@NonNull Call<Video> call, @NonNull Response<Video> response) {
+                if (response.isSuccessful()) {
+                    video.postValue(response.body());
+                } else {
+                    video.postValue(null);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Video> call, @NonNull Throwable t) {
+                t.printStackTrace();
+                video.postValue(null);
+            }
+        });
+        return video;
+    }
+
+
 
 
 
