@@ -1,0 +1,128 @@
+package com.example.myapplication.Activities;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.myapplication.Adapters.VideoAdapter;
+import com.example.myapplication.DB.AppDB;
+import com.example.myapplication.Entities.Video;
+import com.example.myapplication.Helper;
+import com.example.myapplication.R;
+
+import java.util.ArrayList;
+
+public class MainActivity2 extends BaseActivity implements VideoAdapter.OnVideoClickListener {
+
+    private EditText searchEditText;
+    private VideoAdapter adapter;
+    ImageButton imageViewProfilePhoto;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+        // Initialize the profile photo
+        imageViewProfilePhoto = findViewById(R.id.imageViewProfilePhoto);
+        if (Helper.isSignedIn()) {
+            // Display profile photo if available
+            String photoPath = Helper.getSignedInUser().getProfilePicture();
+            Helper.loadPhotoIntoImageView(this, imageViewProfilePhoto, photoPath);
+        } else {
+            // Handle case when user is not signed in
+            imageViewProfilePhoto.setImageResource(R.drawable.ic_default_avatar);
+        }
+
+        adapter = new VideoAdapter(new ArrayList<>(), MainActivity2.this); // Pass null initially
+
+        RecyclerView recyclerView = findViewById(R.id.lstPosts);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity2.this));
+
+        ImageButton buttonToHomePage = findViewById(R.id.buttonToHomePage);
+        buttonToHomePage.setOnClickListener(v -> {
+            Intent i = new Intent(this, MainActivity2.class);
+            startActivity(i);
+        });
+
+        ImageButton buttonToAddVideoPage = findViewById(R.id.buttonToAddVideoPage);
+        buttonToAddVideoPage.setOnClickListener(v -> startAddVideoActivity());
+
+        // Initialize search EditText and Button
+        searchEditText = findViewById(R.id.searchEditText);
+        ImageButton searchButton = findViewById(R.id.buttonSearch);
+        searchButton.setOnClickListener(v -> {
+            String query = searchEditText.getText().toString().trim();
+            if (!query.isEmpty()) {
+                videoViewModel.getVideoByPrefix(query).observe(MainActivity2.this, videos -> {
+                    if (videos == null) {
+                        Toast.makeText(MainActivity2.this, "No videos found", Toast.LENGTH_SHORT).show();
+                    } else {
+                        adapter.updateVideos(videos);
+                    }
+                });
+            }
+            else {
+                getVideos();
+            }
+        });
+    }
+    private void startAddVideoActivity() {
+
+        // Check if user is signed in
+        if (!Helper.isSignedIn()) {
+            Toast.makeText(this, "Please sign in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Intent intent = new Intent(this, AddVideoActivity2.class);
+        startActivity(intent);
+    }
+    @Override
+    public void onVideoClick(Video video) {
+        Intent intent = new Intent(this, WatchVideoActivity2.class);
+        intent.putExtra("selectedVideoId", video.getVideoId());
+        startActivity(intent);
+    }
+
+    public void onProfilePhotoClicked(View view) {
+        Intent i;
+        if (Helper.isSignedIn()) {
+            i = new Intent(this, ProfileActivity.class);
+            i.putExtra("username", Helper.getSignedInUser().getUsername());
+        } else {
+            i = new Intent(this, LogInActivity.class);
+        }
+        startActivity(i);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getVideos();
+    }
+    public void getVideos() {
+        if (Helper.isSignedIn()) {
+            videoViewModel.getTcpVideos(Helper.getSignedInUser().getUserId()).observe(this, videos -> adapter.updateVideos(videos));
+        } else {
+            videoViewModel.getTopVideos().observe(this, videos -> adapter.updateVideos(videos));
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        AppDB appDB = AppDB.getInstance();
+        appDB.clearDatabase();
+    }
+    public void onDarkModeClicked(View view) {
+        toggleDarkMode();
+    }
+}

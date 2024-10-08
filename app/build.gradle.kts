@@ -27,7 +27,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
-
+//
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -38,4 +38,21 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation (libs.gson)
+    implementation(libs.lifecycle.viewmodel)
+
+    implementation (libs.room.runtime)
+    annotationProcessor (libs.room.compiler)
+    implementation (libs.room.ktx)
+
+    implementation (libs.lifecycle.viewmodel.ktx)
+    implementation (libs.lifecycle.livedata.ktx)
+
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
+    implementation (libs.glide)
+    annotationProcessor (libs.compiler)
+
 }
